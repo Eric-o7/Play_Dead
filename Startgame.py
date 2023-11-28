@@ -2,18 +2,23 @@ print('Welcome to StartGame! \nStartGame is a text based role-playing game.\nRes
 create_or_random = True
 def Start_Game_Prompt():
     Ready_Start = input('Start Game? \nYES or NO \n')
-    if Ready_Start == 'YES':
-        create_or_random = input('CREATE character or play a RANDOM build? \n')
-        if create_or_random == 'CREATE':
-            create_or_random = True
+    while Ready_Start is not 'YES':
+        if Ready_Start == 'YES':
+            create_or_random = input('CREATE character or play a RANDOM build? \n')
+            if create_or_random == 'CREATE':
+                create_or_random = True
+                #need to assign this value to a dictionary that store player info?
+                return create_or_random
+            elif create_or_random == 'RANDOM':
+                create_or_random = False
+                return create_or_random
+        elif Ready_Start == 'NO':
             return 
-        elif create_or_random == 'RANDOM':
-            create_or_random = False
-            return
-    elif Ready_Start == 'NO':
-        return 
-    else: 
-        print('Input not valid \n')
+        #what do I do when the player selects no? should I close the program?
+        else: 
+            print('Input not valid \n')
+            break
+            #I want to print this and then loop back to Ready_Start
 
 while Start_Game_Prompt():
     pass

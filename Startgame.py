@@ -11,32 +11,46 @@ class Combatant():
         self.mana -= mana_cost
 
 class PlayerCharacter(Combatant):
-    def __init__(self, player_class, level):
+    def __init__(self, level, spells=None):
         super().__init__()
-        self.player_class = player_class
         self.level = level
-
-    def level_up(self):
-        pass
-    
-    def player_class(self):
-        self.player_class
-
-class Paladin(PlayerCharacter):
-    def __init__(self, styles, spell_list):
-        super().__init__()
-        self.styles = styles
-        self.spell_list = spell_list
         self.styles = []
         self.spell_list = []
+        self.spells = spells
 
-    def get_spell_list(self, spells):
-        self.spell_list = spells
+    def add_spell(self, spells):
+        self.spell_list.append(self.spells)
+    
+    def get_spell_list(self):   
+        return self.spell_list
+    
+    def get_styles(self):
+        return self.styles
+    
+    def level_up(self):
+        self.level+=1
+    
 
-    def get_styles(self, styles):
-        self.styles = styles
+class Paladin(PlayerCharacter):
+    def __init__(self, holy_power):
+        super().__init__()
+        self.holy_power = holy_power
+        
+class Sorcerer(PlayerCharacter):
+    def __init__(self, sorcery):
+        super().__init__()
+        self.sorcery = sorcery
 
+class Abilities():
+    def __init__(self, effect, damage):
+        self.effect = effect
+        self.damage = damage.
 
+class Spells(Abilities):
+    
+class Styles(Abilities):
+    
+    
 
 def main():
     print('Welcome to StartGame! \nStartGame is a text based role-playing game.\nProceed through the game by typing in an answer to the programs questions. \nResponses are case sensitive.')

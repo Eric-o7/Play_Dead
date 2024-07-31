@@ -1,64 +1,39 @@
 import tkinter as tk
 from tkinter import ttk
+from random import randint, choice
 
 
-#helper function - window pop up to test tkinter is installed and ready to use
-# tk._test()
+root2 = tk.Tk()
+root2.geometry("300x300")
+root2.title("StartGame")
+canvas = tk.Canvas(root2, bg="gray", scrollregion=(0,0,2000,5000))
+canvas.create_line(0,0,2000,5000, width=10)
+for i in range(100):
+    l = randint(0,2000)
+    t = randint(0,5000)
+    r = l+randint(10,500)
+    b = t+randint(10,500)
+    color = choice(('red', 'green', 'blue', 'yellow'))
+    canvas.create_rectangle(l,t,r,b, fill=color)
+canvas.pack(expand=True, fill="both")
 
-# def on_click():
-#     lbl.config(text="Button Clicked")
-#     #a method to print to GUI
+#mousewheel scrolling
+canvas.bind('<MouseWheel>', lambda event: canvas.yview_scroll(int(event.delta / 60), "units"))
+canvas.bind('<Control MouseWheel>', lambda event: canvas.xview_scroll(int(event.delta / 60), "units"))
 
-# lbl = tk.Label(root, text="Label 1", bg="green", relief="raised")
-# lbl.grid(row=0, column=0)
+#scrollbar
+scrollbar = ttk.Scrollbar(root2, orient = 'vertical', command = canvas.yview)
+canvas.configure(yscrollcommand = scrollbar.set)
+scrollbar.place(relx = 1, rely = 0, relheight = 1, anchor= 'ne')
 
-# #keys available to a widget, in this case lbl = Label.
-# print(lbl.config().keys())
-
-# btn = tk.Button(root, text="Button 1", command=on_click)
-# btn.grid(row=0, column=1)
-
-root = tk.Tk()
-root.title("Testing Tkinter")
-
-#event argument to allow event to control the function - must also add the function to the entry.bind() method
-#event=None is the argument for the function
-#or can use lambda within the bind function
-def add_to_list(event=None):
-    text = entry.get()
-    if text:
-        text_list.insert(tk.END, text)
-        entry.delete(0, tk.END)
-        #tk.END is a special index adding to the last place in the index
-
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
-#weights are arbitrary numbers. The sum of the weights / individual weight is the percentage of the window that is used
-#e.g. two columns, weight 3 and weight 1, weight 3 will take up 75% of the resized space, weight 1 will take up the remaining 25%
-
-#a frame is a container for other widgets
-frame = ttk.Frame(root)
-frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
-
-frame.columnconfigure(0, weight=1)
-frame.rowconfigure(1, weight=1)
-
-#frame is the parent window, entry is a text entry field
-entry = ttk.Entry(frame)
-entry.grid(row=0, column=0, sticky="ew")
-#I want the entry box to stick but not the button, so I dont make the entire row sticky, just the box
-
-entry.bind("<Return>", add_to_list)
-
-entry_btn = ttk.Button(frame, text="Add to list", command=add_to_list)
-entry_btn.grid(row=0, column=1)
-
-text_list = tk.Listbox(frame)
-text_list.grid(row=1, column=0, columnspan=2, sticky="nsew")
-#sticky="ew" means east & west, the widget then sticks to the sides
+scrollbar2 = ttk.Scrollbar(root2, orient= 'horizontal', command = canvas.xview)
+canvas.configure(xscrollcommand = scrollbar2.set)
+scrollbar2.place(relx = 0, rely = 1, relwidth = 1, anchor = 'sw')
 
 
-root.mainloop()
+
+root2.mainloop()
+
 
 
 #frame usage makes it easier to re-use widgets

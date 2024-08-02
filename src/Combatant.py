@@ -1,3 +1,5 @@
+from graphics import *
+
 class Combatant():
     def __init__(self, name, health, mana):
         self.name = name

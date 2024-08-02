@@ -1,3 +1,6 @@
+from graphics import *
+
+
 def main():
     print('Welcome to StartGame! \nStartGame is a text based role-playing game.\nProceed through the game by typing in an answer to the programs questions. \nResponses are case sensitive.')
     Start_Game_Prompt()

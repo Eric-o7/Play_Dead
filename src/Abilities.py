@@ -1,3 +1,5 @@
+from graphics import *
+
 class Abilities():
     def __init__(self, effect, damage, area):
         self.effect = effect

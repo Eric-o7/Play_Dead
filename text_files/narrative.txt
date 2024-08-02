@@ -1,0 +1,16 @@
+***TitleStart***
+===========<-Welcome to StartGame->============
+----------Type and Enter "Play" to start the game-----------
+--------------Click Help Button for information--------------
+
+
+Project by Eric Brown
+**************************************************************
+***TitleEnd***
+
+***ClassDescStart***
+Choose a class:
+Warrior - melee fighter that can use two-handed weapons or sword and shield for higher avoidance. High strength, capable of wearing the strongest armor.
+Wizard - spellcaster with access to damage and utility spells. High acuity, has the widest selection of spells.
+Ninja - melee or ranged combatant that makes multiple low damage attacks. High agility and speed.
+***ClassDescEnd***

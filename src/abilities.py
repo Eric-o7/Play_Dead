@@ -10,6 +10,9 @@ class Spells(Abilities):
     def __init__ ():
         super().__init__()
         
+    def mana_cost():
+        
+        
         
 class Styles(Abilities):
     def __init__ ():

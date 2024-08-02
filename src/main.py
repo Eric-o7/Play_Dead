@@ -1,29 +1,77 @@
-from graphics import *
+from graphics import root, game_out, game_text
+import time
 
+gstate = 1
 
 def main():
-    print('Welcome to StartGame! \nStartGame is a text based role-playing game.\nProceed through the game by typing in an answer to the programs questions. \nResponses are case sensitive.')
-    Start_Game_Prompt()
-def Start_Game_Prompt():
-    Ready_Start = input('Start Game? \nYes or No \n')
-    if Ready_Start == 'Yes' or Ready_Start == "YES":
-        player = PlayerCharacter()
-        create_character()
-    quit
-
-def create_character():
-    char_class = input('Do you want to play a SORCERER or PALADIN?\n')
-    if char_class == "PALADIN":
-        create_paladin()
-    elif char_class == "SORCERER":
-        create_sorcerer()
-    else:
-        char_class = input('Do you want to play a SORCERER or PALADIN?\n')
-
-def create_paladin():
-    spell_list = input('Select your first spell.\nHoly Word - Strong damage to undead creature \nRepent - Mild damage to any creature')
+    root.mainloop()
     
+def gamestate(text):
+    if gstate == 1:
+        gamestate1(text)
+    elif gstate == 2:
+        gamestate2(text)
+    elif gstate == 3:
+        gamestate3(text)
+    elif gstate == 4:
+        gamestate4(text)
+    elif gstate == 5:
+        gamestate5(text)
+    elif gstate == 6:
+        gamestate6(text)
+    elif gstate == 7:
+        gamestate7(text)
+    elif gstate == 8:
+        gamestate8(text)
+        
+        
+def gamestate1(text):
+    if text.lower() == "play":
+        game_out(text.capitalize())
+        game_out("Enter character name:", "output")
+        global gstate
+        gstate = 2
+        
+def gamestate2(text):
+    if 1 < len(text) < 13:
+        game_out(text)
+        game_out(f"Welcome, {text.capitalize()}!", "title")
+    global char_name 
+    char_name = text.capitalize()
+    with open("text_files/narrative.txt") as class_desc:
+        class_desc = class_desc.readlines()
+    count = 0
+    beginning = "***ClassDescStart***"
+    end = "***ClassDescEnd***"
+    section = []
+    for line in class_desc:
+        if beginning in line:
+            section.append(count)
+        if end in line:
+            section.append(count)
+        count += 1
+    print(section)
+    for line in range(section[0]+1, section[1]):
+        game_out(class_desc[line], "output")
+        
+        
 
-def create_sorcerer():
+def gamestate3(text):
     pass
+
+def gamestate4(text):
+    pass
+
+def gamestate5(text):
+    pass
+
+def gamestate6(text):
+    pass
+
+def gamestate7(text):
+    pass
+
+def gamestate8(text):
+    pass     
+        
 main()

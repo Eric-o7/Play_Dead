@@ -10,7 +10,13 @@ Project by Eric Brown
 
 ***ClassDescStart***
 Choose a class:
-Warrior - melee fighter that can use two-handed weapons or sword and shield for higher avoidance. High strength, capable of wearing the strongest armor.
-Wizard - spellcaster with access to damage and utility spells. High acuity, has the widest selection of spells.
-Ninja - melee or ranged combatant that makes multiple low damage attacks. High agility and speed.
+Warrior - Melee fighter that can use two-handed weapons for higher damage or sword and shield for higher avoidance. High strength, capable of wearing the strongest armor.
+Wizard - Spellcaster with access to damage, defensive, and utility spells. High acuity and overall utility.
+Ninja - Melee or ranged combatant that can make multiple low damage attacks. High agility and speed.
 ***ClassDescEnd***
+
+
+***StylesStart***
+
+
+***StylesEnd***

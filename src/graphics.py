@@ -4,6 +4,7 @@ from tkinter import ttk
 root = tk.Tk()
 root.geometry("800x600")
 root.title("Start Game")
+
 root.configure(background = "#212121")
 
 root.columnconfigure(0, weight = 2)
@@ -12,11 +13,9 @@ root.rowconfigure(0, weight = 5)
 root.rowconfigure(1, weight = 5)
 root.rowconfigure(2, weight = 2)
 
-
-
 #button frame
 
-button_frame = ttk.Frame(root, style = "primary.TFrame")
+button_frame = ttk.Frame(root)
 button_frame.grid(row = 0, column = 0, sticky = "nsew")
 
 button_frame.columnconfigure(0, weight = 1)
@@ -77,10 +76,11 @@ def game_out(text, tags = "user"):
 #display content and progress game using gamestate()
 def add_to_game_out(event=None):
     from main import gamestate, gstate
-    text = text_entry.get()
-    text_entry.delete(0, tk.END)
-    print(f"State: {gstate}")
-    return gamestate(text)
+    if text_entry.get():
+        text = text_entry.get()
+        text_entry.delete(0, tk.END)
+        # print(f"State: {gstate}")
+        return gamestate(text)
 
 #title/credits printed upon execution
 with open("text_files/narrative.txt") as start:
@@ -95,30 +95,21 @@ with open("text_files/narrative.txt") as start:
         if end in line:
             section.append(count)
         count += 1
-    print(section)
     for line in range(section[0]+1, section[1]):
         game_out(start[line], "title")
 
-
 #game input frame    
 entry_frame = ttk.Frame(root)
-entry_frame.grid(row = 2, column = 1, sticky = "ew", padx = 20)
+entry_frame.grid(row = 2, column = 1, sticky = "ew", padx = (15,5))
 
 entry_frame.columnconfigure(0, weight = 25)
 entry_frame.columnconfigure(1, weight = 2)
 
 text_entry = ttk.Entry(entry_frame)
-text_entry.grid(row = 0, column = 0, columnspan = 2, sticky = "nsew")
+text_entry.grid(row = 0, column = 0, sticky = "nsew")
 text_entry.focus()
 
 text_entry.bind("<Return>", add_to_game_out)
 
-enter_button = ttk.Button(entry_frame, text = "Enter", command = add_to_game_out())
+enter_button = ttk.Button(entry_frame, text = "Enter", command = add_to_game_out)
 enter_button.grid(row = 0, column = 1, sticky = "nsew")
-
-
-
-
-
-
-

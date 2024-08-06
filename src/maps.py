@@ -1,11 +1,10 @@
 from graphics import *
 
 class Maps():
-    def __init__(self, name, height, width, neighbors, coordinates=None):
+    def __init__(self, name: str, height: int, width: int, neighbors: list):
         self.name = name
         self.height = height
         self.width = width
         self.neighbors = neighbors
-        self.coordinates = coordinates
-        
-        
+
+tutorial = Maps("Tutorial Room", 10, 10, None)

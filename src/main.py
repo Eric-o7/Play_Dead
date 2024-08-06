@@ -1,5 +1,6 @@
 from graphics import root, game_out, game_text
 import time
+from combatant import *
 
 gstate = 1
 
@@ -36,6 +37,8 @@ def gamestate2(text):
     if 1 < len(text) < 13:
         game_out(text)
         game_out(f"Welcome, {text.capitalize()}!", "title")
+    else:
+        game_out(f"Please enter a name between 2 and 12 characters in length")
     global char_name 
     char_name = text.capitalize()
     with open("text_files/narrative.txt") as class_desc:
@@ -50,14 +53,17 @@ def gamestate2(text):
         if end in line:
             section.append(count)
         count += 1
-    print(section)
+    # print(section)
     for line in range(section[0]+1, section[1]):
         game_out(class_desc[line], "output")
-        
-        
+    global gstate
+    gstate = 3      
 
 def gamestate3(text):
-    pass
+    player_class = text.capitalize()
+    global player
+    player = Combatant(char_name, 1, 0, player_class)
+    game_out(f"You are {player.name} the {player.player_class}!", "title")
 
 def gamestate4(text):
     pass
@@ -73,5 +79,6 @@ def gamestate7(text):
 
 def gamestate8(text):
     pass     
-        
-main()
+
+if __name__ == "__main__":        
+    main()

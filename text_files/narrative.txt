@@ -1,11 +1,13 @@
 ***TitleStart***
-===========<-Welcome to StartGame->============
-----------Type and Enter "Play" to start the game-----------
---------------Click Help Button for information--------------
 
+
+
+===========<-Welcome to StartGame->============
+----------    Type and Enter "Play" to start the game    -----------
+--------------    Click Help Button for information    --------------
 
 Project by Eric Brown
-**************************************************************
+*********************************************************************
 ***TitleEnd***
 
 ***ClassDescStart***

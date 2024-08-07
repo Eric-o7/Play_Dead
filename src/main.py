@@ -1,6 +1,7 @@
 from graphics import root, game_out, game_text
 import time
 from combatant import *
+import items
 
 gstate = 1
 
@@ -53,9 +54,8 @@ def gamestate2(text):
         if end in line:
             section.append(count)
         count += 1
-    # print(section)
     for line in range(section[0]+1, section[1]):
-        game_out(class_desc[line], "output")
+        game_out(class_desc[line], "output2")
     global gstate
     gstate = 3      
 
@@ -63,7 +63,11 @@ def gamestate3(text):
     player_class = text.capitalize()
     global player
     player = Combatant(char_name, 1, 0, player_class)
+    player.set_playerclass(player_class)
     game_out(f"You are {player.name} the {player.player_class}!", "title")
+    if player:
+        char_stats.set(f""" Character Stats \n\n\n Name: {player.name}\n\n\n Level: {player.level}\n\n Health: {player.health}\n Mana: {player.mana}\n Endurance: {player.endurance}\n Speed: {player.speed}\n\n Strength: {player.strength}\n Acuity: {player.acuity}\n Agility: {player.agility}\n""")
+    game_out(f"Choose your starting weapon:", "output")
 
 def gamestate4(text):
     pass

@@ -2,51 +2,27 @@ from graphics import *
 from combatant import *
 
 class Item():
-    def __init__(self, name: str, size: int, cost: float):
+    def __init__(self, name: str, size: int, cost: float,
+                 stat = None, min_stat_req: int = None, slot = None):
         self.name = name
         self.size = size
         self.cost = cost
-        self.inventory = {}
-        
-    def total_cost(self):
-        return self.cost * self.quantity
-    
-    #inventory format: {name:[size, cost, quantity]}        
-    def get_inventory(self):
-        pass
-    
-    def add_to_inventory(self, Combatant):
-        print(self.inventory_size(Combatant))
-        if self.inventory_size(Combatant):
-            self.inventory[self.name] = [self.size, self.cost, 1]
-            print(f"{self.name} added to Inventory!")
-        else:
-            print(f"Inventory is full")
-    
-    def inventory_size(self, Combatant):
-        sum = 0
-        if len(self.inventory):
-            for property in self.inventory.keys():
-                print(f"we here")
-                print(f"{property[0]} {property[2]}")
-                #muiltiplies size and quantity of all items in inventory
-                sum += property[0] * property[2]
-        if sum + self.size < Combatant.health:
-            return
-        
-class Equipment(Item):
-    def __init__(self, name: str, size: int, cost: float, 
-                 slot: str, stat: str, min_stat_req: int):
-        super().__init__(name, size, cost)
-        self.slot = slot
         self.stat = stat
         self.min_stat_req = min_stat_req
-    
-    def equippable(self):
-        pass
+        
+    def __repr__(self):
+        game_out(f"{Item.name}, Stat Required {Item.min_stat_req} {Item.stat}")
 
-if __name__ == "__main__":
-    player = Combatant("bob", 1, 0, "Warrior")
-    dd = Item("dagger", 1, 1.5)
-    dd.add_to_inventory(player)
-    print(player.inventory)
+dagger = Item("Dagger", 3, 3, None, None, "Mhand")
+staff = Item("Staff", 7, 10, "acuity", 10, ("Mhand", "Ohand"))
+sword = Item("Sword", 5, 5, ("strength", "agility"), 5, "Mhand")
+shurikens = Item("Shuriken", 1, 1, "agility", 7, "Mhand")
+buckler = Item("Buckler", 6, 3, None, "Ohand")
+zweihander = Item("Zweihander", 10, 10, "strength", 10, ("Mhand, Ohand"))
+rod = Item("Rod", 5, 7, "acuity", 7, "Mhand")
+claws = Item("Claws", 3, 10, "agility", 10, ("Mhand, Ohand"))
+
+weapons = {}
+ 
+    
+

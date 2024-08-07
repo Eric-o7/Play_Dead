@@ -7,7 +7,7 @@ root.title("Start Game")
 
 root.configure(background = "#212121")
 
-root.columnconfigure(0, weight = 2)
+root.columnconfigure(0, weight = 5)
 root.columnconfigure(1, weight = 5)
 root.rowconfigure(0, weight = 5)
 root.rowconfigure(1, weight = 5)
@@ -15,7 +15,7 @@ root.rowconfigure(2, weight = 2)
 
 #button frame
 
-button_frame = ttk.Frame(root)
+button_frame = tk.Frame(root, background = "#212121")
 button_frame.grid(row = 0, column = 0, sticky = "nsew")
 
 button_frame.columnconfigure(0, weight = 1)
@@ -38,16 +38,20 @@ styles_button = ttk.Button(button_frame, text = "Styles")
 styles_button.grid(row = 3, column = 0)
 
 #status frame
-status_frame = ttk.Frame(root)
+status_frame = tk.Frame(root)
 status_frame.grid(row = 1, column = 0, rowspan = 2, 
                   sticky = "nsew", padx = 5, pady = (5,15))
 
-label = ttk.Label(status_frame, background = "#373737", 
-                  text = "Status box", anchor = "n")
+char_stats = tk.StringVar()
+
+label = tk.Label(status_frame, background = "#373737", foreground = "#b5880b",
+                 textvariable = char_stats, height = 13,
+                  anchor = tk.SW, borderwidth = 2, relief = "groove",
+                  justify = tk.LEFT, font = ("Times", 12, "bold"))
 label.pack(expand = True, fill = "both")
 
 #game output frame
-text_frame = ttk.Frame(root)
+text_frame = tk.Frame(root)
 text_frame.grid(row = 0, column = 1, rowspan = 2, sticky = "nsew")
 
 game_text = tk.Text(text_frame, background = "#212121", 
@@ -64,6 +68,9 @@ game_text.tag_configure("user", background = "#212121",
                         foreground = "#D7D7D7")
 game_text.tag_configure("output", background = "#212121",
                         font=("Times New Roman", 12, "bold"),
+                        foreground = "#759EE0")
+game_text.tag_configure("output2", background = "#212121",
+                        font=("Times New Roman", 11),
                         foreground = "#759EE0")
 
 #output to text box with optional text arguments
@@ -99,7 +106,7 @@ with open("text_files/narrative.txt") as start:
         game_out(start[line], "title")
 
 #game input frame    
-entry_frame = ttk.Frame(root)
+entry_frame = tk.Frame(root, background = "#212121")
 entry_frame.grid(row = 2, column = 1, sticky = "ew", padx = (15,5))
 
 entry_frame.columnconfigure(0, weight = 25)
@@ -112,4 +119,4 @@ text_entry.focus()
 text_entry.bind("<Return>", add_to_game_out)
 
 enter_button = ttk.Button(entry_frame, text = "Enter", command = add_to_game_out)
-enter_button.grid(row = 0, column = 1, sticky = "nsew")
+enter_button.grid(row = 0, column = 1, sticky = "nsew", padx = 10)

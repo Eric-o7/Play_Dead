@@ -60,18 +60,21 @@ game_text = tk.Text(text_frame, background = "#212121",
 game_text.pack(expand = True, fill = 'both')
 
 #output tags
-game_text.tag_configure("title", background = "#212121", 
+game_text.tag_configure("purple_bold", background = "#212121", 
                         font=("Times New Roman", 12, "bold"), 
                         foreground = "#9B61AB")
 game_text.tag_configure("user", background = "#212121", 
                         font=("Times New Roman", 11), 
                         foreground = "#D7D7D7")
-game_text.tag_configure("output", background = "#212121",
+game_text.tag_configure("blue_bold", background = "#212121",
                         font=("Times New Roman", 12, "bold"),
                         foreground = "#759EE0")
-game_text.tag_configure("output2", background = "#212121",
+game_text.tag_configure("blue", background = "#212121",
                         font=("Times New Roman", 11),
                         foreground = "#759EE0")
+game_text.tag_configure("purple", background = "#212121", 
+                        font=("Times New Roman", 12), 
+                        foreground = "#9B61AB")
 
 #output to text box with optional text arguments
 def game_out(text, tags = "user"):
@@ -103,7 +106,7 @@ with open("text_files/narrative.txt") as start:
             section.append(count)
         count += 1
     for line in range(section[0]+1, section[1]):
-        game_out(start[line], "title")
+        game_out(start[line], "purple_bold")
 
 #game input frame    
 entry_frame = tk.Frame(root, background = "#212121")

@@ -18,6 +18,20 @@ Ninja - Melee or ranged combatant that can make multiple low damage attacks. Hig
 ***ClassDescEnd***
 
 
+***WarriorWepsStart***
+You may choose SWORD and shield for higher avoidance, or a ZWEIHANDER for more damage.
+Your weapon determines what combat styles are available to you.
+***WarriorWepsEnd***
+***WizardWepsStart***
+You may choose ROD and shield for higher avoidance, or a STAFF for more damage and utility.
+Your weapon determines what combat styles are available to you.
+***WizardWepsEnd***
+***NinjaWepsStart***
+You may choose SHURIKENS for ranged attacks, or CLAWS for quick melee strikes.
+Your weapon determines what combat styles are available to you.
+***NinjaWepsEnd***
+
+
 ***StylesStart***
 
 

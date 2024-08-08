@@ -4,9 +4,9 @@ from items import *
 
 class Combatant():
     def __init__(self, name: str, level: int, health: int,
-                 player_class = None, 
-                 strength=None, agility=None, 
-                 acuity=None, map=None, coordinate=None,
+                 player_class: str = None, 
+                 strength: int = None, agility: int = None, 
+                 acuity: int = None, map: str = None, coordinate: tuple = None,
                  spells = None, styles = None, inventory = None):
         self.name = name
         self.level = level
@@ -21,23 +21,21 @@ class Combatant():
         self.spells = spells
         self.player_class = player_class
         self.inventory = {}
-        self.equipment = {"Lhand": None, "Rhand": None, "Armor": None, }
+        self.equipment = {"Mhand": None, "Ohand": None, "Armor": None, }
     
     def set_playerclass(self, player_class):
-        if player_class == "Warrior" or "warrior":
+        if player_class == "Warrior":
             self.strength = 10
             self.acuity = 3
             self.agility = 3
-        if player_class == "Wizard" or "wizard":
+        if player_class == "Wizard":
             self.strength = 3
             self.acuity = 10
             self.agility = 3
-        if player_class == "Ninja" or "ninja":
+        if player_class == "Ninja":
             self.strength = 3
             self.acuity = 3
             self.agility = 10
-        else:
-            game_out(f"That is not a valid option, please try entering the name of your class again!")
         self.set_health()
         self.set_mana()
         self.set_endurance()
@@ -57,6 +55,39 @@ class Combatant():
         if self.strength >= 10:
             self.health += int(self.level / 2)   
 
+    
+    
+    def equip_item(self, Item):
+        print(type(Item.slot), Item.slot)
+        if isinstance(Item.slot, tuple):
+            equipment_slot = Item.slot[0]
+        else:
+            equipment_slot = Item.slot
+        stat_check = Item.stat
+        if isinstance(stat_check, tuple):
+            max_stat = stat_check[0]
+            for stat in stat_check:
+                if self.__getattribute__(stat) >= self.__getattribute__(max_stat):
+                    max_stat = stat
+            stat_check = max_stat
+        if self.__getattribute__(stat_check) < Item.min_stat_req:
+            game_out(f"You need {Item.min_stat_req} {stat_check} to equip this item")
+        elif self.equipment[equipment_slot] != None:
+            game_out(f"You currently have {self.equipment[Item.slot[0]]} equipped!")
+            self.unequip_item(self.equipment[Item.slot[0]])
+        else:
+            if Item.slot is tuple:
+                self.equipment[Item.slot][0], self.equipment[Item.slot[1]] = Item, Item
+            else:
+                self.equipment[equipment_slot] = Item
+            game_out(f"{Item.name} equipped!", "purple")
+            
+    def unequip_item(self, Item):
+        game_out(f"Would you like to replace {self.equipment[Item.slot[0]]} with {Item.name}?")
+        # need to record gstate, change to a different gstate, then revert back
+        # if answer is yes:
+        #     self.add_to_inventory(Item)
+        
 #inventory format {item.name: [item.size, item.cost, item.quantity]}
     def add_to_inventory(self, Item):
         inventory_size, space_left = self.inventory_size(Item)

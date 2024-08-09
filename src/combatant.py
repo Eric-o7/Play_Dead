@@ -58,11 +58,11 @@ class Combatant():
     
     
     def equip_item(self, Item):
-        print(type(Item.slot), Item.slot)
         if isinstance(Item.slot, tuple):
             equipment_slot = Item.slot[0]
         else:
             equipment_slot = Item.slot
+        print(type(Item.slot))
         stat_check = Item.stat
         if isinstance(stat_check, tuple):
             max_stat = stat_check[0]
@@ -76,8 +76,8 @@ class Combatant():
             game_out(f"You currently have {self.equipment[Item.slot[0]]} equipped!")
             self.unequip_item(self.equipment[Item.slot[0]])
         else:
-            if Item.slot is tuple:
-                self.equipment[Item.slot][0], self.equipment[Item.slot[1]] = Item, Item
+            if isinstance(Item.slot, tuple):
+                self.equipment[Item.slot[0]], self.equipment[Item.slot[1]] = Item, Item
             else:
                 self.equipment[equipment_slot] = Item
             game_out(f"{Item.name} equipped!", "purple")

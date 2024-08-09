@@ -3,7 +3,7 @@
 
 
 ===========<-Welcome to StartGame->============
-----------    Type and Enter "Play" to start the game    -----------
+----------    Type and Enter "Start" to play the game    -----------
 --------------    Click Help Button for information    --------------
 
 Project by Eric Brown

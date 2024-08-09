@@ -5,6 +5,7 @@ import items
 
 
 
+
 def main():
     root.mainloop()
 
@@ -30,7 +31,7 @@ def gamestate(text):
         
         
 def gamestate1(text):
-    if text.lower() == "play":
+    if text.lower() == "start":
         game_out(text.capitalize())
         game_out("Enter character name:", "blue_bold")
         global gstate
@@ -71,7 +72,14 @@ def gamestate3(text):
         global player
         player = Combatant(char_name, 1, 0, player_class)
         player.set_playerclass(player_class)
-        game_out(f"You are {player.name} the {player.player_class}!", "purple_bold")
+        game_out(f"You are {player.name} the {player.player_class}!\n", "purple_bold")
+        game_out(f"Have some armor {player.name}!", "blue")
+        if player.player_class == "Warrior":
+            player.equip_item(chain_mail)
+        elif player.player_class == "Wizard":
+            player.equip_item(robe)
+        elif player.player_class == "Ninja":
+            player.equip_item(leather_vest)
         if player:
             char_stats.set(f""" Character Stats \n\n\n {player.name}\n the\n {player.player_class}\n
 Level: {player.level}\n
@@ -109,12 +117,9 @@ def gamestate4(text):
         game_out(f"That is not a valid option, please try again!")
     item = weapons[item_name]
     player.equip_item(item)
-    if player.player_class == "Warrior":
-        player.equip_item(chain_mail)
-    elif player.player_class == "Wizard":
-        player.equip_item(robe)
-    elif player.player_class == "Ninja":
-        player.equip_item(leather_vest)
+    if item.name in {"Sword", "Rod"}:
+        player.equip_item(shield)
+    print(player.equipment)
     global gstate
     gstate = 5
     

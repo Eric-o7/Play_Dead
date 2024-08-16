@@ -9,40 +9,65 @@ import items
 def main():
     root.mainloop()
 
-gstate = 1
- 
+gamestate = 1
+combatstate = 1
+
 def gamestate(text):
-    if gstate == 1:
-        gamestate1(text)
-    elif gstate == 2:
-        gamestate2(text)
-    elif gstate == 3:
-        gamestate3(text)
-    elif gstate == 4:
-        gamestate4(text)
-    elif gstate == 5:
-        gamestate5(text)
-    elif gstate == 6:
-        gamestate6(text)
-    elif gstate == 7:
+    if gamestate == 1:
+        start_game(text)
+    elif gamestate == 2:
+        enter_name(text)
+    elif gamestate == 3:
+        choose_class(text)
+    elif gamestate == 4:
+        choose_equipment(text)
+    elif gamestate == 5:
+        choose_styles(text)
+    elif gamestate == 6:
+        choose_spells(text)
+    elif gamestate == 7:
         gamestate7(text)
-    elif gstate == 8:
+    elif gamestate == 8:
         gamestate8(text)
         
+def combatstate():
+    if combatstate == 1:
+        combat_order()
+        #set combat order by comparing speed
+        #clear previous ability counter dictionary
+        #create new ability counter dictionary {pc_name:[counter1, counter2], npc_name:[counter1, counter2]}
+    elif combatstate == 2:
+        take_turn_pc()
+        #counters are decreased
+    elif combatstate == 3:
+        take_turn_npc()
+        #counters are decreased
+    elif combatstate == 4:
+        eval_pc_turn()
+        #counters are set up
+    elif combatstate == 5:
+        eval_npc_turn()
+        #counters are set up
+
+def set_combat_counter():
+    pass
         
-def gamestate1(text):
+        
+def start_game(text):
     if text.lower() == "start":
         game_out(text.capitalize())
+        #Enter name prompt
         game_out("Enter character name:", "blue_bold")
-        global gstate
-        gstate = 2
+        global gamestate
+        gamestate = 2
         
-def gamestate2(text):
+def enter_name(text):
     if 1 < len(text) < 13:
         game_out(text)
         game_out(f"Welcome, {text.capitalize()}!", "purple_bold")
         global char_name 
         char_name = text.capitalize()
+        #Choose class prompt
         with open("text_files/narrative.txt") as class_desc:
             class_desc = class_desc.readlines()
         count = 0
@@ -57,13 +82,13 @@ def gamestate2(text):
             count += 1
         for line in range(section[0]+1, section[1]):
             game_out(class_desc[line], "blue")
-        global gstate
-        gstate = 3
+        global gamestate
+        gamestate = 3
     else:
         game_out(f"Please enter a name between 2 and 12 characters in length")
 
 
-def gamestate3(text):
+def choose_class(text):
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
         game_out(f"That is not a valid option, please try entering the name of your class again!")
@@ -90,6 +115,7 @@ Speed: {player.speed}\n
 Strength: {player.strength} 
 Acuity: {player.acuity} 
 Agility: {player.agility}""")
+        #Choose equipment prompt
         game_out(f"Choose your starting weapon:\n", "blue_bold")
         with open("text_files/narrative.txt") as equipment:
             equipment = equipment.readlines()
@@ -106,10 +132,10 @@ Agility: {player.agility}""")
         for line in range(section[0]+1, section[1]):
             game_out(equipment[line], "blue")
         game_out(f"Enter the words in capital letters to make your selection")
-        global gstate
-        gstate = 4
+        global gamestate
+        gamestate = 4
         
-def gamestate4(text):
+def choose_equipment(text):
     item_name = text.capitalize()
     if item_name not in {"Sword", "Zweihander",
                         "Rod", "Staff",
@@ -120,14 +146,15 @@ def gamestate4(text):
     if item.name in {"Sword", "Rod"}:
         player.equip_item(shield)
     print(player.equipment)
-    global gstate
-    gstate = 5
+    #Choose styles prompt
+    global gamestate
+    gamestate = 5
     
 
-def gamestate5(text):
+def choose_styles(text):
     pass
 
-def gamestate6(text):
+def choose_spells(text):
     pass
 
 def gamestate7(text):

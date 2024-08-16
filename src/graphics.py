@@ -85,7 +85,7 @@ def game_out(text, tags = "user"):
 
 #display content and progress game using gamestate()
 def add_to_game_out(event=None):
-    from main import gamestate, gstate
+    from main import gamestate, gamestate
     if text_entry.get():
         text = text_entry.get()
         text_entry.delete(0, tk.END)

@@ -26,15 +26,15 @@ class Combatant():
     def set_playerclass(self, player_class):
         if player_class == "Warrior":
             self.strength = 10
-            self.acuity = 3
-            self.agility = 3
+            self.acuity = 4
+            self.agility = 4
         if player_class == "Wizard":
-            self.strength = 3
+            self.strength = 4
             self.acuity = 10
-            self.agility = 3
+            self.agility = 4
         if player_class == "Ninja":
-            self.strength = 3
-            self.acuity = 3
+            self.strength = 4
+            self.acuity = 4
             self.agility = 10
         self.set_health()
         self.set_mana()
@@ -54,8 +54,6 @@ class Combatant():
         self.health = 6 + (self.level*2) + self.strength
         if self.strength >= 10:
             self.health += int(self.level / 2)   
-
-    
     
     def equip_item(self, Item):
         if isinstance(Item.slot, tuple):
@@ -145,3 +143,5 @@ if __name__ == "__main__":
     player.add_to_inventory(ddd)
     player.add_to_inventory(dddd)
     print(player.inventory)
+    
+earth_golem = Combatant("Earth Golem", 1, 20, None, )

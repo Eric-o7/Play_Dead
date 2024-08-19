@@ -1,7 +1,6 @@
 from graphics import root, game_out, game_text
 import time
 from combatant import *
-import items
 
 
 
@@ -12,7 +11,7 @@ def main():
 gamestate = 1
 combatstate = 1
 
-def gamestate(text):
+def gamestate_bus(text):
     if gamestate == 1:
         start_game(text)
     elif gamestate == 2:
@@ -30,24 +29,23 @@ def gamestate(text):
     elif gamestate == 8:
         gamestate8(text)
         
-def combatstate():
-    if combatstate == 1:
-        combat_order()
-        #set combat order by comparing speed
-        #clear previous ability counter dictionary
-        #create new ability counter dictionary {pc_name:[counter1, counter2], npc_name:[counter1, counter2]}
-    elif combatstate == 2:
-        take_turn_pc()
-        #counters are decreased
-    elif combatstate == 3:
-        take_turn_npc()
-        #counters are decreased
-    elif combatstate == 4:
-        eval_pc_turn()
-        #counters are set up
-    elif combatstate == 5:
-        eval_npc_turn()
-        #counters are set up
+# def combatstate():
+#     if combatstate == 1:
+#         combat_order()
+#         #set combat order by comparing speed
+#         #clear previous ability counter dictionary
+#     elif combatstate == 2:
+#         take_turn_pc()
+#         #dot counters are decreased automatically
+#     elif combatstate == 3:
+#         take_turn_npc()
+#         #dot counters are decreased automatically
+#     elif combatstate == 4:
+#         eval_pc_turn()
+#         #counters are set up
+#     elif combatstate == 5:
+#         eval_npc_turn()
+#         #counters are set up
 
 def set_combat_counter():
     pass
@@ -98,7 +96,7 @@ def choose_class(text):
         player = Combatant(char_name, 1, 0, player_class)
         player.set_playerclass(player_class)
         game_out(f"You are {player.name} the {player.player_class}!\n", "purple_bold")
-        game_out(f"Have some armor {player.name}!", "blue")
+        game_out(f"Have some armor, {player.name}!", "blue")
         if player.player_class == "Warrior":
             player.equip_item(chain_mail)
         elif player.player_class == "Wizard":
@@ -137,21 +135,40 @@ Agility: {player.agility}""")
         
 def choose_equipment(text):
     item_name = text.capitalize()
-    if item_name not in {"Sword", "Zweihander",
-                        "Rod", "Staff",
-                        "Shurikens", "Claws"}:
+    if item_name not in starting_weapons:
         game_out(f"That is not a valid option, please try again!")
-    item = weapons[item_name]
+    item = starting_weapons[item_name]
     player.equip_item(item)
     if item.name in {"Sword", "Rod"}:
         player.equip_item(shield)
-    print(player.equipment)
+    game_out(f"Based on your weapon choice, choose a starting style")
     #Choose styles prompt
+    with open("text_files/narrative.txt") as styles:
+            styles = styles.readlines()
+    count = 0
+    beginning = f"***{item.name}Start***"
+    end = f"***{item.name}End***"
+    section = []
+    for line in styles:
+        if beginning in line:
+            section.append(count)
+        if end in line:
+            section.append(count)
+        count += 1
+    for line in range(section[0]+1, section[1]):
+        game_out(styles[line], "blue")
     global gamestate
     gamestate = 5
     
 
 def choose_styles(text):
+    from abilities import starting_styles
+    style_name = text.capitalized()
+    if style_name not in starting_styles:
+        game_out(f"That is not a valid option, please try again!")
+    style_choice = starting_styles[style_name]
+    player.style_list.append(style_choice)
+    #add styles to player styles list
     pass
 
 def choose_spells(text):

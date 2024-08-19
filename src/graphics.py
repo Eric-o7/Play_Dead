@@ -85,12 +85,12 @@ def game_out(text, tags = "user"):
 
 #display content and progress game using gamestate()
 def add_to_game_out(event=None):
-    from main import gamestate, gamestate
+    from main import gamestate, gamestate_bus
     if text_entry.get():
         text = text_entry.get()
         text_entry.delete(0, tk.END)
         # print(f"State: {gstate}")
-        return gamestate(text)
+        return gamestate_bus(text)
 
 #title/credits printed upon execution
 with open("text_files/narrative.txt") as start:

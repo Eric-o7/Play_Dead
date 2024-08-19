@@ -1,45 +1,61 @@
 from graphics import *
 from maps import *
 from items import *
+from random import randint
+
 
 class Combatant():
     def __init__(self, name: str, level: int, health: int,
-                 player_class: str = None, 
-                 strength: int = None, agility: int = None, 
-                 acuity: int = None, map: str = None, coordinate: tuple = None,
-                 spells = None, styles = None, inventory = None):
+                 player_class: str = None, strength: int = None, 
+                 agility: int = None, acuity: int = None, 
+                 primary_stat: str = None, avoidance: int = None,
+                 resistance: int = None, deflection: int = None,  
+                 map: str = None, coordinate: tuple = None,
+                 spells = None, styles = None, 
+                 inventory: dict = None, status: dict = None):
         self.name = name
         self.level = level
         self.health = health
+        self.player_class = player_class
         self.strength = strength
         self.agility = agility
         self.acuity = acuity
+        self.primary_stat = primary_stat
+        self.avoidance = avoidance
+        self.resistance = resistance
+        self.deflection = deflection
         self.map = tutorial.name
+        self.coordinate = coordinate
+        self.spells = spells
         self.styles = styles
         self.style_list = []
         self.spell_list = []
-        self.spells = spells
-        self.player_class = player_class
         self.inventory = {}
-        self.equipment = {"Mhand": None, "Ohand": None, "Armor": None, }
+        self.status = {}
+        self.equipment = {"Mhand": None, "Ohand": None, "Armor": None}
     
     def set_playerclass(self, player_class):
         if player_class == "Warrior":
             self.strength = 10
-            self.acuity = 4
-            self.agility = 4
+            self.acuity = 6
+            self.agility = 6
+            self.primary_stat = self.strength
         if player_class == "Wizard":
-            self.strength = 4
+            self.strength = 6
             self.acuity = 10
-            self.agility = 4
+            self.agility = 6
+            self.primary_stat = self.acuity
         if player_class == "Ninja":
-            self.strength = 4
-            self.acuity = 4
+            self.strength = 6
+            self.acuity = 6
             self.agility = 10
+            self.primary_stat = self.agility
         self.set_health()
         self.set_mana()
         self.set_endurance()
         self.set_speed()
+        self.set_avoidance()
+        self.set_resistance()
     
     def set_mana(self):
         self.mana = (self.acuity + self.level) * 10
@@ -60,8 +76,9 @@ class Combatant():
             equipment_slot = Item.slot[0]
         else:
             equipment_slot = Item.slot
-        print(type(Item.slot))
         stat_check = Item.stat
+        #checks highest stat(str/acu/agi) of all possible options from the item
+        #if item can be worn with a min 6 in str or agi, this will check the player for which is highest
         if isinstance(stat_check, tuple):
             max_stat = stat_check[0]
             for stat in stat_check:
@@ -79,6 +96,8 @@ class Combatant():
             else:
                 self.equipment[equipment_slot] = Item
             game_out(f"{Item.name} equipped!", "purple")
+        if isinstance (Item, Armor):
+            self.set_deflection()
             
     def unequip_item(self, Item):
         game_out(f"Would you like to replace {self.equipment[Item.slot[0]]} with {Item.name}?")
@@ -111,9 +130,45 @@ class Combatant():
             return remaining_inventory, False
         return remaining_inventory, True
 
+    def set_avoidance(self):
+        self.avoidance = self.agility + self.level + 4
+    
+    def set_resistance(self):
+        self.resistance = self.acuity + self.level + 4
+    
+    def set_deflection(self):
+        self.deflection = (self.equipment["Armor"].armor_class) / 2
+    
+    def attack_roll(self):
+        first_die, second_die = randint(1,6), randint(1,6)
+        game_out(f"Rolling 2d6 to hit:")
+        game_out(f"First die rolls {first_die}")
+        game_out(f"Second die rolls {second_die}")
+        #2d6 plus primary stat -4 plus level
+        attack_roll_result = first_die + second_die + (self.primary_stat - 5) + self.level
+        return attack_roll_result
+        
+    def avoidance_check(self, Combatant):
+        attack_roll_result = self.attack_roll()
+        if attack_roll_result >= Combatant.avoidance:
+            game_out(f"You hit with a {attack_roll_result}!")
+            return True
+        game_out(f"You miss with a {attack_roll_result}.")
+        return False        
+    
+    def resistance_check(self, Combatant):
+        attack_roll_result = self.attack_roll()
+        if attack_roll_result >= Combatant.resistance:
+            game_out(f"You hit with a {attack_roll_result}!")
+            return True
+        game_out(f"You miss with a {attack_roll_result}.")
+        return False
                         
-    def take_damage(self, damage):
-        self.health -= damage
+    def take_damage(self, damage, ability = None):
+        if self.status[ability.effect] == "vulnerability":
+            self.health -= (damage + self.status[ability.effect_int])
+        else:    
+            self.health -= damage
 
     def use_mana(self, mana_cost):
         self.mana -= mana_cost
@@ -123,6 +178,9 @@ class Combatant():
     
     def add_spell(self, spell):
         self.spell_list.append(spell)
+    
+    def add_style(self, style):
+        self.style_list.append(style)
     
     def get_spell_list(self):   
         return self.spell_list
@@ -144,4 +202,4 @@ if __name__ == "__main__":
     player.add_to_inventory(dddd)
     print(player.inventory)
     
-earth_golem = Combatant("Earth Golem", 1, 20, None, )
+earth_golem = Combatant("Earth Golem", 1, 20, None)

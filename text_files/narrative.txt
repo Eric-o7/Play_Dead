@@ -32,7 +32,41 @@ Your weapon determines what combat styles are available to you.
 ***NinjaWepsEnd***
 
 
-***StylesStart***
+***ZweihanderStart***
+You may choose HEAVY STRIKE (heavy direct damage attack) or SWEEPING STRIKE (direct damage on multiple targets)
+***ZweihanderEnd***
+
+***StaffStart***
+You may choose ARCANE PULSE (direct damage on multiple targets) or FADE (raise deflection for a short period)
+***StaffEnd***
+
+***SwordStart***
+You may choose DEFENSIVE STRIKE (bonus to avoidance after an attack) or BLOODY STRIKE (damage over time effect)
+***SwordEnd***
+
+***ShurikensStart***
+You may choose STEALTH (automatic hit on next attack) or LOTUS BLOOM (direct damage on multiple targets)
+***ShurikensEnd***
+
+***RodStart***
+You may choose FIRE BOLT (direct damage ranged attack) or FADE (raise deflection for a short period)
+***RodEnd***
+
+***ClawsStart***
+You may choose STEALTH (automatic hit on next attack) or TEAR FLESH (bonus damage on subsequent hits)
+***ClawsEnd***
 
 
-***StylesEnd***
+
+***Start***
+***End***
+***Start***
+***End***
+***Start***
+***End***
+***Start***
+***End***
+***Start***
+***End***
+***Start***
+***End***

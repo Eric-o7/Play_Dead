@@ -5,6 +5,7 @@ from combatant import *
 
 
 
+
 def main():
     root.mainloop()
 
@@ -25,7 +26,7 @@ def gamestate_bus(text):
     elif gamestate == 6:
         choose_spells(text)
     elif gamestate == 7:
-        gamestate7(text)
+        combat(text)
     elif gamestate == 8:
         gamestate8(text)
         
@@ -50,6 +51,22 @@ def gamestate_bus(text):
 def set_combat_counter():
     pass
         
+
+def narrative_read(identifier:str, tag = "blue"):
+    with open("text_files/narrative.txt") as narrative:
+        narrative = narrative.readlines()
+    count = 0
+    beginning = f"***{identifier}Start***"
+    end = f"***{identifier}End***"
+    section = []
+    for line in narrative:
+        if beginning in line:
+            section.append(count)
+        if end in line:
+            section.append(count)
+        count += 1
+    for line in range(section[0]+1, section[1]):
+        game_out(narrative[line], tag)
         
 def start_game(text):
     if text.lower() == "start":
@@ -66,20 +83,7 @@ def enter_name(text):
         global char_name 
         char_name = text.capitalize()
         #Choose class prompt
-        with open("text_files/narrative.txt") as class_desc:
-            class_desc = class_desc.readlines()
-        count = 0
-        beginning = "***ClassDescStart***"
-        end = "***ClassDescEnd***"
-        section = []
-        for line in class_desc:
-            if beginning in line:
-                section.append(count)
-            if end in line:
-                section.append(count)
-            count += 1
-        for line in range(section[0]+1, section[1]):
-            game_out(class_desc[line], "blue")
+        narrative_read("ClassDesc")
         global gamestate
         gamestate = 3
     else:
@@ -115,21 +119,8 @@ Acuity: {player.acuity}
 Agility: {player.agility}""")
         #Choose equipment prompt
         game_out(f"Choose your starting weapon:\n", "blue_bold")
-        with open("text_files/narrative.txt") as equipment:
-            equipment = equipment.readlines()
-        count = 0
-        beginning = f"***{player_class}WepsStart***"
-        end = f"***{player_class}WepsEnd***"
-        section = []
-        for line in equipment:
-            if beginning in line:
-                section.append(count)
-            if end in line:
-                section.append(count)
-            count += 1
-        for line in range(section[0]+1, section[1]):
-            game_out(equipment[line], "blue")
-        game_out(f"Enter the words in capital letters to make your selection")
+        narrative_read(f"{player_class}Weps")
+        game_out(f"Enter the words in capital letters to make your selection.")
         global gamestate
         gamestate = 4
         
@@ -141,40 +132,48 @@ def choose_equipment(text):
     player.equip_item(item)
     if item.name in {"Sword", "Rod"}:
         player.equip_item(shield)
-    game_out(f"Based on your weapon choice, choose a starting style")
+    game_out(f"Based on your weapon choice, choose a starting style.", "blue_bold")
     #Choose styles prompt
-    with open("text_files/narrative.txt") as styles:
-            styles = styles.readlines()
-    count = 0
-    beginning = f"***{item.name}Start***"
-    end = f"***{item.name}End***"
-    section = []
-    for line in styles:
-        if beginning in line:
-            section.append(count)
-        if end in line:
-            section.append(count)
-        count += 1
-    for line in range(section[0]+1, section[1]):
-        game_out(styles[line], "blue")
+    narrative_read(item.name)
     global gamestate
     gamestate = 5
     
 
 def choose_styles(text):
     from abilities import starting_styles
-    style_name = text.capitalized()
+    style_name = text.title()
     if style_name not in starting_styles:
         game_out(f"That is not a valid option, please try again!")
     style_choice = starting_styles[style_name]
-    player.style_list.append(style_choice)
-    #add styles to player styles list
-    pass
+    if len(player.style_list) < 1:
+        player.style_list.append(style_choice)
+        game_out(f"You have learned {style_choice.name}!")
+    else:
+        game_out(f"You've already chosen a style!")
+    if player.player_class != "Wizard":
+        game_out(f"Your character is almost complete! Choose a spell to start with.", "blue_bold")
+    if player.player_class == "Wizard":
+        game_out(f"Your character is almost complete! Choose two spells to start with.", "blue_bold")
+    narrative_read(f"{player.player_class}Spells")
+    global gamestate
+    gamestate = 6
+    
 
 def choose_spells(text):
-    pass
+    from abilities import starting_spells
+    spell_name = text.title()
+    if spell_name not in starting_spells:
+        game_out(f"That is not a valid option, please try again!")
+    spell_choice = starting_spells[spell_name]
+    while (player.player_class != "Wizard" and len(player.spell_list) < 1) or (
+        player.player_class == "Wizard" and len(player.spell_list) < 2):
+        player.spell_list.append(spell_choice)
+        game_out(f"{spell_choice.name} has been added to your list of spells.")
+        del spell_choice
+    global gamestate
+    gamestate = 7
 
-def gamestate7(text):
+def combat(text):
     pass
 
 def gamestate8(text):

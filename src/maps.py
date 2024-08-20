@@ -1,4 +1,3 @@
-from graphics import *
 
 class Maps():
     def __init__(self, name: str, height: int, width: int, neighbors: list):

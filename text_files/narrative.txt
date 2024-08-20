@@ -1,7 +1,6 @@
 ***TitleStart***
 
 
-
 ===========<-Welcome to StartGame->============
 ----------    Type and Enter "Start" to play the game    -----------
 --------------    Click Help Button for information    --------------
@@ -56,14 +55,18 @@ You may choose FIRE BOLT (direct damage ranged attack) or FADE (raise deflection
 You may choose STEALTH (automatic hit on next attack) or TEAR FLESH (bonus damage on subsequent hits)
 ***ClawsEnd***
 
+***WarriorSpellsStart***
+You may choose TRANSFUSION (drain a wounded enemy's life to heal yourself), SPELL REFLECT (reflects the effect of one spell back to the caster), or INFLAME WEAPON (all attacks this turn do additional damage).
+***WarriorSpellsEnd***
 
+***WizardSpellsStart***
+You may choose two spells: ROOT(enemy cannot move for two turns), COMET(massive damage to a single target and light area damage to surrounding enemies), MISSILE BARRAGE(automatically hit an enemy with moderate damage).
+***WizardSpellsEnd***
 
-***Start***
-***End***
-***Start***
-***End***
-***Start***
-***End***
+***NinjaSpellsStart***
+You may choose SHADOW GUISE (raise deflection on next two instances of damage), SECOND WIND (recover some speed resource), INFLAME WEAPON (all attacks this turn do additional damage).
+***NinjaSpellsEnd***
+
 ***Start***
 ***End***
 ***Start***

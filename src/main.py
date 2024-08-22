@@ -2,15 +2,14 @@ from graphics import root, game_out, game_text
 import time
 from combatant import *
 
-
-
-
-
 def main():
     root.mainloop()
 
 gamestate = 1
 combatstate = 1
+
+def delay(seconds):
+    time.sleep(seconds)
 
 def gamestate_bus(text):
     if gamestate == 1:
@@ -26,32 +25,85 @@ def gamestate_bus(text):
     elif gamestate == 6:
         choose_spells(text)
     elif gamestate == 7:
-        combat(text)
+        wizard_spells(text)
     elif gamestate == 8:
-        gamestate8(text)
+        tutorial_combat(text)
         
-# def combatstate():
-#     if combatstate == 1:
-#         combat_order()
-#         #set combat order by comparing speed
-#         #clear previous ability counter dictionary
-#     elif combatstate == 2:
-#         take_turn_pc()
-#         #dot counters are decreased automatically
-#     elif combatstate == 3:
-#         take_turn_npc()
-#         #dot counters are decreased automatically
-#     elif combatstate == 4:
-#         eval_pc_turn()
-#         #counters are set up
-#     elif combatstate == 5:
-#         eval_npc_turn()
-#         #counters are set up
+def combatstate_bus(text, *args):
+    if combatstate == 1:
+        combat_order()
+        #set combat order by rolling agi + 2d6
+        #clear previous ability counter dictionary
+    elif combatstate == 2:
+        player_action(text)
+        #dot counters are decreased automatically
+    elif combatstate == 3:
+        npc_action(*args)
+    elif combatstate == 4:
+        player_target(text)
 
-def set_combat_counter():
-    pass
-        
 
+enemies = []
+
+def combat_order(player, *args): 
+    global enemies
+    enemies = []
+    for combatant in args:
+        combatant.initiative = None
+        enemies.append(combatant)
+    player.initiative = player.agility + randint(2,12)
+    game_out(f"You got an initiative score of {player.initiative}!")
+    for combatant in enemies:
+        combatant.initiative = combatant.agility + randint(2,12)
+        game_out(f"{combatant.name} got an initiative score of {combatant.initiative}!")
+    enemies.sort(key = lambda x: x.initiative, reverse = True)
+    global combatstate
+    if player.initiative > enemies[0].initiative:
+        game_out(f"You go first!")
+        if len(enemies) <= 1:
+            combatstate = 2
+            wait_player_input()
+        else:
+            game_out(f"Which enemy would you like to target?", "blue")
+            for e in enemies:
+                if e.player_class == None:
+                    game_out(f"{e.name}")
+                    print(f"{e.name}")
+                    combatstate = 4
+    else:
+        combatstate = 3       
+
+def player_action(text):
+    if text.lower() == "attack":
+        pass
+    elif text.lower() == "style":
+        pass
+    elif text.lower() == "spell":
+        pass
+    elif text.lower() == "flee":
+        pass
+    else:
+        game_out(f"{text} is not a valid command, please try again.", "error")
+
+def npc_action():
+    if enemies > 2:
+        pass
+    #BOTH ENEMIES GO OR FIND another way to rotate with multiple enemies?
+    for e in enemies:
+        pass
+        #set up ATTACK METHOD
+
+def wait_player_input():
+    game_out(f"What would you like to do?", "blue")
+    game_out(f"You can ATTACK, use a STYLE, cast a SPELL, change TARGET, or attempt to FLEE.")
+
+def player_target(text):
+    names = [e.name for e in enemies]
+    if text.title() in names:
+        game_out(f"{text.title()} is targeted!")
+    else:
+        game_out(f"Cannot find {text}, please try again!", "error")    
+            
 def narrative_read(identifier:str, tag = "blue"):
     with open("text_files/narrative.txt") as narrative:
         narrative = narrative.readlines()
@@ -87,13 +139,13 @@ def enter_name(text):
         global gamestate
         gamestate = 3
     else:
-        game_out(f"Please enter a name between 2 and 12 characters in length")
+        game_out(f"Please enter a name between 2 and 12 characters in length", "error")
 
 
 def choose_class(text):
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
-        game_out(f"That is not a valid option, please try entering the name of your class again!")
+        game_out(f"That is not a valid option, please try entering the name of your class again!", "error")
     else:
         game_out(text)
         global player
@@ -127,7 +179,7 @@ Agility: {player.agility}""")
 def choose_equipment(text):
     item_name = text.capitalize()
     if item_name not in starting_weapons:
-        game_out(f"That is not a valid option, please try again!")
+        game_out(f"That is not a valid option, please try again!", "error")
     item = starting_weapons[item_name]
     player.equip_item(item)
     if item.name in {"Sword", "Rod"}:
@@ -143,13 +195,13 @@ def choose_styles(text):
     from abilities import starting_styles
     style_name = text.title()
     if style_name not in starting_styles:
-        game_out(f"That is not a valid option, please try again!")
+        game_out(f"That is not a valid option, please try again!", "error")
     style_choice = starting_styles[style_name]
     if len(player.style_list) < 1:
         player.style_list.append(style_choice)
-        game_out(f"You have learned {style_choice.name}!")
+        game_out(f"You have learned {style_choice.name}!", "purple")
     else:
-        game_out(f"You've already chosen a style!")
+        game_out(f"You've already chosen a style!", "error")
     if player.player_class != "Wizard":
         game_out(f"Your character is almost complete! Choose a spell to start with.", "blue_bold")
     if player.player_class == "Wizard":
@@ -163,21 +215,43 @@ def choose_spells(text):
     from abilities import starting_spells
     spell_name = text.title()
     if spell_name not in starting_spells:
-        game_out(f"That is not a valid option, please try again!")
+        game_out(f"That is not a valid option, please try again!", "error")
     spell_choice = starting_spells[spell_name]
-    while (player.player_class != "Wizard" and len(player.spell_list) < 1) or (
-        player.player_class == "Wizard" and len(player.spell_list) < 2):
-        player.spell_list.append(spell_choice)
-        game_out(f"{spell_choice.name} has been added to your list of spells.")
-        del spell_choice
+    player.spell_list.append(spell_choice)
+    game_out(f"{spell_choice.name} has been added to your list of spells.", "blue")
     global gamestate
-    gamestate = 7
+    if player.player_class == "Wizard":
+        gamestate = 7
+    else:
+        game_out(f"{char_name}, your {player.player_class} is ready for combat!", "purple")
+        gamestate = 8
+        combat_order(player, earth_golem, mud_golem)
+    
+def wizard_spells(text):
+    from abilities import starting_spells
+    spell_name = text.title()
+    if spell_name not in starting_spells:
+        game_out(f"That is not a valid option, please try again!", "error")
+    spell_choice = starting_spells[spell_name]
+    if spell_choice not in player.spell_list:
+        player.spell_list.append(spell_choice)
+        game_out(f"{spell_choice.name} has been added to your list of spells.", "blue")
+        game_out(f"{char_name}, your {player.player_class} is ready for combat!", "purple")
+        global gamestate
+        gamestate = 8
+        combat_order(player, earth_golem, mud_golem)
+    else:
+        game_out(f"{spell_choice.name} is already in your list of spells!", "error")
 
-def combat(text):
+def tutorial_combat(text):
     pass
+        
 
 def gamestate8(text):
     pass     
+
+
+
 
 if __name__ == "__main__":        
     main()

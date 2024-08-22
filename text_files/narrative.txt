@@ -60,7 +60,7 @@ You may choose TRANSFUSION (drain a wounded enemy's life to heal yourself), SPEL
 ***WarriorSpellsEnd***
 
 ***WizardSpellsStart***
-You may choose two spells: ROOT(enemy cannot move for two turns), COMET(massive damage to a single target and light area damage to surrounding enemies), MISSILE BARRAGE(automatically hit an enemy with moderate damage).
+You may choose two spells: ENTANGLE(enemy cannot move for two turns), COMET(massive damage to a single target and light area damage to surrounding enemies), MISSILE BARRAGE(automatically hit an enemy with moderate damage).
 ***WizardSpellsEnd***
 
 ***NinjaSpellsStart***

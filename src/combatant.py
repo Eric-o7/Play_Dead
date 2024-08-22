@@ -1,4 +1,4 @@
-from graphics import *
+from graphics import game_out
 from maps import *
 from items import *
 from random import randint
@@ -12,7 +12,8 @@ class Combatant():
                  resistance: int = None, deflection: int = None,  
                  map: str = None, coordinate: tuple = None,
                  spells = None, styles = None, 
-                 inventory: dict = None, status: dict = None):
+                 inventory: dict = None, status: dict = None,
+                 initiative: int = None):
         self.name = name
         self.level = level
         self.health = health
@@ -33,6 +34,7 @@ class Combatant():
         self.inventory = {}
         self.status = {}
         self.equipment = {"Mhand": None, "Ohand": None, "Armor": None}
+        self.initiative = initiative
     
     def set_playerclass(self, player_class):
         if player_class == "Warrior":
@@ -201,5 +203,17 @@ if __name__ == "__main__":
     player.add_to_inventory(ddd)
     player.add_to_inventory(dddd)
     print(player.inventory)
+
+#level 1 monster - 15 hp, 11 avoidance, 11 resistance, 1 deflection, 1 style, 1 spell
+
+# self, name: str, level: int, health: int,
+# player_class: str = None, strength: int = None, 
+# agility: int = None, acuity: int = None, 
+# primary_stat: str = None, avoidance: int = None,
+# resistance: int = None, deflection: int = None,  
+# map: str = None, coordinate: tuple = None,
+# spells = None, styles = None, 
+# inventory: dict = None, status: dict = None):
     
-earth_golem = Combatant("Earth Golem", 1, 20, None)
+earth_golem = Combatant("Earth Golem", 1, 20, None, 10, 3, 3, "strength", 11, 11, 1, None, None, [])
+mud_golem = Combatant("Mud Golem", 1, 20, None, 10, 3, 3, "strength", 11, 11, 1, None, None, [])

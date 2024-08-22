@@ -75,6 +75,9 @@ game_text.tag_configure("blue", background = "#212121",
 game_text.tag_configure("purple", background = "#212121", 
                         font=("Times New Roman", 12), 
                         foreground = "#9B61AB")
+game_text.tag_configure("error", background = "#212121", 
+                        font=("Times New Roman", 11), 
+                        foreground = "#e02012")
 
 #output to text box with optional text arguments
 def game_out(text, tags = "user"):
@@ -85,11 +88,13 @@ def game_out(text, tags = "user"):
 
 #display content and progress game using gamestate()
 def add_to_game_out(event=None):
-    from main import gamestate_bus
+    from main import gamestate_bus, gamestate, combatstate, combatstate_bus
     if text_entry.get():
         text = text_entry.get()
         text_entry.delete(0, tk.END)
         # print(f"State: {gstate}")
+        if combatstate > 1:
+            return combatstate_bus(text)
         return gamestate_bus(text)
 
 #title/credits printed upon execution

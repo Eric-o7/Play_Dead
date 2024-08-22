@@ -1,5 +1,4 @@
 from graphics import *
-from combatant import *
 
 class Item():
     def __init__(self, name: str, size: int, cost: float,

@@ -2,7 +2,7 @@ from graphics import game_out
 from maps import *
 from items import *
 from random import randint
-
+from abilities import *
 
 class Combatant():
     def __init__(self, name: str, level: int, health: int,
@@ -11,9 +11,10 @@ class Combatant():
                  primary_stat: str = None, avoidance: int = None,
                  resistance: int = None, deflection: int = None,  
                  map: str = None, coordinate: tuple = None,
-                 spells = None, styles = None, 
+                 mana: int = None, endurance: int = None,
+                 speed: int = None, spells: list = None, styles: list = None, 
                  inventory: dict = None, status: dict = None,
-                 initiative: int = None):
+                 equipment: dict = None, initiative: int = None):
         self.name = name
         self.level = level
         self.health = health
@@ -27,15 +28,13 @@ class Combatant():
         self.deflection = deflection
         self.map = tutorial.name
         self.coordinate = coordinate
-        self.spells = spells
-        self.styles = styles
-        self.style_list = []
-        self.spell_list = []
+        self.spells = []
+        self.styles = []
         self.inventory = {}
         self.status = {}
         self.equipment = {"Mhand": None, "Ohand": None, "Armor": None}
         self.initiative = initiative
-    
+
     def set_playerclass(self, player_class):
         if player_class == "Warrior":
             self.strength = 10
@@ -193,27 +192,38 @@ class Combatant():
     def level_up(self):
         self.level+=1
 
+
+#avoidance = agility + level + 4 (2d6 + primary stat - 5 + level) 11/15
+#resistance = acuity + level + 4 (2d6 + primary stat - 5 + level) to hit
+#NPC MONSTERS
+earth_golem = Combatant("Earth Golem", 1, 20, None, 9, 4, 3, "strength",
+                        10, 8, 2, None, None, 50, 50, 50, [heavy_strike], [], {}, {}) #CS 35 
+goblin_bonemage = Combatant("Goblin Bone Mage", 1, 15, None, 4, 7, 7, "acuity",
+                            12, 12, 0, None, None, 50, 50, 50 [firebolt], [transfusion], {}, {}) #CS 27
+mud_golem = Combatant("Mud Golem", 1, 20, None, 7, 3, 3, "strength",
+                        8, 6, 1, None, None, 50, 50, 50, [], [], {}, {}) #CS 30
+black_bear = Combatant("Black Bear", 1, 20, None, 12, 6, 1, "strength",
+                        10, 3, 1, None, None, 50, 50, 50, [], [], {}, {}) #CS 29.5
+dire_fox = Combatant("Dire Fox", 1, 25, None, 10, 12, 3, "agility",
+                        16, 6, 1, None, None, 50, 50, 50, [], [], {}, {}) #CS 39
+fire_sprite = Combatant("Fire Sprite", 1, 10, None, 7, 7, 7, "acuity",
+                            10, 10, 1, None, None, 50, 50, 50, [], [], {}, {})
+water_sprite = Combatant("Fire Sprite", 1, 10, None, 5, 10, 4, "agility",
+                            15, 7, 1, None, None, 50, 50, 50, [], [], {}, {})
+
+
+
+
+
+
 if __name__ == "__main__":
-    player = Combatant("bob", 1, 30, "Warrior")
-    dd = Item("Dagger", 27, 1.5)
-    ddd = Item("Dagger", 5, 1.5)
-    dddd = Item("Dagger", 2, 1.5)
-    twohandsword = Item("zweihander", 15, 5)
-    player.add_to_inventory(dd)
-    player.add_to_inventory(ddd)
-    player.add_to_inventory(dddd)
-    print(player.inventory)
 
-#level 1 monster - 15 hp, 11 avoidance, 11 resistance, 1 deflection, 1 style, 1 spell
-
-# self, name: str, level: int, health: int,
-# player_class: str = None, strength: int = None, 
-# agility: int = None, acuity: int = None, 
-# primary_stat: str = None, avoidance: int = None,
-# resistance: int = None, deflection: int = None,  
-# map: str = None, coordinate: tuple = None,
-# spells = None, styles = None, 
-# inventory: dict = None, status: dict = None):
+    def calculate_npc_challenge(*args):
+        for combatant in args:
+            challenge_score = combatant.health + (combatant.deflection * 3)
+            challenge_score += ((combatant.avoidance + combatant.resistance) / 2)
+            challenge_score += (len(combatant.style_list)*4) + (len(combatant.spell_list)*4)
+            print(f"{combatant.name} challenge score is {challenge_score}")
     
-earth_golem = Combatant("Earth Golem", 1, 20, None, 10, 3, 3, "strength", 11, 11, 1, None, None, [])
-mud_golem = Combatant("Mud Golem", 1, 20, None, 10, 3, 3, "strength", 11, 11, 1, None, None, [])
+    calculate_npc_challenge(earth_golem, goblin_bonemage, mud_golem,
+                            black_bear, dire_fox)

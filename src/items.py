@@ -14,18 +14,18 @@ class Item():
 class Weapon(Item):
     def __init__(self, name: str, size: int, cost: float,
                  stat = None, min_stat_req: int = None, 
-                 slot: tuple = None, style_class: str = None):
+                 slot: tuple = None, damage: int = None):
         super().__init__(name, size, cost, stat, min_stat_req, slot)
-        self.style_class = style_class
+        self.damage = damage
         
 dagger = Weapon("Dagger", 3, 3, None, None, (("Mhand")))
-staff = Weapon("Staff", 7, 10, "acuity", 10, ("Mhand", "Ohand"))
-sword = Weapon("Sword", 5, 5, ("strength", "agility"), 7, (("Mhand")))
-shurikens = Weapon("Shurikens", 1, 1, "agility", 7, ("Mhand", "Ohand"))
+staff = Weapon("Staff", 7, 10, "acuity", 10, ("Mhand", "Ohand"), 6)
+sword = Weapon("Sword", 5, 5, ("strength", "agility"), 7, ("Mhand"), 5)
+shurikens = Weapon("Shurikens", 1, 1, "agility", 7, ("Mhand", "Ohand"), 4)
 shield = Weapon("Shield", 6, 3, ("strength", "acuity", "agility"), 3, ("Ohand"))
-zweihander = Weapon("Zweihander", 14, 10, "strength", 10, ("Mhand", "Ohand"))
-rod = Weapon("Rod", 5, 7, "acuity", 7, ("Mhand"))
-claws = Weapon("Claws", 3, 10, "agility", 10, ("Mhand", "Ohand"))
+zweihander = Weapon("Zweihander", 14, 10, "strength", 10, ("Mhand", "Ohand"), 8)
+rod = Weapon("Rod", 5, 7, "acuity", 7, ("Mhand"), 4)
+claws = Weapon("Claws", 3, 10, "agility", 10, ("Mhand", "Ohand"), 5)
 
 starting_weapons = {"Sword": sword, "Zweihander": zweihander,
            "Rod": rod, "Staff": staff,

@@ -1,5 +1,5 @@
 from main import *
-from combatant import *
+
 
 class Ability():
     def __init__(self, name, effect: str, effect_int:int, damage: range, targets: int, duration: int):
@@ -8,47 +8,28 @@ class Ability():
         self.effect_int = effect_int
         self.damage = damage #max damage or range
         self.area = targets
-        self.duration = duration
-    
-    # def starting_abilities(self, Combatant):
-    #     match Combatant.equipment["Mhand"]:
-    #         case zweihander:
-    #             Combatant.style_list.append(bloody_strike)
-    #             Combatant.style_list.append(heavy_strike)
-    #         case sword:
-    #             pass
-    #         case rod:
-    #             pass
-    #         case staff:
-    #             pass
-    #         case shurikens:
-    #             pass
-    #         case claws:
-    #             pass
-    
-    
-        
+        self.duration = duration    
             
-    def ability_effect(self):
-        match Ability.effect:
+    def ability_effect(self, user, victim):
+        match self.effect:
             case "damage_over_time":
-                self.set_damage_over_time(player, Combatant)
+                self.set_damage_over_time(user, victim)
             case "vulnerability":
-                self.vulnerability(player, Combatant)
+                self.vulnerability(user, victim)
             case "raise_avoidance":
-                self.raise_avoidance(player, Combatant)
+                self.raise_avoidance(user, victim)
             case "raise_deflection":
-                self.raise_deflection(player, Combatant)
+                self.raise_deflection(user, victim)
             case "direct_damage":
-                self.direct_damage(player, Combatant)
+                self.direct_damage(user, victim)
             case "automatic_hit":
-                self.automatic_hit(player, Combatant)   
+                self.automatic_hit(user, victim)   
             case "lifedraw":
-                self.automatic_hit(player, Combatant)  
+                self.automatic_hit(user, victim)  
             case "reflect":
-                self.automatic_hit(player, Combatant)
+                self.automatic_hit(user, victim)
             case "resource_recover":
-                self.automatic_hit(player, Combatant)   
+                self.automatic_hit(user, victim)   
     
     #damage_over_time set up is Combatant.status = {"damage_over_time":{dot1:[duration,effect_int]}, {dot2:[duration, effect_int]}}
         
@@ -68,11 +49,16 @@ class Ability():
             else:
                 del victim.status["damage_over_time"][dot]
         
-    def vulnerability(self, victim): #ninja tear flesh
-        if victim.status[self.name]:
-            victim.status[self.name] -= 1
-            
-        victim.status[self.name] = self.duration
+    def vulnerability(self, user, victim): #ninja tear flesh
+        from combatant import Combatant
+        if self.effect in victim.status:
+            victim.status[self.effect][1] -= 1
+            user.basic_attack(victim)
+        else:
+            victim.status[self.effect] = [self, (self.duration)]
+            print(f"Vulnerability applied to {victim.name}")
+            user.basic_attack(victim)
+        
         
         
     def raise_avoidance(self, user): #wizard fade, warrior defensive strike
@@ -116,7 +102,7 @@ class Style(Ability):
     
 #Styles
 firebolt = Style("Fire Bolt", "direct_damage", 0, 6, 1, 2, 25, staff)
-tear_flesh = Style("Tear Flesh", "vulnerability", 0, 3, 1, 2, 25,claws)
+tear_flesh = Style("Tear Flesh", "vulnerability", 0, 3, 1, 2, 25, claws)
 lotus_bloom = Style("Lotus Bloom", "direct_damage", 0, 3, 3, 1, 25, shurikens)
 arcane_pulse = Style("Arcane Pulse", "direct_damage", 0, 3, 3, 2, 25, rod)
 sweeping_strike = Style("Sweeping Strike", "direct_damage", 0, 3, 3, 1, 25, zweihander)

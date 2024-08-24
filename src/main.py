@@ -41,9 +41,14 @@ def combatstate_bus(text, *args):
         npc_action(*args)
     elif combatstate == 4:
         player_target(text)
+    elif combatstate == 5:
+        extra_attack(text)
+    elif combatstate == 6:
+        check_range()
 
 
 enemies = []
+target = None
 
 def combat_order(player, *args): 
     global enemies
@@ -52,10 +57,10 @@ def combat_order(player, *args):
         combatant.initiative = None
         enemies.append(combatant)
     player.initiative = player.agility + randint(2,12)
-    game_out(f"You got an initiative score of {player.initiative}!")
+    game_out(f"You rolled an initiative score of {player.initiative}!")
     for combatant in enemies:
         combatant.initiative = combatant.agility + randint(2,12)
-        game_out(f"{combatant.name} got an initiative score of {combatant.initiative}!")
+        game_out(f"{combatant.name} rolled an initiative score of {combatant.initiative}!")
     enemies.sort(key = lambda x: x.initiative, reverse = True)
     global combatstate
     if player.initiative > enemies[0].initiative:
@@ -64,46 +69,125 @@ def combat_order(player, *args):
             combatstate = 2
             wait_player_input()
         else:
-            game_out(f"Which enemy would you like to target?", "blue")
-            for e in enemies:
-                if e.player_class == None:
-                    game_out(f"{e.name}")
-                    print(f"{e.name}")
-                    combatstate = 4
+            ask_player_target()    
     else:
-        combatstate = 3       
+        npc_action()      
+
+
 
 def player_action(text):
+    if target == None:
+        ask_player_target()
+    game_out(f"{text}")
     if text.lower() == "attack":
-        pass
-    elif text.lower() == "style":
-        pass
-    elif text.lower() == "spell":
-        pass
+        if (player.equipment["Mhand"] == "Shurikens" or
+            player.player_class == "Wizard"):
+            check_range()
+        
+        player.basic_attack(target)
+        ask_extra_attack()
+    elif text.title() in [style.name for style in player.styles]:
+        for style in player.styles:
+            if text.title() == style.name:
+                chosen_style = style
+        chosen_style.ability_effect(player, target)
+        ask_extra_attack()
+    elif text.title() == [spell.name for spell in player.spells]:
+        for spell in player.spells:
+            if text.title() == spell.name:
+                chosen_spell = spell
+        chosen_spell.ability_effect(player, target)
+        ask_extra_attack()
     elif text.lower() == "flee":
         pass
+    elif text.lower() == "target":
+        ask_player_target()
     else:
         game_out(f"{text} is not a valid command, please try again.", "error")
 
+def ask_attack_range():
+    game_out(f"Would you like to use some speed to attack from range?")
+    game_out(f"Respond with YES or NO")
+    global combatstate
+    combatstate = 6
+    
+def check_range():
+    if player.speed > target.speed:
+        player.speed -= (player.speed - target.speed)
+        #add status condition for ranged
+    else:
+        #deduct speed for the attempt, but do not add the ranged condition
+        pass
+
+def ask_extra_attack():
+    if player.speed >= 30:
+        game_out(f"Would you like to use your speed to attack again this round?")
+        game_out(f"Respond with YES or NO")
+        global combatstate
+        combatstate = 5
+    else:
+        npc_action()
+
 def npc_action():
-    if enemies > 2:
+    global enemies, player
+    if len(enemies) > 2:
         pass
-    #BOTH ENEMIES GO OR FIND another way to rotate with multiple enemies?
+    #ALL ENEMIES GO
     for e in enemies:
-        pass
-        #set up ATTACK METHOD
+        e.basic_attack(player)
+    set_char_stats()
+    if target == None:
+        ask_player_target()
+    else:
+        wait_player_input()
+
+def extra_attack(text):
+    if text.lower() == "yes":
+        global player
+        player.use_speed(30)
+        player.basic_attack(target)
+    elif text.lower() == "no":
+        npc_action()
+    else:
+        game_out(f"{text} is not a valid response, please enter Yes or No", "error")
+    npc_action()
+    
 
 def wait_player_input():
     game_out(f"What would you like to do?", "blue")
-    game_out(f"You can ATTACK, use a STYLE, cast a SPELL, change TARGET, or attempt to FLEE.")
+    game_out(f"You can ATTACK, use a style(STYLE NAME), cast a spell(SPELL NAME), change TARGET, or attempt to FLEE.")
+    global combatstate
+    combatstate = 2
 
-def player_target(text):
+def ask_player_target():
+    global enemies, target
+    if len(enemies) == 0:
+        game_out(f"You've defeated all enemies!")
+    if len(enemies) == 1:
+        target = enemies[0]
+        game_out(f"{target.name} is your new target!")
+        wait_player_input()
+        return
+    game_out(f"Which enemy would you like to target?", "blue")
+    for e in enemies:
+        if e.player_class == None:
+            game_out(f"{e.name}")
+            global combatstate
+            combatstate = 4
+
+def player_target(text): #combatstate 4
     names = [e.name for e in enemies]
     if text.title() in names:
-        game_out(f"{text.title()} is targeted!")
+        for e in enemies:
+            if text.title() == e.name:
+                game_out(f"{text.title()} is targeted!")
+                global target
+                target = e
+                wait_player_input()
     else:
         game_out(f"Cannot find {text}, please try again!", "error")    
-            
+        
+
 def narrative_read(identifier:str, tag = "blue"):
     with open("text_files/narrative.txt") as narrative:
         narrative = narrative.readlines()
@@ -141,8 +225,20 @@ def enter_name(text):
     else:
         game_out(f"Please enter a name between 2 and 12 characters in length", "error")
 
-
+def set_char_stats():
+    if player:
+        char_stats.set(f""" Character Stats \n\n\n {player.name}\n the\n {player.player_class}\n
+Level: {player.level}\n
+Health: {player.health} 
+Mana: {player.mana}
+Endurance: {player.endurance} 
+Speed: {player.speed}\n 
+Deflection: {player.deflection} 
+Avoidance: {player.avoidance} 
+Resistance: {player.resistance}""")      
+        
 def choose_class(text):
+    from combatant import Combatant
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
         game_out(f"That is not a valid option, please try entering the name of your class again!", "error")
@@ -159,16 +255,7 @@ def choose_class(text):
             player.equip_item(robe)
         elif player.player_class == "Ninja":
             player.equip_item(leather_vest)
-        if player:
-            char_stats.set(f""" Character Stats \n\n\n {player.name}\n the\n {player.player_class}\n
-Level: {player.level}\n
-Health: {player.health} 
-Mana: {player.mana}
-Endurance: {player.endurance} 
-Speed: {player.speed}\n 
-Strength: {player.strength} 
-Acuity: {player.acuity} 
-Agility: {player.agility}""")
+        set_char_stats()
         #Choose equipment prompt
         game_out(f"Choose your starting weapon:\n", "blue_bold")
         narrative_read(f"{player_class}Weps")
@@ -197,8 +284,8 @@ def choose_styles(text):
     if style_name not in starting_styles:
         game_out(f"That is not a valid option, please try again!", "error")
     style_choice = starting_styles[style_name]
-    if len(player.style_list) < 1:
-        player.style_list.append(style_choice)
+    if len(player.styles) < 1:
+        player.styles.append(style_choice)
         game_out(f"You have learned {style_choice.name}!", "purple")
     else:
         game_out(f"You've already chosen a style!", "error")
@@ -213,11 +300,12 @@ def choose_styles(text):
 
 def choose_spells(text):
     from abilities import starting_spells
+    from combatant import earth_golem, mud_golem
     spell_name = text.title()
     if spell_name not in starting_spells:
         game_out(f"That is not a valid option, please try again!", "error")
     spell_choice = starting_spells[spell_name]
-    player.spell_list.append(spell_choice)
+    player.spells.append(spell_choice)
     game_out(f"{spell_choice.name} has been added to your list of spells.", "blue")
     global gamestate
     if player.player_class == "Wizard":
@@ -229,12 +317,13 @@ def choose_spells(text):
     
 def wizard_spells(text):
     from abilities import starting_spells
+    from combatant import earth_golem, mud_golem
     spell_name = text.title()
     if spell_name not in starting_spells:
         game_out(f"That is not a valid option, please try again!", "error")
     spell_choice = starting_spells[spell_name]
-    if spell_choice not in player.spell_list:
-        player.spell_list.append(spell_choice)
+    if spell_choice not in player.spells:
+        player.spells.append(spell_choice)
         game_out(f"{spell_choice.name} has been added to your list of spells.", "blue")
         game_out(f"{char_name}, your {player.player_class} is ready for combat!", "purple")
         global gamestate

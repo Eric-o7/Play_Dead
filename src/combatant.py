@@ -13,14 +13,16 @@ class Combatant():
                  primary_stat: int = None, avoidance: int = None,
                  resistance: int = None, deflection: int = None,  
                  map: str = None, coordinate: tuple = None,
-                 mana: int = None, endurance: int = None,
-                 speed: int = None, spells: list = None, styles: list = None, 
+                 max_mana: int = None, max_endurance: int = None,
+                 max_speed: int = None, spells: list = None, styles: list = None, 
                  inventory: dict = None, status: dict = None,
                  equipment: dict = None, base_damage: int = None,
-                 initiative: int = None):
+                 initiative: int = None, max_health: int = None,
+                 endurance: int = None, speed: int = None,
+                 mana: int = None):
         self.name = name
         self.level = level
-        self.health = health
+        self.max_health = health
         self.player_class = player_class
         self.strength = strength
         self.agility = agility
@@ -34,10 +36,15 @@ class Combatant():
         self.spells = []
         self.styles = []
         self.inventory = {}
-        self.status = {}
+        self.status = {"Ranged": False}
         self.equipment = {"Mhand": None, "Ohand": None, "Armor": None}
-        self.initiative = initiative
         self.base_damage = base_damage
+        self.initiative = initiative
+        self.health = health
+        self.endurance = endurance
+        self.speed = speed
+        self.mana = mana
+        
         Combatant.combatant_list.append(self)
 
     def set_playerclass(self, player_class):
@@ -64,18 +71,22 @@ class Combatant():
         self.set_resistance()
     
     def set_mana(self):
-        self.mana = (self.acuity + self.level) * 10
+        self.max_mana = (self.acuity + self.level) * 10
+        self.mana = self.max_mana
     
     def set_endurance(self):
-        self.endurance = (self.strength + self.level) * 10
+        self.max_endurance = (self.strength + self.level) * 10
+        self.endurance = self.max_endurance
         
     def set_speed(self):
-        self.speed = (self.agility + self.level) * 10
+        self.max_speed = (self.agility + self.level) * 10
+        self.speed = self.max_speed
        
     def set_health(self):
-        self.health = 6 + (self.level*2) + self.strength
+        self.max_health = 6 + (self.level*2) + self.strength
         if self.strength >= 10:
-            self.health += int(self.level / 2)   
+            self.max_health += int(self.level / 2)
+        self.health = self.max_health
     
     def equip_item(self, Item):
         if isinstance(Item.slot, tuple):
@@ -144,34 +155,37 @@ class Combatant():
     
     def set_deflection(self):
         self.deflection = int((self.equipment["Armor"].armor_class) / 2)
+        if self.status["Ranged"] == True:
+            self.deflection += 1
 
 #2d6 plus primary stat -4 plus level
     def attack_roll(self):
         first_die, second_die = randint(1,6), randint(1,6)
-        game_out(f"{self.name} rolling 2d6 plus {self.primary_stat} to hit:")
-        game_out(f"First die rolls {first_die}")
-        game_out(f"Second die rolls {second_die}")
-        print(type(self.primary_stat))
+        # game_out(f"{self.name} rolling 2d6 plus {self.primary_stat} to hit:")
+        # game_out(f"First die rolls {first_die}")
+        # game_out(f"Second die rolls {second_die}")
         attack_roll_result = first_die + second_die + (self.primary_stat - 5) + self.level
         return attack_roll_result
         
     def avoidance_check(self, Combatant):
         attack_roll_result = self.attack_roll()
+        if Combatant.status["Ranged"] == True:
+            Combatant.avoidance += 2
         if attack_roll_result >= Combatant.avoidance:
-            game_out(f"{self.target_check()} hit with a roll of {attack_roll_result}!")
+            game_out(f"{self.target_check()} hit with a {attack_roll_result} beating {Combatant.name}'s avoidance score of {Combatant.avoidance}!", "purple")
             return True
-        game_out(f"{self.target_check()} missed with a roll of {attack_roll_result}.")
+        game_out(f"{self.target_check()} missed with a {attack_roll_result} against {Combatant.name}'s avoidance score of {Combatant.avoidance}.")
         return False        
     
     def resistance_check(self, Combatant):
         attack_roll_result = self.attack_roll()
         if attack_roll_result >= Combatant.resistance:
-            game_out(f"{self.target_check()} hit with a {attack_roll_result}!")
+            game_out(f"{self.target_check()} hit with a {attack_roll_result} beating {Combatant.name}'s avoidance score of {Combatant.resistance}!", "purple")
             return True
-        game_out(f"{self.target_check()} missed with a {attack_roll_result}.")
+        game_out(f"{self.target_check()} missed with a {attack_roll_result} against {Combatant.name}'s avoidance score of {Combatant.resistance}.")
         return False
                         
-    def take_damage(self, damage, ability = None):
+    def take_damage(self, damage):
         from main import player, set_char_stats
         damage = damage - self.deflection
         if damage < 1: damage = 0
@@ -192,7 +206,6 @@ class Combatant():
             set_char_stats()
         
     def basic_attack(self, Combatant):
-        print(self.name, Combatant.name)
         if self.player_class:
             damage = randint(1,(self.equipment["Mhand"].damage)) + self.level
         else:
@@ -205,8 +218,10 @@ class Combatant():
         from main import enemies, ask_player_target
         if self.health <= 0:
             game_out(f"{self.name} was defeated!")
-            enemies.remove(self)
-            ask_player_target()
+            if self in enemies:
+                enemies.remove(self)
+            else:
+                game_out(f"You play dead until the threat has passed")
             return True
         if self.player_class:
             pass
@@ -222,8 +237,11 @@ class Combatant():
         self.mana -= mana_cost
         
     def use_speed(self, speed_cost):
-        self.speed -= speed_cost
-        set_char_stats()
+        if self.speed >= speed_cost:
+            self.speed -= speed_cost
+            set_char_stats()
+        else:
+            game_out(f"Not enough speed", "error")
     
     def use_endurance(self, endurance_cost):
         if self.endurance >= endurance_cost:
@@ -241,13 +259,14 @@ class Combatant():
         self.style_list.append(style)
     
     def get_spell_list(self):   
-        return self.spell_list
+        return self.spells
     
     def get_styles(self):
         return self.styles
     
     def level_up(self):
         self.level+=1
+        self.set_health()
 
 
     # def assign_styles(self):
@@ -259,6 +278,7 @@ class Combatant():
 #avoidance = agility + level + 4 (2d6 + primary stat - 5 + level) 11/15
 #resistance = acuity + level + 4 (2d6 + primary stat - 5 + level) to hit
 #NPC MONSTERS
+# snakey = Combatant("Snakey", )
 earth_golem = Combatant("Earth Golem", 1, 20, None, 9, 4, 3, 9,
                         10, 8, 2, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 6) #CS 35 
 goblin_bonemage = Combatant("Goblin Bone Mage", 1, 15, None, 4, 7, 7, 12,

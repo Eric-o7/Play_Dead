@@ -47,7 +47,7 @@ char_stats = tk.StringVar()
 label = tk.Label(status_frame, background = "#373737", foreground = "#b5880b",
                  textvariable = char_stats, height = 13,
                   anchor = tk.SW, borderwidth = 2, relief = "groove",
-                  justify = tk.LEFT, font = ("Times", 12, "bold"))
+                  justify = tk.LEFT, font = ("Times", 11, "bold"))
 label.pack(expand = True, fill = "both")
 
 #game output frame

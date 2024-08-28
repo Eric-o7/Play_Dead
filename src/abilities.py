@@ -1,10 +1,11 @@
 from main import *
 
 
+
 class Ability():
     def __init__(self, name, effect: str, effect_int:int, damage: range, targets: int, duration: int):
         self.name = name
-        self.effect = effect #link to a method
+        self.effect = effect #identified using ability_effect() method
         self.effect_int = effect_int
         self.damage = damage #max damage or range
         self.area = targets
@@ -34,7 +35,6 @@ class Ability():
     #damage_over_time set up is Combatant.status = {"damage_over_time":{dot1:[duration,effect_int]}, {dot2:[duration, effect_int]}}
         
     def set_damage_over_time(self, victim): #warrior bloody
-        print(victim.status)
         if victim.status["damage_over_time"]:
             dot_key = f"dot{len(victim.status['damage_over_time'])+1}"
             victim.status["damage_over_time"][dot_key] = [self.duration, self.effect_int]
@@ -56,7 +56,7 @@ class Ability():
             user.basic_attack(victim)
         else:
             victim.status[self.effect] = [self, (self.duration)]
-            print(f"Vulnerability applied to {victim.name}")
+            game_out(f"Vulnerability applied to {victim.name}")
             user.basic_attack(victim)
         
         
@@ -67,8 +67,9 @@ class Ability():
     def raise_deflection(self, user): #ninja shadow guise
         pass
     
-    def direct_damage(self, victim): #firebolt #type 1 is physical, type 2 is spell damage
-        pass
+    def direct_damage(self, user, victim): #effect int 1 is physical, effect int 2 is spell damage
+        if user.resistance_check(victim):
+            victim.take_damage(self.damage)
     
     def automatic_hit(self, user, victim): #ninja stealth, wizard missile barrage
         pass
@@ -88,27 +89,30 @@ class Ability():
         
 
 class Style(Ability):
-    def __init__ (self, name, effect: str, effect_int:int, damage: int, targets: int, duration: int, endurance_cost: int,  weapon_type: Item = None):
+    def __init__ (self, name, effect: str, effect_int:int, damage: int, targets: int, duration: int, endurance_cost: int):
         super().__init__(name, effect, effect_int, damage, targets, duration)
         self.endurance_cost = endurance_cost
-        self.weapon_type = weapon_type
     
-    def use_style(self, Combatant):
-        if self.endurance_cost >= Combatant.endurance:
-            Combatant.use_endurance(self.endurance_cost)
-            self.ability_effect()
+    def use_style(self, user, victim):
+        print(user.name, self.name, victim.name)
+        print(self.endurance_cost, user.endurance)
+        if self.endurance_cost <= user.endurance:
+            user.use_endurance(self.endurance_cost)
+            self.ability_effect(user, victim)
+            ask_extra_attack()
         else:
-            game_out(f"You need {self.endurance_cost} to use that style")
+            game_out(f"Not enough endurance to use this style", "error")
+            wait_player_input()
     
 #Styles
-firebolt = Style("Fire Bolt", "direct_damage", 0, 6, 1, 2, 25, staff)
-tear_flesh = Style("Tear Flesh", "vulnerability", 0, 3, 1, 2, 25, claws)
-lotus_bloom = Style("Lotus Bloom", "direct_damage", 0, 3, 3, 1, 25, shurikens)
-arcane_pulse = Style("Arcane Pulse", "direct_damage", 0, 3, 3, 2, 25, rod)
-sweeping_strike = Style("Sweeping Strike", "direct_damage", 0, 3, 3, 1, 25, zweihander)
-defensive_strike = Style("Defensive Strike", "raise_avoidance", 1, 3, 1, 1, 25, sword)
+firebolt = Style("Fire Bolt", "direct_damage", 2, 8, 1, 2, 25)
+tear_flesh = Style("Tear Flesh", "vulnerability", 0, 3, 1, 2, 25)
+lotus_bloom = Style("Lotus Bloom", "direct_damage", 0, 3, 3, 1, 25)
+arcane_pulse = Style("Arcane Pulse", "direct_damage", 0, 3, 3, 2, 25)
+sweeping_strike = Style("Sweeping Strike", "direct_damage", 0, 3, 3, 1, 25)
+defensive_strike = Style("Defensive Strike", "raise_avoidance", 1, 3, 1, 1, 25)
 stealth = Style("Stealth", "automatic_hit", 0, 0, 0, 25, 1)
-heavy_strike = Style("Heavy Strike", "direct_damage", 0, 8, 1, 1, 5, zweihander)
+heavy_strike = Style("Heavy Strike", "direct_damage", 0, 8, 1, 1, 5)
 bloody_strike = Style("Bloody Strike", "damage_over_time", 1, 6, 1, 0, 25)
 fade = Style("Fade", "raise_deflection", 0, 0, 0, 2, 25)
 

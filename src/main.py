@@ -1,6 +1,7 @@
-from graphics import root, game_out, game_text
+from graphics import root, game_out, char_stats
 import time
 from combatant import *
+from random import randint
 
 def main():
     root.mainloop()
@@ -38,13 +39,13 @@ def combatstate_bus(text, *args):
         player_action(text)
         #dot counters are decreased automatically
     elif combatstate == 3:
-        npc_action(*args)
+        npc_action()
     elif combatstate == 4:
         player_target(text)
     elif combatstate == 5:
         extra_attack(text)
     elif combatstate == 6:
-        check_range()
+        check_range(text)
 
 
 enemies = []
@@ -73,32 +74,31 @@ def combat_order(player, *args):
     else:
         npc_action()      
 
-
-
 def player_action(text):
     if target == None:
         ask_player_target()
     game_out(f"{text}")
-    if text.lower() == "attack":
-        if (player.equipment["Mhand"] == "Shurikens" or
-            player.player_class == "Wizard"):
-            check_range()
-        
+    if text.lower() == "attack" and player.equipment["Mhand"] != "Shurikens":
+        player.status["Ranged"] = False
+        game_out(f"You move back into melee range to attack.")
+        player.basic_attack(target)
+        ask_extra_attack()
+    elif text.lower() == "attack":
+        player.status["Ranged"] = False
         player.basic_attack(target)
         ask_extra_attack()
     elif text.title() in [style.name for style in player.styles]:
         for style in player.styles:
             if text.title() == style.name:
                 chosen_style = style
-        chosen_style.ability_effect(player, target)
-        ask_extra_attack()
+        chosen_style.use_style(player, target)
     elif text.title() == [spell.name for spell in player.spells]:
         for spell in player.spells:
             if text.title() == spell.name:
                 chosen_spell = spell
         chosen_spell.ability_effect(player, target)
         ask_extra_attack()
-    elif text.lower() == "flee":
+    elif text.lower() == "play dead":
         pass
     elif text.lower() == "target":
         ask_player_target()
@@ -106,18 +106,21 @@ def player_action(text):
         game_out(f"{text} is not a valid command, please try again.", "error")
 
 def ask_attack_range():
-    game_out(f"Would you like to use some speed to attack from range?")
+    game_out(f"Would you like to try to outmaneuver the enemies to gain a bonus to deflection?")
     game_out(f"Respond with YES or NO")
     global combatstate
     combatstate = 6
     
-def check_range():
-    if player.speed > target.speed:
-        player.speed -= (player.speed - target.speed)
-        #add status condition for ranged
-    else:
-        #deduct speed for the attempt, but do not add the ranged condition
-        pass
+def check_range(text): #combatstate 6
+    if text.lower() == "no":
+        wait_player_input()
+        return
+    for e in enemies:
+        if player.max_speed <= e.max_speed:
+            return game_out(f"You try to maneuver around your opponents but they're too quick!")
+    game_out(f"You successfully outmaneuver your enemies, increasing your deflection by 1!")
+    wait_player_input()
+        
 
 def ask_extra_attack():
     if player.speed >= 30:
@@ -130,8 +133,7 @@ def ask_extra_attack():
 
 def npc_action():
     global enemies, player
-    if len(enemies) > 2:
-        pass
+    print(f"NPC ACTION")
     #ALL ENEMIES GO
     for e in enemies:
         e.basic_attack(player)
@@ -150,14 +152,19 @@ def extra_attack(text):
         npc_action()
     else:
         game_out(f"{text} is not a valid response, please enter Yes or No", "error")
-    npc_action()
     
 
 def wait_player_input():
-    game_out(f"What would you like to do?", "blue")
-    game_out(f"You can ATTACK, use a style(STYLE NAME), cast a spell(SPELL NAME), change TARGET, or attempt to FLEE.")
-    global combatstate
-    combatstate = 2
+    print(f"Player Main hand {player.equipment['Mhand']}")
+    print(f"Player Status {player.status}")
+    if ((player.player_class == "Wizard" or player.equipment["Mhand"].name == "Shurikens")
+        and player.status["Ranged"] == False):
+        ask_attack_range()
+    else:
+        game_out(f"What would you like to do?", "blue")
+        game_out(f"You can ATTACK, use a style(STYLE NAME), cast a spell(SPELL NAME), change TARGET, attempt to PLAY DEAD.")
+        global combatstate
+        combatstate = 2
 
 def ask_player_target():
     global enemies, target
@@ -229,10 +236,10 @@ def set_char_stats():
     if player:
         char_stats.set(f""" Character Stats \n\n\n {player.name}\n the\n {player.player_class}\n
 Level: {player.level}\n
-Health: {player.health} 
-Mana: {player.mana}
-Endurance: {player.endurance} 
-Speed: {player.speed}\n 
+Health: {player.health} / {player.max_health}
+Mana: {player.mana} / {player.max_mana}
+End: {player.endurance} / {player.max_endurance}
+Speed: {player.speed} / {player.max_speed}\n 
 Deflection: {player.deflection} 
 Avoidance: {player.avoidance} 
 Resistance: {player.resistance}""")      

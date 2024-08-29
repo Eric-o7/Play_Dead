@@ -75,16 +75,20 @@ def combat_order(player, *args):
         npc_action()      
 
 def player_action(text):
+    global player
+    game_out(text)
     if target == None:
         ask_player_target()
     game_out(f"{text}")
-    if text.lower() == "attack" and player.equipment["Mhand"] != "Shurikens":
-        player.status["Ranged"] = False
-        game_out(f"You move back into melee range to attack.")
+    if (text.lower() == "attack" and (player.player_class == "Wizard" or
+        player.player_class == "Warrior")):
+        if player.status["Ranged"] == True:
+            player.status["Ranged"] = False
+            player.set_deflection()
+            game_out(f"You move back into melee range to attack.")
         player.basic_attack(target)
         ask_extra_attack()
     elif text.lower() == "attack":
-        player.status["Ranged"] = False
         player.basic_attack(target)
         ask_extra_attack()
     elif text.title() in [style.name for style in player.styles]:
@@ -92,6 +96,7 @@ def player_action(text):
             if text.title() == style.name:
                 chosen_style = style
         chosen_style.use_style(player, target)
+        ask_extra_attack()
     elif text.title() == [spell.name for spell in player.spells]:
         for spell in player.spells:
             if text.title() == spell.name:
@@ -112,13 +117,20 @@ def ask_attack_range():
     combatstate = 6
     
 def check_range(text): #combatstate 6
+    global player
+    if text.lower() not in {'yes', 'no'}:
+        game_out(f"{text} is not a valid response, please enter Yes or No.", "error")
     if text.lower() == "no":
         wait_player_input()
         return
     for e in enemies:
-        if player.max_speed <= e.max_speed:
-            return game_out(f"You try to maneuver around your opponents but they're too quick!")
-    game_out(f"You successfully outmaneuver your enemies, increasing your deflection by 1!")
+        if "entangled" not in e.status and player.max_speed <= e.max_speed:
+            game_out(f"You try to maneuver around your opponents but they're too quick!")
+            wait_player_input()
+            return
+    game_out(f"You successfully outrange your enemies, increasing your deflection by 1!")
+    player.status["Ranged"] = True
+    player.set_deflection()
     wait_player_input()
         
 
@@ -136,23 +148,32 @@ def npc_action():
     print(f"NPC ACTION")
     #ALL ENEMIES GO
     for e in enemies:
+        if "damage_over_time" in e.status:
+            damage_over_time(e)
+            e.check_death()
         e.basic_attack(player)
     set_char_stats()
-    if target == None:
-        ask_player_target()
-    else:
-        wait_player_input()
+    wait_player_input()
+    
+def damage_over_time(enemy):
+    for dot in enemy.status["damage_over_time"]:
+        if enemy.status["damage_over_time"][dot][0] > 0:
+            enemy.status["damage_over_time"][dot][0] -= 1
+            enemy.health -= enemy.status["damage_over_time"][dot][1]
+            game_out(f"{enemy.name} takes {enemy.status['damage_over_time'][dot][1]} damage from {enemy.status['damage_over_time'][dot][2]}")
+        else:
+            del enemy.status["damage_over_time"][dot]
 
 def extra_attack(text):
     if text.lower() == "yes":
         global player
         player.use_speed(30)
         player.basic_attack(target)
+        ask_extra_attack()
     elif text.lower() == "no":
         npc_action()
     else:
         game_out(f"{text} is not a valid response, please enter Yes or No", "error")
-    
 
 def wait_player_input():
     print(f"Player Main hand {player.equipment['Mhand']}")
@@ -172,7 +193,7 @@ def ask_player_target():
         game_out(f"You've defeated all enemies!")
     if len(enemies) == 1:
         target = enemies[0]
-        game_out(f"{target.name} is your new target!")
+        game_out(f"{target.name} is your target!")
         wait_player_input()
         return
     game_out(f"Which enemy would you like to target?", "blue")
@@ -278,6 +299,7 @@ def choose_equipment(text):
     player.equip_item(item)
     if item.name in {"Sword", "Rod"}:
         player.equip_item(shield)
+        player.set_avoidance()
     game_out(f"Based on your weapon choice, choose a starting style.", "blue_bold")
     #Choose styles prompt
     narrative_read(item.name)
@@ -307,7 +329,7 @@ def choose_styles(text):
 
 def choose_spells(text):
     from abilities import starting_spells
-    from combatant import earth_golem, mud_golem
+    from combatant import snakey
     spell_name = text.title()
     if spell_name not in starting_spells:
         game_out(f"That is not a valid option, please try again!", "error")
@@ -320,11 +342,11 @@ def choose_spells(text):
     else:
         game_out(f"{char_name}, your {player.player_class} is ready for combat!", "purple")
         gamestate = 8
-        combat_order(player, earth_golem, mud_golem)
+        combat_order(player, snakey)
     
 def wizard_spells(text):
     from abilities import starting_spells
-    from combatant import earth_golem, mud_golem
+    from combatant import snakey
     spell_name = text.title()
     if spell_name not in starting_spells:
         game_out(f"That is not a valid option, please try again!", "error")
@@ -335,7 +357,7 @@ def wizard_spells(text):
         game_out(f"{char_name}, your {player.player_class} is ready for combat!", "purple")
         global gamestate
         gamestate = 8
-        combat_order(player, earth_golem, mud_golem)
+        combat_order(player, snakey)
     else:
         game_out(f"{spell_choice.name} is already in your list of spells!", "error")
 

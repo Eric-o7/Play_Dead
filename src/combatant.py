@@ -3,7 +3,7 @@ from maps import *
 from items import *
 from random import randint
 from abilities import *
-from main import set_char_stats
+# from main import set_char_stats
 
 class Combatant():
     combatant_list = []
@@ -33,6 +33,9 @@ class Combatant():
         self.deflection = deflection
         self.map = tutorial.name
         self.coordinate = coordinate
+        self.max_mana = max_mana
+        self.max_endurance = max_endurance
+        self.max_speed = max_speed
         self.spells = []
         self.styles = []
         self.inventory = {}
@@ -44,7 +47,6 @@ class Combatant():
         self.endurance = endurance
         self.speed = speed
         self.mana = mana
-        
         Combatant.combatant_list.append(self)
 
     def set_playerclass(self, player_class):
@@ -149,6 +151,10 @@ class Combatant():
 
     def set_avoidance(self):
         self.avoidance = self.agility + self.level + 4
+        if "raise_avoidance" in self.status:
+            self.avoidance += self.status["raise_avoidance"][1]
+        if self.equipment["Ohand"].name == "Shield":
+            self.avoidance += 1
     
     def set_resistance(self):
         self.resistance = self.acuity + self.level + 4
@@ -157,6 +163,8 @@ class Combatant():
         self.deflection = int((self.equipment["Armor"].armor_class) / 2)
         if self.status["Ranged"] == True:
             self.deflection += 1
+        if "raise_deflection" in self.status:
+            self.deflection += self.status["raise_deflection"][1]
 
 #2d6 plus primary stat -4 plus level
     def attack_roll(self):
@@ -168,17 +176,37 @@ class Combatant():
         return attack_roll_result
         
     def avoidance_check(self, Combatant):
-        attack_roll_result = self.attack_roll()
-        if Combatant.status["Ranged"] == True:
-            Combatant.avoidance += 2
-        if attack_roll_result >= Combatant.avoidance:
-            game_out(f"{self.target_check()} hit with a {attack_roll_result} beating {Combatant.name}'s avoidance score of {Combatant.avoidance}!", "purple")
+        temp_avoidance = Combatant.avoidance
+        if "stealth" in self.status and self.player_class:
+            game_out(f"{self.name} automatically hits {Combatant.name} from stealth!", "purple")
+            del self.status["stealth"]
             return True
-        game_out(f"{self.target_check()} missed with a {attack_roll_result} against {Combatant.name}'s avoidance score of {Combatant.avoidance}.")
+        elif "stealth" in Combatant.status:
+            game_out(f"{self.name} tries to attack but cannot see you!")
+            return False
+        if "raise_avoidance" in Combatant.status:
+            Combatant.status["raise_avoidance"][0] -= 1
+            if Combatant.status["raise_avoidance"][0] == 0:
+                game_out(f"Bonus avoidance from {Combatant.status['raise_avoidance'][2]} has ended")
+                del Combatant.status["raise_avoidance"]
+                Combatant.set_avoidance()
+        attack_roll_result = self.attack_roll()    
+        if attack_roll_result >= temp_avoidance:
+            game_out(f"{self.name} hit with a roll of {attack_roll_result} beating {Combatant.name}'s avoidance score of {Combatant.avoidance}!", "purple")
+            return True
+        game_out(f"{self.name} missed with a roll of {attack_roll_result} against {Combatant.name}'s avoidance score of {Combatant.avoidance}.")
         return False        
     
     def resistance_check(self, Combatant):
         attack_roll_result = self.attack_roll()
+        if "stealth" in self.status and self.player_class:
+            game_out(f"{self.name} has come out of stealth!", "purple")
+            del self.status["stealth"]
+        elif "stealth" in Combatant.status:
+            game_out(f"{self.name} cannot see you!")
+            return False
+        if "reflect" in Combatant.status:
+            pass
         if attack_roll_result >= Combatant.resistance:
             game_out(f"{self.target_check()} hit with a {attack_roll_result} beating {Combatant.name}'s avoidance score of {Combatant.resistance}!", "purple")
             return True
@@ -187,7 +215,14 @@ class Combatant():
                         
     def take_damage(self, damage):
         from main import player, set_char_stats
-        damage = damage - self.deflection
+        temp_deflection = self.deflection
+        if "raise_deflection" in self.status:
+            self.status["raise_deflection"][0] -= 1
+            if self.status["raise_deflection"][0] == 0:
+                game_out(f"Bonus deflection from {self.status['raise_avoidance'][2]} has ended")
+                del self.status["raise_deflection"]
+                self.set_deflection()
+        damage = damage - temp_deflection
         if damage < 1: damage = 0
         if "vulnerability" in self.status:
             self.health -= damage + player.level
@@ -200,32 +235,31 @@ class Combatant():
                 game_out(f"{self.name}'s vulnerability condition has ended.")
         else:
             self.health -= damage
-            game_out(f"{self.name} takes {damage} damage! ({self.deflection} damage was deflected)")
+            game_out(f"{self.name} takes {damage} damage! ({temp_deflection} damage was deflected)")
             self.check_death(self.health)
         if self.player_class:
             set_char_stats()
         
-    def basic_attack(self, Combatant):
-        if self.player_class:
+    def basic_attack(self, Combatant, style_damage = None):
+        if style_damage:
+            damage = style_damage
+        elif self.player_class:
             damage = randint(1,(self.equipment["Mhand"].damage)) + self.level
         else:
             damage = randint(1,self.base_damage) + self.level
         if self.avoidance_check(Combatant):
-            game_out(f"{self.target_check()} rolled a {damage} for damage")
+            game_out(f"{self.name} rolled {damage} for damage")
             Combatant.take_damage(damage)
             
-    def check_death(self, damage):
-        from main import enemies, ask_player_target
+    def check_death(self, damage = None):
+        from main import enemies
         if self.health <= 0:
             game_out(f"{self.name} was defeated!")
             if self in enemies:
                 enemies.remove(self)
-            else:
-                game_out(f"You play dead until the threat has passed")
             return True
-        if self.player_class:
-            pass
-            #do stuff for player death
+        if self.health <= 0 and self.player_class:
+            game_out(f"You play dead until the threat has passed")
             
     def target_check(self):
         if self.player_class:
@@ -268,17 +302,13 @@ class Combatant():
         self.level+=1
         self.set_health()
 
-
-    # def assign_styles(self):
-    #     if self.primary_stat == "strength":
-    #         self.styles.append(heavy_strike)
-    #         print(f"{self.name} assigned")
-
-
+    # def __repr__(self):
+    #     print(f"Name {self.name}, max_speed {self.max_speed}")
 #avoidance = agility + level + 4 (2d6 + primary stat - 5 + level) 11/15
 #resistance = acuity + level + 4 (2d6 + primary stat - 5 + level) to hit
 #NPC MONSTERS
-# snakey = Combatant("Snakey", )
+snakey = Combatant("Snakey", 2, 18, None, 6, 7, 10, 10, 11, 13, 1, None, None,
+                   120, 120, max_speed = 100, initiative= 2, base_damage=6)
 earth_golem = Combatant("Earth Golem", 1, 20, None, 9, 4, 3, 9,
                         10, 8, 2, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 6) #CS 35 
 goblin_bonemage = Combatant("Goblin Bone Mage", 1, 15, None, 4, 7, 7, 12,
@@ -296,15 +326,16 @@ water_sprite = Combatant("Water Sprite", 1, 10, None, 5, 10, 4, 10,
 
 if __name__ == "__main__":
 
-    def calculate_npc_challenge(*args):
-        print(args)
-        for combatant in args[0]:
-            combatant.assign_styles()
-        for combatant in args[0]:
-            challenge_score = (combatant.health + (combatant.deflection * 3)
-                            + ((combatant.avoidance + combatant.resistance) / 2)
-                            + (len(combatant.styles)*4) + (len(combatant.spells)*4))
-            print(f"{combatant.name} challenge score is {challenge_score}")
+    snakey.__repr__()
+    # def calculate_npc_challenge(*args):
+    #     print(args)
+    #     for combatant in args[0]:
+    #         combatant.assign_styles()
+    #     for combatant in args[0]:
+    #         challenge_score = (combatant.health + (combatant.deflection * 3)
+    #                         + ((combatant.avoidance + combatant.resistance) / 2)
+    #                         + (len(combatant.styles)*4) + (len(combatant.spells)*4))
+    #         print(f"{combatant.name} challenge score is {challenge_score}")
     
-    calculate_npc_challenge(Combatant.combatant_list)
-    print(mud_golem.styles[0].name)
+    # calculate_npc_challenge(Combatant.combatant_list)
+    # print(mud_golem.styles[0].name)

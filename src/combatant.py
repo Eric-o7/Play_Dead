@@ -1,9 +1,8 @@
-from graphics import game_out
-from maps import *
-from items import *
 from random import randint
+from maps import *
+from items import starting_weapons, armor
 from abilities import *
-# from main import set_char_stats
+from graphics import game_out
 
 class Combatant():
     combatant_list = []
@@ -153,14 +152,14 @@ class Combatant():
         self.avoidance = self.agility + self.level + 4
         if "raise_avoidance" in self.status:
             self.avoidance += self.status["raise_avoidance"][1]
-        if self.equipment["Ohand"].name == "Shield":
+        if self.equipment["Ohand"] and self.equipment["Ohand"].name == "Shield":
             self.avoidance += 1
     
     def set_resistance(self):
         self.resistance = self.acuity + self.level + 4
     
     def set_deflection(self):
-        self.deflection = int((self.equipment["Armor"].armor_class) / 2)
+        self.deflection = int((self.equipment["Armor"].deflection_rating) / 2)
         if self.status["Ranged"] == True:
             self.deflection += 1
         if "raise_deflection" in self.status:
@@ -169,9 +168,6 @@ class Combatant():
 #2d6 plus primary stat -4 plus level
     def attack_roll(self):
         first_die, second_die = randint(1,6), randint(1,6)
-        # game_out(f"{self.name} rolling 2d6 plus {self.primary_stat} to hit:")
-        # game_out(f"First die rolls {first_die}")
-        # game_out(f"Second die rolls {second_die}")
         attack_roll_result = first_die + second_die + (self.primary_stat - 5) + self.level
         return attack_roll_result
         
@@ -208,22 +204,33 @@ class Combatant():
         if "reflect" in Combatant.status:
             pass
         if attack_roll_result >= Combatant.resistance:
-            game_out(f"{self.target_check()} hit with a {attack_roll_result} beating {Combatant.name}'s avoidance score of {Combatant.resistance}!", "purple")
+            game_out(f"{self.name} hit with a roll of {attack_roll_result} beating {Combatant.name}'s resistance score of {Combatant.resistance}!", "purple")
             return True
-        game_out(f"{self.target_check()} missed with a {attack_roll_result} against {Combatant.name}'s avoidance score of {Combatant.resistance}.")
+        game_out(f"{self.name} missed with a roll of {attack_roll_result} against {Combatant.name}'s resistance score of {Combatant.resistance}.")
         return False
                         
     def take_damage(self, damage):
         from main import player, set_char_stats
         temp_deflection = self.deflection
+        
         if "raise_deflection" in self.status:
             self.status["raise_deflection"][0] -= 1
             if self.status["raise_deflection"][0] == 0:
                 game_out(f"Bonus deflection from {self.status['raise_avoidance'][2]} has ended")
                 del self.status["raise_deflection"]
                 self.set_deflection()
+        
         damage = damage - temp_deflection
+        
+        if "augment_attack" in self.status:
+            damage += self.status["augment_attack"][1]
+            self.status["augment_attack"][0] -= 1
+            if self.status["augment_attack"][0] == 0:
+                del self.status["augment_attack"]
+                game_out(f"{self.name}'s weapon returns to its normal state.")
+        
         if damage < 1: damage = 0
+        
         if "vulnerability" in self.status:
             self.health -= damage + player.level
             print(f"vulnerability counter currently at {self.status['vulnerability'][1]}")
@@ -237,6 +244,7 @@ class Combatant():
             self.health -= damage
             game_out(f"{self.name} takes {damage} damage! ({temp_deflection} damage was deflected)")
             self.check_death(self.health)
+        
         if self.player_class:
             set_char_stats()
         
@@ -306,9 +314,22 @@ class Combatant():
     #     print(f"Name {self.name}, max_speed {self.max_speed}")
 #avoidance = agility + level + 4 (2d6 + primary stat - 5 + level) 11/15
 #resistance = acuity + level + 4 (2d6 + primary stat - 5 + level) to hit
+
 #NPC MONSTERS
-snakey = Combatant("Snakey", 2, 18, None, 6, 7, 10, 10, 11, 13, 1, None, None,
-                   120, 120, max_speed = 100, initiative= 2, base_damage=6)
+
+#Template Combatant(name= , level= , health= , player_class=None, strength= , agility= , acuity= , 
+# primary_stat= , avoidance= , resistance= , deflection= , map=None, coordinate=None, max_mana= , max_endurance= , 
+# max_speed= , spells=[], styles=[], inventory= , status= , equipment= , base_damage= , initiative= , max_health= , 
+# endurance= , speed= , mana= , )
+
+#max end/speed/mana = (level+stat)*10  (divide in 2 for NPC's because they will use it right away?)
+
+snakey = Combatant(name="Snakey", level=3 , health=18 , player_class=None, strength=6 , agility=7 , acuity=10 , 
+primary_stat=10 , avoidance=11 , resistance=15 , deflection=1 , map=None, coordinate=None, max_mana=130 , max_endurance=90 , 
+max_speed=100 , spells=[comet, missile_barrage, spell_reflect], styles=[arcane_pulse, tear_flesh], inventory={} , status={} , 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=6 , initiative=None , max_health=18 , 
+endurance=90 , speed=100 , mana=130)
+
 earth_golem = Combatant("Earth Golem", 1, 20, None, 9, 4, 3, 9,
                         10, 8, 2, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 6) #CS 35 
 goblin_bonemage = Combatant("Goblin Bone Mage", 1, 15, None, 4, 7, 7, 12,

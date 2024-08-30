@@ -1,5 +1,3 @@
-from graphics import *
-
 class Item():
     def __init__(self, name: str, size: int, cost: float,
                  stat = None, min_stat_req: int = None, 
@@ -18,14 +16,14 @@ class Weapon(Item):
         super().__init__(name, size, cost, stat, min_stat_req, slot)
         self.damage = damage
         
-dagger = Weapon("Dagger", 3, 3, None, None, (("Mhand")))
-staff = Weapon("Staff", 7, 10, "acuity", 10, ("Mhand", "Ohand"), 6)
-sword = Weapon("Sword", 5, 5, ("strength", "agility"), 7, ("Mhand"), 5)
-shurikens = Weapon("Shurikens", 1, 1, "agility", 7, ("Mhand", "Ohand"), 4)
-shield = Weapon("Shield", 6, 3, ("strength", "acuity", "agility"), 3, ("Ohand"))
-zweihander = Weapon("Zweihander", 14, 10, "strength", 10, ("Mhand", "Ohand"), 8)
-rod = Weapon("Rod", 5, 7, "acuity", 7, ("Mhand"), 4)
-claws = Weapon("Claws", 3, 10, "agility", 10, ("Mhand", "Ohand"), 5)
+dagger = Weapon("Dagger", size=3, cost=3, stat=None, min_stat_req=None, slot=(("Mhand")), damage=4)
+staff = Weapon("Staff", size=7, cost=10, stat="acuity", min_stat_req=10, slot=("Mhand", "Ohand"), damage=6)
+sword = Weapon("Sword", size=5, cost=5, stat=("strength", "agility"), min_stat_req=7, slot=("Mhand"), damage=5)
+shurikens = Weapon("Shurikens", size=1, cost=1, stat="agility", min_stat_req=7, slot=("Mhand", "Ohand"), damage=4)
+shield = Weapon("Shield", size=6, cost=3, stat=("strength", "acuity", "agility"), min_stat_req=3, damage=("Ohand"))
+zweihander = Weapon("Zweihander", size=14, cost=10, stat="strength", min_stat_req=10, slot=("Mhand", "Ohand"), damage=8)
+rod = Weapon("Rod", size=5, cost=7, stat="acuity", min_stat_req=7, slot=("Mhand"), damage=4)
+claws = Weapon("Claws", size=3, cost=10, stat="agility", min_stat_req=10, slot=("Mhand", "Ohand"), damage=5)
 
 starting_weapons = {"Sword": sword, "Zweihander": zweihander,
            "Rod": rod, "Staff": staff,
@@ -35,16 +33,16 @@ starting_weapons = {"Sword": sword, "Zweihander": zweihander,
 class Armor(Item):
     def __init__(self, name: str, size: int, cost: float,
                  stat: str = None, min_stat_req: int = None, 
-                 slot: tuple = None, armor_class: int = None):
+                 slot: tuple = None, deflection_rating: int = None):
         super().__init__(name, size, cost, stat, min_stat_req,
                          slot)
-        self.armor_class = armor_class
+        self.deflection_rating = deflection_rating
 
-tunic = Armor("Tunic", 2, 1, None, None, ("Armor"), 0)
-robe = Armor("Robe", 3, 5, "acuity", 7, ("Armor"), 2)
-leather_vest = Armor("Leather Vest", 4, 6, "agility", 7, ("Armor"), 4)
-chain_mail = Armor("Chain Mail", 8, 8, "strength", 7, ("Armor"), 6)
-breastplate = Armor("Breastplate", 14, 18, "strength", 10, ("Armor"), 8)
+tunic = Armor("Tunic", size=2, cost=1, stat=None, min_stat_req=None, slot=("Armor"), deflection_rating=0)
+robe = Armor("Robe", size=3, cost=5, stat="acuity", min_stat_req=7, slot=("Armor"), deflection_rating=2)
+leather_vest = Armor("Leather Vest", size=4, cost=6, stat="agility", min_stat_req=7, slot=("Armor"), deflection_rating=4)
+chain_mail = Armor("Chain Mail", size=8, cost=8, stat="strength", min_stat_req=7, slot=("Armor"), deflection_rating=6)
+breastplate = Armor("Breastplate", size=14, cost=18, stat="strength", min_stat_req=10, slot=("Armor"), deflection_rating=8)
 
 
 armor = {"Tunic": tunic, "Robe": robe, "Leather Vest": leather_vest,

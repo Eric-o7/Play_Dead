@@ -1,7 +1,7 @@
-from graphics import root, game_out, char_stats
 import time
-from combatant import *
 from random import randint
+from combatant import *
+from graphics import root, game_out, char_stats
 
 def main():
     root.mainloop()
@@ -148,12 +148,19 @@ def npc_action():
     print(f"NPC ACTION")
     #ALL ENEMIES GO
     for e in enemies:
+        if "entangled" in e.status:
+            e.status["entangled"][0] -= 1
+            if e.status["entangled"][0] == 0:
+                del e.status["entangled"]
         if "damage_over_time" in e.status:
             damage_over_time(e)
             e.check_death()
-        e.basic_attack(player)
+        e.basic_attack(player)#NPC action logic (need to work in spell reflect logic as well)
     set_char_stats()
     wait_player_input()
+    
+def npc_decision():
+    pass
     
 def damage_over_time(enemy):
     for dot in enemy.status["damage_over_time"]:
@@ -267,6 +274,7 @@ Resistance: {player.resistance}""")
         
 def choose_class(text):
     from combatant import Combatant
+    from items import chain_mail, robe, leather_vest
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
         game_out(f"That is not a valid option, please try entering the name of your class again!", "error")
@@ -292,6 +300,7 @@ def choose_class(text):
         gamestate = 4
         
 def choose_equipment(text):
+    from items import shield
     item_name = text.capitalize()
     if item_name not in starting_weapons:
         game_out(f"That is not a valid option, please try again!", "error")

@@ -77,6 +77,8 @@ def combat_order(player, *args):
 def player_action(text):
     global player
     game_out(text)
+    print([style.name for style in player.styles])
+    print([spell.name for spell in player.spells])
     if target == None:
         ask_player_target()
     game_out(f"{text}")
@@ -96,13 +98,11 @@ def player_action(text):
             if text.title() == style.name:
                 chosen_style = style
         chosen_style.use_style(player, target)
-        ask_extra_attack()
-    elif text.title() == [spell.name for spell in player.spells]:
+    elif text.title() in [spell.name for spell in player.spells]:
         for spell in player.spells:
             if text.title() == spell.name:
                 chosen_spell = spell
-        chosen_spell.ability_effect(player, target)
-        ask_extra_attack()
+        chosen_spell.use_spell(player, target)
     elif text.lower() == "play dead":
         pass
     elif text.lower() == "target":
@@ -126,10 +126,11 @@ def check_range(text): #combatstate 6
     for e in enemies:
         if "entangled" not in e.status and player.max_speed <= e.max_speed:
             game_out(f"You try to maneuver around your opponents but they're too quick!")
+            player.status["Ranged"][1] = "failed"
             wait_player_input()
             return
     game_out(f"You successfully outrange your enemies, increasing your deflection by 1!")
-    player.status["Ranged"] = True
+    player.status["Ranged"][0] = True
     player.set_deflection()
     wait_player_input()
         
@@ -154,20 +155,24 @@ def npc_action():
                 del e.status["entangled"]
         if "damage_over_time" in e.status:
             damage_over_time(e)
-            e.check_death()
+            if e.check_death():
+                return
         e.basic_attack(player)#NPC action logic (need to work in spell reflect logic as well)
     set_char_stats()
     wait_player_input()
     
-def npc_decision():
+def npc_decision(): #logic affecting conditions - entangled, stealth, 
     pass
     
 def damage_over_time(enemy):
-    for dot in enemy.status["damage_over_time"]:
+    for dot in enemy.status["damage_over_time"].copy():
         if enemy.status["damage_over_time"][dot][0] > 0:
             enemy.status["damage_over_time"][dot][0] -= 1
             enemy.health -= enemy.status["damage_over_time"][dot][1]
-            game_out(f"{enemy.name} takes {enemy.status['damage_over_time'][dot][1]} damage from {enemy.status['damage_over_time'][dot][2]}")
+            game_out(f"{enemy.name} takes {enemy.status['damage_over_time'][dot][1]} damage from {enemy.status['damage_over_time'][dot][2]}", "dot")
+            if enemy.status["damage_over_time"][dot][0] == 0:
+                del enemy.status["damage_over_time"][dot]
+                
         else:
             del enemy.status["damage_over_time"][dot]
 
@@ -183,14 +188,12 @@ def extra_attack(text):
         game_out(f"{text} is not a valid response, please enter Yes or No", "error")
 
 def wait_player_input():
-    print(f"Player Main hand {player.equipment['Mhand']}")
-    print(f"Player Status {player.status}")
     if ((player.player_class == "Wizard" or player.equipment["Mhand"].name == "Shurikens")
-        and player.status["Ranged"] == False):
+        and player.status["Ranged"] == [False, "status"]):
         ask_attack_range()
     else:
         game_out(f"What would you like to do?", "blue")
-        game_out(f"You can ATTACK, use a style(STYLE NAME), cast a spell(SPELL NAME), change TARGET, attempt to PLAY DEAD.")
+        game_out(f"You can ATTACK, use a style(STYLE NAME), cast a spell(SPELL NAME), change TARGET, attempt to PLAY DEAD.", "blue")
         global combatstate
         combatstate = 2
 
@@ -300,7 +303,7 @@ def choose_class(text):
         gamestate = 4
         
 def choose_equipment(text):
-    from items import shield
+    from items import starting_weapons, shield
     item_name = text.capitalize()
     if item_name not in starting_weapons:
         game_out(f"That is not a valid option, please try again!", "error")
@@ -338,7 +341,6 @@ def choose_styles(text):
 
 def choose_spells(text):
     from abilities import starting_spells
-    from combatant import snakey
     spell_name = text.title()
     if spell_name not in starting_spells:
         game_out(f"That is not a valid option, please try again!", "error")
@@ -351,11 +353,10 @@ def choose_spells(text):
     else:
         game_out(f"{char_name}, your {player.player_class} is ready for combat!", "purple")
         gamestate = 8
-        combat_order(player, snakey)
+        opening_combat()
     
 def wizard_spells(text):
     from abilities import starting_spells
-    from combatant import snakey
     spell_name = text.title()
     if spell_name not in starting_spells:
         game_out(f"That is not a valid option, please try again!", "error")
@@ -366,12 +367,13 @@ def wizard_spells(text):
         game_out(f"{char_name}, your {player.player_class} is ready for combat!", "purple")
         global gamestate
         gamestate = 8
-        combat_order(player, snakey)
+        opening_combat()
     else:
         game_out(f"{spell_choice.name} is already in your list of spells!", "error")
 
-def tutorial_combat(text):
-    pass
+def opening_combat():
+    from combatant import snakey
+    combat_order(player, snakey)
         
 
 def gamestate8(text):

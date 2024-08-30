@@ -45,7 +45,7 @@ class Ability():
             victim.status[self.effect][dot_key] = [self.duration, self.effect_int, self.name]
         else:
             victim.status[self.effect] = {"dot1": [self.duration, self.effect_int, self.name]}
-        game_out(f"Damage over time effect applied to {victim.name}")
+        game_out(f"Damage over time effect applied to {victim.name}", "dot")
         user.basic_attack(victim)
         
     def vulnerability(self, user, victim): #ninja tear flesh
@@ -60,12 +60,16 @@ class Ability():
     def raise_avoidance(self, user, victim): #warrior defensive strike
         user.status["raise_avoidance"] = [self.duration, self.effect_int, self.name]
         user.set_avoidance()
+        set_char_stats()
+        game_out(f"{user.name} uses {self.name} to increas avoidance for {self.duration} attacks")
         if self.damage:
             user.basic_attack(victim, self.damage)
     
     def raise_deflection(self, user, victim): #ninja shadow guise
         user.status["raise_deflection"] = [self.duration, self.effect_int, self.name]
         user.set_deflection()
+        set_char_stats()
+        game_out(f"{user.name} uses {self.name} to increas deflection for {self.duration} attacks")
         if self.damage:
             user.basic_attack(victim, self.damage)
     
@@ -74,6 +78,8 @@ class Ability():
             victim.take_damage(self.damage)
         elif self.effect_int == 1 and user.avoidance_check(victim):
             victim.take_damage(self.damage)
+        else:
+            game_out(f"{self.name} missed {victim.name}!")
         if self.name == "Comet":
             self.multi_target_damage(user, victim)
     
@@ -83,7 +89,7 @@ class Ability():
         game_out(f"Your next attack or style is guaranteed to hit", "blue")
     
     def lifedraw(self, user, victim): #warrior transfusion
-        total_life = randint(1, 6) + player.level
+        total_life = randint(1, 6) + user.level
         if user.resistance_check(victim):
             game_out(f"{user.name} stole {total_life} health from {victim.name}!", "blue")
         else:
@@ -92,8 +98,6 @@ class Ability():
         user.health += total_life
         victim.health -= total_life
 
-    
-    
     def reflect(self, user, victim):
         user.status["reflect"] = True
         #when building NPC action logic, find out where to put this
@@ -118,7 +122,9 @@ class Ability():
             
     
     def entangle(self, user, victim):
-        victim.status["entangled"] == [self.duration, self.effect_int, self.name]
+        victim.status["entangled"] = [self.duration, self.effect_int, self.name]
+        if not victim.player_class:
+            user.status["Ranged"] = [False, "status"]
         game_out(f"{victim.name} is entangled! They are unable to move!")
     
     def augment_attack(self, user, victim):
@@ -158,7 +164,7 @@ arcane_pulse = Style("Arcane Pulse", "multi_target_damage", effect_int=0, damage
 sweeping_strike = Style("Sweeping Strike", "multi_target_damage", effect_int=0, damage=5, duration=1, endurance_cost=25)
 defensive_strike = Style("Defensive Strike", "raise_avoidance", effect_int=1, damage=4, duration=2, endurance_cost=25)
 stealth = Style("Stealth", "stealth", effect_int=0, damage=0, duration=0, endurance_cost=25)
-heavy_strike = Style("Heavy Strike", "direct_damage", effect_int=0, damage=8, duration=1, endurance_cost=25)
+heavy_strike = Style("Heavy Strike", "direct_damage", effect_int=1, damage=8, duration=1, endurance_cost=25)
 bloody_strike = Style("Bloody Strike", "damage_over_time", effect_int=1, damage=6, duration=3, endurance_cost=25)
 fade = Style("Fade", "raise_deflection", effect_int=2, damage=0, duration=3, endurance_cost=25)
 
@@ -175,7 +181,6 @@ class Spell(Ability):
         
     def use_spell(self, user, victim):
         print(user.name, self.name, victim.name)
-        print(self.endurance_cost, user.endurance)
         if self.effect in user.status:
             game_out(f"You already benefit from {self.name}! Choose a different action.", "error")
             wait_player_input()
@@ -183,6 +188,7 @@ class Spell(Ability):
         if self.mana_cost <= user.mana:
             user.use_mana(self.mana_cost)
             self.ability_effect(user, victim)
+            set_char_stats()
             ask_extra_attack()
         else:
             game_out(f"Not enough mana to use this spell", "error")
@@ -196,7 +202,7 @@ shadow_guise = Spell("Shadow Guise", "raise_deflection", effect_int=2, damage=0,
 second_wind = Spell("Second Wind", "recover_resource", effect_int=0, damage=0, duration=0, mana_cost=50) #effect int will indicate which resource to recover
 vanish = Spell("Vanish", "leave_combat", effect_int=0, damage=0, duration=0, mana_cost=30)
 entangle = Spell("Entangle", "entangle", effect_int=3, damage=0, duration=3, mana_cost=25)
-comet = Spell("Comet", "direct_damage", effect_int=3, damage=12, duration=0, mana_cost=50) #effect int used for area of effect damage
+comet = Spell("Comet", "direct_damage", effect_int=2, damage=12, duration=0, mana_cost=50) #effect int used for area of effect damage
 missile_barrage = Spell("Missile Barrage", "automatic_hit", effect_int=0, damage=6, duration=0, mana_cost=40)
 
 starting_spells = {"Transfusion": transfusion, "Spell Reflect": spell_reflect,

@@ -20,7 +20,7 @@ dagger = Weapon("Dagger", size=3, cost=3, stat=None, min_stat_req=None, slot=(("
 staff = Weapon("Staff", size=7, cost=10, stat="acuity", min_stat_req=10, slot=("Mhand", "Ohand"), damage=6)
 sword = Weapon("Sword", size=5, cost=5, stat=("strength", "agility"), min_stat_req=7, slot=("Mhand"), damage=5)
 shurikens = Weapon("Shurikens", size=1, cost=1, stat="agility", min_stat_req=7, slot=("Mhand", "Ohand"), damage=4)
-shield = Weapon("Shield", size=6, cost=3, stat=("strength", "acuity", "agility"), min_stat_req=3, damage=("Ohand"))
+shield = Weapon("Shield", size=6, cost=3, stat=("strength", "acuity", "agility"), min_stat_req=3, slot=("Ohand"))
 zweihander = Weapon("Zweihander", size=14, cost=10, stat="strength", min_stat_req=10, slot=("Mhand", "Ohand"), damage=8)
 rod = Weapon("Rod", size=5, cost=7, stat="acuity", min_stat_req=7, slot=("Mhand"), damage=4)
 claws = Weapon("Claws", size=3, cost=10, stat="agility", min_stat_req=10, slot=("Mhand", "Ohand"), damage=5)

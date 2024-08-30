@@ -1,6 +1,6 @@
 from random import randint
 from maps import *
-from items import starting_weapons, armor
+from items import *
 from abilities import *
 from graphics import game_out
 
@@ -38,7 +38,7 @@ class Combatant():
         self.spells = []
         self.styles = []
         self.inventory = {}
-        self.status = {"Ranged": False}
+        self.status = {"Ranged": [False, "status"]}
         self.equipment = {"Mhand": None, "Ohand": None, "Armor": None}
         self.base_damage = base_damage
         self.initiative = initiative
@@ -105,7 +105,7 @@ class Combatant():
             stat_check = max_stat
         if self.__getattribute__(stat_check) < Item.min_stat_req:
             game_out(f"You need {Item.min_stat_req} {stat_check} to equip this item")
-        elif self.equipment[equipment_slot] != None:
+        elif self.equipment[equipment_slot]:
             game_out(f"You currently have {self.equipment[Item.slot[0]]} equipped!")
             self.unequip_item(self.equipment[Item.slot[0]])
         else:
@@ -160,7 +160,7 @@ class Combatant():
     
     def set_deflection(self):
         self.deflection = int((self.equipment["Armor"].deflection_rating) / 2)
-        if self.status["Ranged"] == True:
+        if self.status["Ranged"][0] == True:
             self.deflection += 1
         if "raise_deflection" in self.status:
             self.deflection += self.status["raise_deflection"][1]
@@ -183,7 +183,7 @@ class Combatant():
         if "raise_avoidance" in Combatant.status:
             Combatant.status["raise_avoidance"][0] -= 1
             if Combatant.status["raise_avoidance"][0] == 0:
-                game_out(f"Bonus avoidance from {Combatant.status['raise_avoidance'][2]} has ended")
+                game_out(f"Bonus avoidance from {Combatant.status['raise_avoidance'][2]} ends after next attack.")
                 del Combatant.status["raise_avoidance"]
                 Combatant.set_avoidance()
         attack_roll_result = self.attack_roll()    
@@ -224,6 +224,7 @@ class Combatant():
         
         if "augment_attack" in self.status:
             damage += self.status["augment_attack"][1]
+            game_out(f"{self.status['augment_attack'][2]} adds {self.status['augment_attack'][1]} to your damage!")
             self.status["augment_attack"][0] -= 1
             if self.status["augment_attack"][0] == 0:
                 del self.status["augment_attack"]
@@ -267,7 +268,7 @@ class Combatant():
                 enemies.remove(self)
             return True
         if self.health <= 0 and self.player_class:
-            game_out(f"You play dead until the threat has passed")
+            game_out(f"You play dead until the threat has passed.", "error")
             
     def target_check(self):
         if self.player_class:

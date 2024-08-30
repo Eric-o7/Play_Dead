@@ -78,6 +78,9 @@ game_text.tag_configure("purple", background = "#212121",
 game_text.tag_configure("error", background = "#212121", 
                         font=("Times New Roman", 11), 
                         foreground = "#e02012")
+game_text.tag_configure("dot", background = "#69070b", 
+                        font=("Times New Roman", 9), 
+                        foreground = "#ebe6e6")
 
 #output to text box with optional text arguments
 def game_out(text, tags = "user"):

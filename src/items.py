@@ -18,15 +18,15 @@ class Weapon(Item):
         
 dagger = Weapon("Dagger", size=3, cost=3, stat=None, min_stat_req=None, slot=(("Mhand")), damage=4)
 staff = Weapon("Staff", size=7, cost=10, stat="acuity", min_stat_req=10, slot=("Mhand", "Ohand"), damage=6)
-sword = Weapon("Sword", size=5, cost=5, stat=("strength", "agility"), min_stat_req=7, slot=("Mhand"), damage=5)
+bowie_knife = Weapon("Knife", size=5, cost=5, stat=("strength", "agility"), min_stat_req=7, slot=("Mhand"), damage=5)
 shurikens = Weapon("Shurikens", size=1, cost=1, stat="agility", min_stat_req=7, slot=("Mhand", "Ohand"), damage=4)
 shield = Weapon("Shield", size=6, cost=3, stat=("strength", "acuity", "agility"), min_stat_req=3, slot=("Ohand"))
-zweihander = Weapon("Zweihander", size=14, cost=10, stat="strength", min_stat_req=10, slot=("Mhand", "Ohand"), damage=8)
-rod = Weapon("Rod", size=5, cost=7, stat="acuity", min_stat_req=7, slot=("Mhand"), damage=4)
+hatchet = Weapon("Hatchet", size=14, cost=10, stat="strength", min_stat_req=10, slot=("Mhand", "Ohand"), damage=8)
+wand = Weapon("Wand", size=5, cost=7, stat="acuity", min_stat_req=7, slot=("Mhand"), damage=4)
 claws = Weapon("Claws", size=3, cost=10, stat="agility", min_stat_req=10, slot=("Mhand", "Ohand"), damage=5)
 
-starting_weapons = {"Sword": sword, "Zweihander": zweihander,
-           "Rod": rod, "Staff": staff,
+starting_weapons = {"Knife": bowie_knife, "Hatchet": hatchet,
+           "Wand": wand, "Staff": staff,
            "Shurikens": shurikens, "Claws": claws,
            "Shield": shield, "Dagger": dagger}
 
@@ -39,14 +39,14 @@ class Armor(Item):
         self.deflection_rating = deflection_rating
 
 tunic = Armor("Tunic", size=2, cost=1, stat=None, min_stat_req=None, slot=("Armor"), deflection_rating=0)
-robe = Armor("Robe", size=3, cost=5, stat="acuity", min_stat_req=7, slot=("Armor"), deflection_rating=2)
-leather_vest = Armor("Leather Vest", size=4, cost=6, stat="agility", min_stat_req=7, slot=("Armor"), deflection_rating=4)
-chain_mail = Armor("Chain Mail", size=8, cost=8, stat="strength", min_stat_req=7, slot=("Armor"), deflection_rating=6)
-breastplate = Armor("Breastplate", size=14, cost=18, stat="strength", min_stat_req=10, slot=("Armor"), deflection_rating=8)
+leafrobe = Armor("Leaf Robe", size=3, cost=5, stat="acuity", min_stat_req=7, slot=("Armor"), deflection_rating=0)
+snakeweave = Armor("Snakeweave", size=4, cost=6, stat="agility", min_stat_req=7, slot=("Armor"), deflection_rating=2)
+pinecone_mail = Armor("Pinecone Mail", size=8, cost=8, stat="strength", min_stat_req=7, slot=("Armor"), deflection_rating=4)
+barkplate = Armor("Barkplate", size=14, cost=18, stat="strength", min_stat_req=10, slot=("Armor"), deflection_rating=6)
 
 
-armor = {"Tunic": tunic, "Robe": robe, "Leather Vest": leather_vest,
-         "Chain Mail": chain_mail, "Breastplate": breastplate}
+armor = {"Tunic": tunic, "Leaf Robe": leafrobe, "Snakeweave": snakeweave,
+         "Pinecone Mail": pinecone_mail, "Barkplate": barkplate}
  
     
 

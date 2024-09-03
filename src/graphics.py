@@ -95,11 +95,11 @@ def add_to_game_out(event=None):
     if text_entry.get():
         text = text_entry.get()
         text_entry.delete(0, tk.END)
-        # print(f"State: {gstate}")
+        print(f"State: {gamestate}")
         if combatstate > 1:
             return combatstate_bus(text)
         return gamestate_bus(text)
-
+    
 #title/credits printed upon execution
 with open("text_files/narrative.txt") as start:
     start = start.readlines()

@@ -170,14 +170,16 @@ class Combatant():
         first_die, second_die = randint(1,6), randint(1,6)
         attack_roll_result = first_die + second_die + (self.primary_stat - 5) + self.level
         return attack_roll_result
+    
+
         
     def avoidance_check(self, Combatant):
         temp_avoidance = Combatant.avoidance
-        if "stealth" in self.status and self.player_class:
-            game_out(f"{self.name} automatically hits {Combatant.name} from stealth!", "purple")
-            del self.status["stealth"]
+        if "Stealth" in self.status and self.player_class:
+            game_out(f"{self.name} automatically hits {Combatant.name} from Stealth!", "purple")
+            del self.status["Stealth"]
             return True
-        elif "stealth" in Combatant.status:
+        elif "Stealth" in Combatant.status:
             game_out(f"{self.name} tries to attack but cannot see you!")
             return False
         if "raise_avoidance" in Combatant.status:
@@ -195,10 +197,10 @@ class Combatant():
     
     def resistance_check(self, Combatant):
         attack_roll_result = self.attack_roll()
-        if "stealth" in self.status and self.player_class:
-            game_out(f"{self.name} has come out of stealth!", "purple")
-            del self.status["stealth"]
-        elif "stealth" in Combatant.status:
+        if "Stealth" in self.status and self.player_class:
+            game_out(f"{self.name} has come out of Stealth!", "purple")
+            del self.status["Stealth"]
+        elif "Stealth" in Combatant.status:
             game_out(f"{self.name} cannot see you!")
             return False
         if "reflect" in Combatant.status:
@@ -283,17 +285,12 @@ class Combatant():
         if self.speed >= speed_cost:
             self.speed -= speed_cost
             set_char_stats()
-        else:
-            game_out(f"Not enough speed", "error")
+
     
     def use_endurance(self, endurance_cost):
         if self.endurance >= endurance_cost:
             self.endurance -= endurance_cost
             return True
-        if self.player_class:
-            game_out(f"You do not have enough endurance to use that style. Please choose another action.")
-            global combatstate
-            combatstate = 2
             
     def add_spell(self, spell):
         self.spell_list.append(spell)
@@ -311,8 +308,8 @@ class Combatant():
         self.level+=1
         self.set_health()
 
-    # def __repr__(self):
-    #     print(f"Name {self.name}, max_speed {self.max_speed}")
+    def __repr__(self):
+        print(f"Name {self.name}, max_speed {self.max_speed}, status {self.status}")
 #avoidance = agility + level + 4 (2d6 + primary stat - 5 + level) 11/15
 #resistance = acuity + level + 4 (2d6 + primary stat - 5 + level) to hit
 
@@ -325,11 +322,11 @@ class Combatant():
 
 #max end/speed/mana = (level+stat)*10  (divide in 2 for NPC's because they will use it right away?)
 
-snakey = Combatant(name="Snakey", level=3 , health=18 , player_class=None, strength=6 , agility=7 , acuity=10 , 
-primary_stat=10 , avoidance=11 , resistance=15 , deflection=1 , map=None, coordinate=None, max_mana=130 , max_endurance=90 , 
-max_speed=100 , spells=[comet, missile_barrage, spell_reflect], styles=[arcane_pulse, tear_flesh], inventory={} , status={} , 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=6 , initiative=None , max_health=18 , 
-endurance=90 , speed=100 , mana=130)
+snakey = Combatant(name="Snakey", level=3, health=30, player_class=None, strength=6, agility=7, acuity=10, 
+primary_stat=10 , avoidance=11, resistance=15, deflection=1, map=None, coordinate=None, max_mana=130, max_endurance=90, 
+max_speed=100, spells=[comet, missile_barrage, spell_reflect], styles=[arcane_pulse, tear_flesh], inventory={}, status={"Ranged": [False, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=3, initiative=None, max_health=18, 
+endurance=90, speed=100, mana=130)
 
 earth_golem = Combatant("Earth Golem", 1, 20, None, 9, 4, 3, 9,
                         10, 8, 2, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 6) #CS 35 

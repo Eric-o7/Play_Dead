@@ -18,38 +18,38 @@ Ninja - Melee or ranged combatant that can make multiple low damage attacks. Hig
 
 
 ***WarriorWepsStart***
-You may choose SWORD and shield for higher avoidance, or a ZWEIHANDER for more damage.
+You may choose a bowie KNIFE and shield for higher avoidance, or a HATCHET for more damage.
 Your weapon determines what combat styles are available to you.
 ***WarriorWepsEnd***
 ***WizardWepsStart***
-You may choose ROD and shield for higher avoidance, or a STAFF for more damage and utility.
+You may choose briar WAND and shield for higher avoidance, or a gnarled STAFF for more damage and utility.
 Your weapon determines what combat styles are available to you.
 ***WizardWepsEnd***
 ***NinjaWepsStart***
-You may choose SHURIKENS for ranged attacks, or CLAWS for quick melee strikes.
+You may choose sharpened stone SHURIKENS for ranged attacks, or lengthened CLAWS for quick melee strikes.
 Your weapon determines what combat styles are available to you.
 ***NinjaWepsEnd***
 
 
-***ZweihanderStart***
+***HatchetStart***
 You may choose HEAVY STRIKE (heavy direct damage attack) or SWEEPING STRIKE (direct damage on multiple targets)
-***ZweihanderEnd***
+***HatchetEnd***
 
 ***StaffStart***
-You may choose ARCANE PULSE (direct damage on multiple targets) or FADE (raise deflection for a short period)
+You may choose ARCANE PULSE (direct damage on multiple targets), FIRE BOLT (direct damage ranged attack), or FADE (raise deflection for a short period)
 ***StaffEnd***
 
-***SwordStart***
+***KnifeStart***
 You may choose DEFENSIVE STRIKE (bonus to avoidance after an attack) or BLOODY STRIKE (damage over time effect)
-***SwordEnd***
+***KnifeEnd***
 
 ***ShurikensStart***
 You may choose STEALTH (automatic hit on next attack) or LOTUS BLOOM (direct damage on multiple targets)
 ***ShurikensEnd***
 
-***RodStart***
+***WandStart***
 You may choose FIRE BOLT (direct damage ranged attack) or FADE (raise deflection for a short period)
-***RodEnd***
+***WandEnd***
 
 ***ClawsStart***
 You may choose STEALTH (automatic hit on next attack) or TEAR FLESH (bonus damage on subsequent hits)

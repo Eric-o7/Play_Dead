@@ -1,5 +1,5 @@
 import time
-from random import randint
+import random
 from combatant import *
 from graphics import root, game_out, char_stats
 
@@ -8,6 +8,7 @@ def main():
 
 gamestate = 1
 combatstate = 1
+combatround = 0
 
 def delay(seconds):
     time.sleep(seconds)
@@ -28,7 +29,7 @@ def gamestate_bus(text):
     elif gamestate == 7:
         wizard_spells(text)
     elif gamestate == 8:
-        tutorial_combat(text)
+        pass
         
 def combatstate_bus(text, *args):
     if combatstate == 1:
@@ -61,6 +62,7 @@ def combat_order(player, *args):
     game_out(f"You rolled an initiative score of {player.initiative}!")
     for combatant in enemies:
         combatant.initiative = combatant.agility + randint(2,12)
+        combatant.status["Extra Attack"] = 0
         game_out(f"{combatant.name} rolled an initiative score of {combatant.initiative}!")
     enemies.sort(key = lambda x: x.initiative, reverse = True)
     global combatstate
@@ -75,7 +77,8 @@ def combat_order(player, *args):
         npc_action()      
 
 def player_action(text):
-    global player
+    global player, combatround
+    combatround +=1
     game_out(text)
     print([style.name for style in player.styles])
     print([spell.name for spell in player.spells])
@@ -121,6 +124,7 @@ def check_range(text): #combatstate 6
     if text.lower() not in {'yes', 'no'}:
         game_out(f"{text} is not a valid response, please enter Yes or No.", "error")
     if text.lower() == "no":
+        player.status["Ranged"][1] == "no"
         wait_player_input()
         return
     for e in enemies:
@@ -157,13 +161,52 @@ def npc_action():
             damage_over_time(e)
             if e.check_death():
                 return
+        npc_decision(e)
         e.basic_attack(player)#NPC action logic (need to work in spell reflect logic as well)
     set_char_stats()
     wait_player_input()
     
-def npc_decision(): #logic affecting conditions - entangled, stealth, 
-    pass
+def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra attack is its own function
+    global player
+    aoe_styles = {"Lotus Bloom", "Arcane Pulse", "Sweeping Strike"}
+    player_health_status = float(player.health  / player.max_health) * 100
+    enemy_health_status = float(enemy.health  / enemy.max_health) * 100
+    print(f"Player health: {player_health_status}%, Enemy health: {enemy_health_status}%")
+    print(f"Enemy resources: Speed - {enemy.speed}, Endurance - {enemy.endurance}, Mana - {enemy.mana}")
+    check_aoe = [style.name for style in enemy.styles if style.name in aoe_styles]
+    range_difference = True if player.status["Ranged"][0] == True and enemy.status["Ranged"][0] == False else False
+    if "Stealth" in player.status and len(check_aoe) > 0:
+        if enemy.endurance > check_aoe[0].endurance_cost:
+            check_aoe[0].use_style(enemy, player)
+    elif player_health_status > enemy_health_status:
+        if enemy.endurance > enemy.mana:
+            available_styles = [style for style in enemy.styles if enemy.endurance > style.endurance_cost]
+            if range_difference: available_styles = [style for style in available_styles if style.ranged == True]
+            if available_styles:
+                random_style = random.choice(available_styles)
+                random_style.use_style(enemy, player)
+            else:
+                npc_basic_attack(range_difference, enemy)
+        else:
+            available_spells = [spell for spell in enemy.spells if enemy.mana > spell.mana_cost]
+            if available_spells:
+                random_style = random.choice(available_spells)
+                random_style.use_spell(enemy, player)
+            else:
+                npc_basic_attack(range_difference, enemy)
+    print(enemy.status)
+    if enemy.speed > 30 and player_health_status > enemy_health_status and enemy.status["Extra Attack"] < combatround:
+        if npc_basic_attack(range_difference, enemy):
+            enemy.use_speed(30)
+            enemy.status["Extra Attack"] += 1
+    return wait_player_input()
     
+def npc_basic_attack(range_difference, enemy):
+    if range_difference and "Entangled" in enemy.status:
+        return game_out(f"{enemy.name} cannot attack while entangled.")
+    enemy.basic_attack(player)
+    return True
+
 def damage_over_time(enemy):
     for dot in enemy.status["damage_over_time"].copy():
         if enemy.status["damage_over_time"][dot][0] > 0:
@@ -277,7 +320,7 @@ Resistance: {player.resistance}""")
         
 def choose_class(text):
     from combatant import Combatant
-    from items import chain_mail, robe, leather_vest
+    from items import pinecone_mail, leafrobe, snakeweave
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
         game_out(f"That is not a valid option, please try entering the name of your class again!", "error")
@@ -289,11 +332,11 @@ def choose_class(text):
         game_out(f"You are {player.name} the {player.player_class}!\n", "purple_bold")
         game_out(f"Have some armor, {player.name}!", "blue")
         if player.player_class == "Warrior":
-            player.equip_item(chain_mail)
+            player.equip_item(pinecone_mail)
         elif player.player_class == "Wizard":
-            player.equip_item(robe)
+            player.equip_item(leafrobe)
         elif player.player_class == "Ninja":
-            player.equip_item(leather_vest)
+            player.equip_item(snakeweave)
         set_char_stats()
         #Choose equipment prompt
         game_out(f"Choose your starting weapon:\n", "blue_bold")

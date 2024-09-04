@@ -79,6 +79,8 @@ def combat_order(player, *args):
 def player_action(text):
     global player, combatround
     combatround +=1
+    if "damage_over_time" in player.status:
+        damage_over_time(player)
     game_out(text)
     print([style.name for style in player.styles])
     print([spell.name for spell in player.spells])
@@ -207,17 +209,17 @@ def npc_basic_attack(range_difference, enemy):
     enemy.basic_attack(player)
     return True
 
-def damage_over_time(enemy):
-    for dot in enemy.status["damage_over_time"].copy():
-        if enemy.status["damage_over_time"][dot][0] > 0:
-            enemy.status["damage_over_time"][dot][0] -= 1
-            enemy.health -= enemy.status["damage_over_time"][dot][1]
-            game_out(f"{enemy.name} takes {enemy.status['damage_over_time'][dot][1]} damage from {enemy.status['damage_over_time'][dot][2]}", "dot")
-            if enemy.status["damage_over_time"][dot][0] == 0:
-                del enemy.status["damage_over_time"][dot]
+def damage_over_time(combatant):
+    for dot in combatant.status["damage_over_time"].copy():
+        if combatant.status["damage_over_time"][dot][0] > 0:
+            combatant.status["damage_over_time"][dot][0] -= 1
+            combatant.health -= combatant.status["damage_over_time"][dot][1]
+            game_out(f"{combatant.name} takes {combatant.status['damage_over_time'][dot][1]} damage from {combatant.status['damage_over_time'][dot][2]}", "dot")
+            if combatant.status["damage_over_time"][dot][0] == 0:
+                del combatant.status["damage_over_time"][dot]
                 
         else:
-            del enemy.status["damage_over_time"][dot]
+            del combatant.status["damage_over_time"][dot]
 
 def extra_attack(text):
     if text.lower() == "yes":

@@ -324,9 +324,15 @@ class Combatant():
 
 snakey = Combatant(name="Snakey", level=3, health=30, player_class=None, strength=6, agility=7, acuity=10, 
 primary_stat=10 , avoidance=11, resistance=15, deflection=1, map=None, coordinate=None, max_mana=130, max_endurance=90, 
-max_speed=100, spells=[comet, missile_barrage, spell_reflect], styles=[arcane_pulse, tear_flesh], inventory={}, status={"Ranged": [False, "status"]}, 
+max_speed=60, spells=[comet, missile_barrage, spell_reflect], styles=[arcane_pulse, tear_flesh], inventory={}, status={"Ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=3, initiative=None, max_health=18, 
-endurance=90, speed=100, mana=130)
+endurance=90, speed=60, mana=130)
+
+lilsnake1 = Combatant(name="snake", level=1, health=6, player_class=None, strength=3, agility=7, acuity=3, 
+primary_stat=7, avoidance=10, resistance=9, deflection=1, map=None, coordinate=None, max_mana=0, max_endurance=30, 
+max_speed=30, spells=[], styles=[tear_flesh], inventory={}, status={"Ranged": [False, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=6, 
+endurance=30, speed=30, mana=0)
 
 earth_golem = Combatant("Earth Golem", 1, 20, None, 9, 4, 3, 9,
                         10, 8, 2, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 6) #CS 35 

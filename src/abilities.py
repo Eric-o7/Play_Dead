@@ -47,7 +47,8 @@ class Ability():
         else:
             victim.status[self.effect] = {"dot1": [self.duration, self.effect_int, self.name]}
         game_out(f"Damage over time effect applied to {victim.name}", "dot")
-        user.basic_attack(victim)
+        if self.name == "Bloody Strike":
+            user.basic_attack(victim)
         
     def vulnerability(self, user, victim): #ninja tear flesh
         if self.effect in victim.status:
@@ -172,15 +173,16 @@ class Style(Ability):
     
 #Styles
 firebolt = Style("Fire Bolt", "direct_damage", effect_int=2, damage=8, duration=1, ranged=True, endurance_cost=25)
-tear_flesh = Style("Tear Flesh", "vulnerability", effect_int=0, damage=3, duration=2, ranged=False, endurance_cost=25)
-lotus_bloom = Style("Lotus Bloom", "multi_target_damage", effect_int=0, damage=3, duration=1, ranged=True, endurance_cost=25)
-arcane_pulse = Style("Arcane Pulse", "multi_target_damage", effect_int=0, damage=3, duration=2, ranged=True, endurance_cost=25)
+tear_flesh = Style("Tear Flesh", "vulnerability", effect_int=0, damage=4, duration=2, ranged=False, endurance_cost=25)
+lotus_bloom = Style("Lotus Bloom", "multi_target_damage", effect_int=0, damage=5, duration=1, ranged=True, endurance_cost=25)
+arcane_pulse = Style("Arcane Pulse", "multi_target_damage", effect_int=0, damage=5, duration=2, ranged=True, endurance_cost=25)
 sweeping_strike = Style("Sweeping Strike", "multi_target_damage", effect_int=0, damage=5, duration=1, ranged=True, endurance_cost=25)
 defensive_strike = Style("Defensive Strike", "raise_avoidance", effect_int=1, damage=4, duration=2, ranged=False, endurance_cost=25)
 stealth = Style("Stealth", "stealth", effect_int=0, damage=0, duration=0, ranged=True, endurance_cost=25)
 heavy_strike = Style("Heavy Strike", "direct_damage", effect_int=1, damage=8, duration=1, ranged=False, endurance_cost=25)
 bloody_strike = Style("Bloody Strike", "damage_over_time", effect_int=1, damage=6, duration=3, ranged=False, endurance_cost=25)
 fade = Style("Fade", "raise_deflection", effect_int=2, damage=0, duration=3, ranged=True, endurance_cost=25)
+envenom = Style("Envenom", "damage_over_time", effect_int=1, damage=3, duration=2, ranged=False, endurance_cost=30)
 
 starting_styles = {"Fire Bolt": firebolt, "Tear Flesh": tear_flesh,
                    "Lotus Bloom": lotus_bloom, "Arcane Pulse": arcane_pulse,
@@ -218,6 +220,7 @@ second_wind = Spell("Second Wind", "recover_resource", effect_int=0, damage=0, d
 entangle = Spell("Entangle", "entangle", effect_int=3, damage=0, duration=3, ranged=True, mana_cost=25)
 comet = Spell("Comet", "direct_damage", effect_int=2, damage=12, duration=0, ranged=True, mana_cost=50) #effect int used for area of effect damage
 missile_barrage = Spell("Missile Barrage", "automatic_hit", effect_int=0, damage=6, duration=0, ranged=True, mana_cost=40)
+
 
 starting_spells = {"Transfusion": transfusion, "Spell Reflect": spell_reflect,
                    "Inflame Weapon": inflame_weapon, "Shadow Guise": shadow_guise,

@@ -91,9 +91,20 @@ def game_out(text, tags = "user"):
 
 #display content and progress game using gamestate()
 def add_to_game_out(event=None):
-    from main import gamestate_bus, gamestate, combatstate, combatstate_bus
+    from main import gamestate_bus, gamestate, combatstate, combatstate_bus, enemies, target, combatround
     if text_entry.get():
         text = text_entry.get()
+        if text.lower() in {"reset", "restart"}:
+            if text.lower() == "reset":
+                gamestate = 1
+                player = None
+                enemies = []
+                target = None
+                combatstate = 1
+                combatround = 0
+                gamestate_bus("start")
+                text_entry.delete(0, tk.END)
+                return
         text_entry.delete(0, tk.END)
         print(f"State: {gamestate}")
         if combatstate > 1:

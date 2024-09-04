@@ -1,7 +1,8 @@
 import time
 import random
-from combatant import *
-from graphics import root, game_out, char_stats
+import importlib
+
+from graphics import root, game_out, char_stats, narrative_out
 
 def main():
     root.mainloop()
@@ -13,7 +14,12 @@ combatround = 0
 def delay(seconds):
     time.sleep(seconds)
 
+def reset_game():
+    import os, sys
+    os.execl(sys.executable, *([sys.executable]+sys.argv))
+
 def gamestate_bus(text):
+    global gamestate
     if gamestate == 1:
         start_game(text)
     elif gamestate == 2:
@@ -55,13 +61,14 @@ target = None
 def combat_order(player, *args): 
     global enemies
     enemies = []
-    for combatant in args:
+    for combatant in args[0]:
+        print(combatant.name)
         combatant.initiative = None
         enemies.append(combatant)
-    player.initiative = player.agility + randint(2,12)
+    player.initiative = player.agility + random.randint(2,12)
     game_out(f"You rolled an initiative score of {player.initiative}!")
     for combatant in enemies:
-        combatant.initiative = combatant.agility + randint(2,12)
+        combatant.initiative = combatant.agility + random.randint(2,12)
         combatant.status["Extra Attack"] = 0
         game_out(f"{combatant.name} rolled an initiative score of {combatant.initiative}!")
     enemies.sort(key = lambda x: x.initiative, reverse = True)
@@ -74,7 +81,7 @@ def combat_order(player, *args):
         else:
             ask_player_target()    
     else:
-        npc_action()      
+        npc_action()   
 
 def player_action(text):
     global player, combatround
@@ -87,8 +94,8 @@ def player_action(text):
     if target == None:
         ask_player_target()
     game_out(f"{text}")
-    if (text.lower() == "attack" and (player.player_class == "Wizard" or
-        player.player_class == "Warrior")):
+    if (text.lower() == "attack" and (player.equipment["Mhand"].name != "Shurikens")
+        and player.equipment["Mhand"].name != "Wand"):
         if player.status["Ranged"] == True:
             player.status["Ranged"] = False
             player.set_deflection()
@@ -126,7 +133,7 @@ def check_range(text): #combatstate 6
     if text.lower() not in {'yes', 'no'}:
         game_out(f"{text} is not a valid response, please enter Yes or No.", "error")
     if text.lower() == "no":
-        player.status["Ranged"][1] == "no"
+        player.status["Ranged"][1] = "no"
         wait_player_input()
         return
     for e in enemies:
@@ -147,6 +154,7 @@ def ask_extra_attack():
         game_out(f"Respond with YES or NO")
         global combatstate
         combatstate = 5
+        return
     else:
         npc_action()
 
@@ -162,10 +170,12 @@ def npc_action():
         if "damage_over_time" in e.status:
             damage_over_time(e)
             if e.check_death():
+                if len(enemies) == 0:
+                    gamestate_bus()
                 return
+        print([style.name for style in e.styles])
         npc_decision(e)
         e.basic_attack(player)#NPC action logic (need to work in spell reflect logic as well)
-    set_char_stats()
     wait_player_input()
     
 def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra attack is its own function
@@ -177,6 +187,8 @@ def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra
     print(f"Enemy resources: Speed - {enemy.speed}, Endurance - {enemy.endurance}, Mana - {enemy.mana}")
     check_aoe = [style.name for style in enemy.styles if style.name in aoe_styles]
     range_difference = True if player.status["Ranged"][0] == True and enemy.status["Ranged"][0] == False else False
+    for style in enemy.styles:
+        print(style.name)
     if "Stealth" in player.status and len(check_aoe) > 0:
         if enemy.endurance > check_aoe[0].endurance_cost:
             check_aoe[0].use_style(enemy, player)
@@ -184,9 +196,12 @@ def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra
         if enemy.endurance > enemy.mana:
             available_styles = [style for style in enemy.styles if enemy.endurance > style.endurance_cost]
             if range_difference: available_styles = [style for style in available_styles if style.ranged == True]
+            for style in available_styles:
+                print(style.name)
             if available_styles:
                 random_style = random.choice(available_styles)
                 random_style.use_style(enemy, player)
+                game_out(f"{enemy.name} uses {random_style.name}!")
             else:
                 npc_basic_attack(range_difference, enemy)
         else:
@@ -197,11 +212,12 @@ def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra
             else:
                 npc_basic_attack(range_difference, enemy)
     print(enemy.status)
+    set_char_stats()
     if enemy.speed > 30 and player_health_status > enemy_health_status and enemy.status["Extra Attack"] < combatround:
         if npc_basic_attack(range_difference, enemy):
             enemy.use_speed(30)
             enemy.status["Extra Attack"] += 1
-    return wait_player_input()
+    return 
     
 def npc_basic_attack(range_difference, enemy):
     if range_difference and "Entangled" in enemy.status:
@@ -226,6 +242,7 @@ def extra_attack(text):
         global player
         player.use_speed(30)
         player.basic_attack(target)
+        set_char_stats()
         ask_extra_attack()
     elif text.lower() == "no":
         npc_action()
@@ -233,7 +250,7 @@ def extra_attack(text):
         game_out(f"{text} is not a valid response, please enter Yes or No", "error")
 
 def wait_player_input():
-    if ((player.player_class == "Wizard" or player.equipment["Mhand"].name == "Shurikens")
+    if ((player.equipment["Mhand"].name == "Wand" or player.equipment["Mhand"].name == "Shurikens")
         and player.status["Ranged"] == [False, "status"]):
         ask_attack_range()
     else:
@@ -285,23 +302,25 @@ def narrative_read(identifier:str, tag = "blue"):
             section.append(count)
         count += 1
     for line in range(section[0]+1, section[1]):
-        game_out(narrative[line], tag)
+        narrative_out(narrative[line], tag)
         
 def start_game(text):
     if text.lower() == "start":
         game_out(text.capitalize())
         #Enter name prompt
-        game_out("Enter character name:", "blue_bold")
+        # game_out("Enter character name:", "blue_bold")
+        narrative_read("Intro")
         global gamestate
         gamestate = 2
         
 def enter_name(text):
     if 1 < len(text) < 13:
         game_out(text)
-        game_out(f"Welcome, {text.capitalize()}!", "purple_bold")
+        game_out(f"What a wonderful name, {text.capitalize()}!", "purple_bold")
         global char_name 
         char_name = text.capitalize()
         #Choose class prompt
+        game_out(f"Now tell us how you would like to defend yourself in battle. Choose your class.", "blue")
         narrative_read("ClassDesc")
         global gamestate
         gamestate = 3
@@ -310,7 +329,7 @@ def enter_name(text):
 
 def set_char_stats():
     if player:
-        char_stats.set(f""" Character Stats \n\n\n {player.name}\n the\n {player.player_class}\n
+        char_stats.set(f""" Player Info \n\n\n {player.name}\n the\n {player.player_class}\n
 Level: {player.level}\n
 Health: {player.health} / {player.max_health}
 Mana: {player.mana} / {player.max_mana}
@@ -329,7 +348,7 @@ def choose_class(text):
     else:
         game_out(text)
         global player
-        player = Combatant(char_name, 1, 0, player_class)
+        player = Combatant(char_name, 1, 0, player_class, styles=[], spells=[])
         player.set_playerclass(player_class)
         game_out(f"You are {player.name} the {player.player_class}!\n", "purple_bold")
         game_out(f"Have some armor, {player.name}!", "blue")
@@ -417,15 +436,36 @@ def wizard_spells(text):
         game_out(f"{spell_choice.name} is already in your list of spells!", "error")
 
 def opening_combat():
-    from combatant import snakey
-    combat_order(player, snakey)
+    from combatant import dire_beetle
+    combat_order(player, [dire_beetle])
         
 
-def gamestate8(text):
-    pass     
+def post_tutorial_combat(text):
+    pass
+#read from narrative - 
 
 
-
+def restart_combat():
+    enemies.append(player)
+    status_conditions = {"damage_over_time", "entangled", "vulnerability", "raise_avoidance", "raise_deflection", "stealth", "reflect"}
+    for e in enemies:
+        e.health = e.max_health
+        e.endurance = e.max_endurance
+        e.speed = e.max_speed
+        e.mana = e.max_mana
+        e.status["Ranged"][1] = "status"
+        for condition in status_conditions:
+            if condition in e.status:
+                del e.status[condition]
+    enemies.pop()
+    global combatround, combatstate
+    combatstate = 1
+    combatround = 0
+    print([enemy.name for enemy in enemies])
+    combat_order(player, enemies)
+    set_char_stats()
+    
+    
 
 if __name__ == "__main__":        
     main()

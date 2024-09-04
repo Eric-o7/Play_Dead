@@ -1,4 +1,6 @@
-from main import *
+from random import randint
+from graphics import game_out
+import main
 
 class Ability():
     def __init__(self, name, effect: str, effect_int:int, damage: range, duration: int, ranged:bool):
@@ -62,7 +64,7 @@ class Ability():
     def raise_avoidance(self, user, victim): #warrior defensive strike
         user.status["raise_avoidance"] = [self.duration, self.effect_int, self.name]
         user.set_avoidance()
-        set_char_stats()
+        main.set_char_stats()
         game_out(f"{user.name} uses {self.name} to increas avoidance for {self.duration} attacks")
         if self.damage:
             user.basic_attack(victim, self.damage)
@@ -70,7 +72,7 @@ class Ability():
     def raise_deflection(self, user, victim): #ninja shadow guise
         user.status["raise_deflection"] = [self.duration, self.effect_int, self.name]
         user.set_deflection()
-        set_char_stats()
+        main.set_char_stats()
         game_out(f"{user.name} uses {self.name} to increas deflection for {self.duration} attacks")
         if self.damage:
             user.basic_attack(victim, self.damage)
@@ -95,7 +97,7 @@ class Ability():
         if victim.health == victim.max_health and user.player_class:
             user.use_mana(-50)
             game_out(f"Your opponent must be wounded before you can draw their life.", "error")
-            return wait_player_input()
+            return main.wait_player_input()
         if user.resistance_check(victim):
             game_out(f"{user.name} stole {total_life} health from {victim.name}!", "blue")
         else:
@@ -107,9 +109,6 @@ class Ability():
     def reflect(self, user, victim):
         user.status["reflect"] = True
         #when building NPC action logic, find out where to put this
-    
-    def leave_combat(self, user, victim):
-        pass
     
     def recover_resource(self, user, victim):
         #effect int key: 0-speed, 1-mana, 2-endurance
@@ -129,13 +128,13 @@ class Ability():
                     del e.status["Stealth"]
             return
         else:
-            player.take_damage(aoe_damage)
-            if "Stealth" in player.status:
+            main.player.take_damage(aoe_damage)
+            if "Stealth" in main.player.status:
                 game_out(f"Your location has been revealed, you lose the stealth effect!")
-                del player.status["Stealth"]
+                del main.player.status["Stealth"]
             
     def entangle(self, user, victim):
-        victim.status["Entangled"] = [self.duration, self.effect_int, self.name]
+        victim.status["entangled"] = [self.duration, self.effect_int, self.name]
         if not victim.player_class:
             user.status["Ranged"] = [False, "status"]
         game_out(f"{victim.name} is entangled! They are unable to move!")
@@ -159,17 +158,17 @@ class Style(Ability):
         print(self.endurance_cost, user.endurance)
         if self.effect in user.status and user.player_class:
             game_out(f"You already benefit from {self.name}! Choose a different action.", "error")
-            wait_player_input()
+            main.wait_player_input()
             return
         if self.endurance_cost <= user.endurance:
             user.use_endurance(self.endurance_cost)
             self.ability_effect(user, victim)
-            set_char_stats()
+            main.set_char_stats()
             if user.player_class:
-                ask_extra_attack()
+                main.ask_extra_attack()
         else:
             game_out(f"Not enough endurance to use this style", "error")
-            wait_player_input()
+            main.wait_player_input()
     
 #Styles
 firebolt = Style("Fire Bolt", "direct_damage", effect_int=2, damage=8, duration=1, ranged=True, endurance_cost=25)
@@ -199,17 +198,17 @@ class Spell(Ability):
         print(user.name, self.name, victim.name)
         if self.effect in user.status and user.player_class:
             game_out(f"You already benefit from {self.name}! Choose a different action.", "error")
-            wait_player_input()
+            main.wait_player_input()
             return
         if self.mana_cost <= user.mana:
             user.use_mana(self.mana_cost)
             self.ability_effect(user, victim)
-            set_char_stats()
+            main.set_char_stats()
             if user.player_class:
-                ask_extra_attack()
+                main.ask_extra_attack()
         else:
             game_out(f"Not enough mana to use this spell", "error")
-            wait_player_input()
+            main.wait_player_input()
         
 #Spells
 transfusion = Spell("Transfusion", "lifedraw", effect_int=0, damage=6, duration=0, ranged=True, mana_cost=50) #use player.level as effect int to modify damage

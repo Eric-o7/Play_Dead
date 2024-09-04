@@ -17,13 +17,13 @@ class Weapon(Item):
         self.damage = damage
         
 dagger = Weapon("Dagger", size=3, cost=3, stat=None, min_stat_req=None, slot=(("Mhand")), damage=4)
-staff = Weapon("Staff", size=7, cost=10, stat="acuity", min_stat_req=10, slot=("Mhand", "Ohand"), damage=6)
+staff = Weapon("Staff", size=7, cost=10, stat="acuity", min_stat_req=10, slot=("Mhand", "Ohand"), damage=8)
 bowie_knife = Weapon("Knife", size=5, cost=5, stat=("strength", "agility"), min_stat_req=7, slot=("Mhand"), damage=5)
 shurikens = Weapon("Shurikens", size=1, cost=1, stat="agility", min_stat_req=7, slot=("Mhand", "Ohand"), damage=4)
 shield = Weapon("Shield", size=6, cost=3, stat=("strength", "acuity", "agility"), min_stat_req=3, slot=("Ohand"))
-hatchet = Weapon("Hatchet", size=14, cost=10, stat="strength", min_stat_req=10, slot=("Mhand", "Ohand"), damage=8)
+hatchet = Weapon("Hatchet", size=14, cost=10, stat="strength", min_stat_req=10, slot=("Mhand", "Ohand"), damage=10)
 wand = Weapon("Wand", size=5, cost=7, stat="acuity", min_stat_req=7, slot=("Mhand"), damage=4)
-claws = Weapon("Claws", size=3, cost=10, stat="agility", min_stat_req=10, slot=("Mhand", "Ohand"), damage=5)
+claws = Weapon("Claws", size=3, cost=10, stat="agility", min_stat_req=10, slot=("Mhand", "Ohand"), damage=6)
 
 starting_weapons = {"Knife": bowie_knife, "Hatchet": hatchet,
            "Wand": wand, "Staff": staff,

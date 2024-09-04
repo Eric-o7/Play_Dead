@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+
 root = tk.Tk()
 root.geometry("800x600")
 root.title("Start Game")
@@ -88,25 +89,34 @@ def game_out(text, tags = "user"):
     game_text.insert(tk.END, f"{text}\n", tags)
     game_text.configure(state = "disabled")
     game_text.see(tk.END)
+    
+def narrative_out(text, tags = "user"):
+    for char in range(0, len(text)):
+        game_text.configure(state = "normal")
+        game_text.insert(tk.END, text[char], tags)
+        game_text.configure(state = "disabled")
+        game_text.see(tk.END)
+        # char += 1
+        # root.after(100, narrative_out, text[char:])
+
 
 #display content and progress game using gamestate()
 def add_to_game_out(event=None):
-    from main import gamestate_bus, gamestate, combatstate, combatstate_bus, enemies, target, combatround
+    from main import gamestate_bus, combatstate, combatstate_bus,  restart_combat, combat_order, reset_game
     if text_entry.get():
         text = text_entry.get()
         if text.lower() in {"reset", "restart"}:
             if text.lower() == "reset":
-                gamestate = 1
-                player = None
-                enemies = []
-                target = None
-                combatstate = 1
-                combatround = 0
-                gamestate_bus("start")
-                text_entry.delete(0, tk.END)
-                return
+                reset_game()
+            else:
+                if combatstate > 1:
+                    restart_combat()
+                else:
+                    game_out(f"You're currently not in combat", "error")
+            text_entry.delete(0, tk.END)
+            return
         text_entry.delete(0, tk.END)
-        print(f"State: {gamestate}")
+        # print(f"State: {gamestate}")
         if combatstate > 1:
             return combatstate_bus(text)
         return gamestate_bus(text)
@@ -142,3 +152,4 @@ text_entry.bind("<Return>", add_to_game_out)
 
 enter_button = ttk.Button(entry_frame, text = "Enter", command = add_to_game_out)
 enter_button.grid(row = 0, column = 1, sticky = "nsew", padx = 10)
+

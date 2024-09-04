@@ -1,8 +1,8 @@
-from random import randint
-from maps import *
-from items import *
-from abilities import *
+import random
+import abilities
 from graphics import game_out
+from items import *
+import time
 
 class Combatant():
     combatant_list = []
@@ -11,7 +11,6 @@ class Combatant():
                  agility: int = None, acuity: int = None, 
                  primary_stat: int = None, avoidance: int = None,
                  resistance: int = None, deflection: int = None,  
-                 map: str = None, coordinate: tuple = None,
                  max_mana: int = None, max_endurance: int = None,
                  max_speed: int = None, spells: list = None, styles: list = None, 
                  inventory: dict = None, status: dict = None,
@@ -30,13 +29,11 @@ class Combatant():
         self.avoidance = avoidance
         self.resistance = resistance
         self.deflection = deflection
-        self.map = tutorial.name
-        self.coordinate = coordinate
         self.max_mana = max_mana
         self.max_endurance = max_endurance
         self.max_speed = max_speed
-        self.spells = []
-        self.styles = []
+        self.spells = spells
+        self.styles = styles
         self.inventory = {}
         self.status = {"Ranged": [False, "status"]}
         self.equipment = {"Mhand": None, "Ohand": None, "Armor": None}
@@ -167,7 +164,7 @@ class Combatant():
 
 #2d6 plus primary stat -4 plus level
     def attack_roll(self):
-        first_die, second_die = randint(1,6), randint(1,6)
+        first_die, second_die = random.randint(1,6), random.randint(1,6)
         attack_roll_result = first_die + second_die + (self.primary_stat - 5) + self.level
         return attack_roll_result
     
@@ -255,9 +252,9 @@ class Combatant():
         if style_damage:
             damage = style_damage
         elif self.player_class:
-            damage = randint(1,(self.equipment["Mhand"].damage)) + self.level
+            damage = random.randint(1,(self.equipment["Mhand"].damage)) + self.level
         else:
-            damage = randint(1,self.base_damage) + self.level
+            damage = random.randint(1,self.base_damage) + self.level
         if self.avoidance_check(Combatant):
             game_out(f"{self.name} rolled {damage} for damage")
             Combatant.take_damage(damage)
@@ -271,12 +268,7 @@ class Combatant():
             return True
         if self.health <= 0 and self.player_class:
             game_out(f"You play dead until the threat has passed.", "error")
-            
-    def target_check(self):
-        if self.player_class:
-            return "You"
-        else:
-            return "You were"
+            game_out(f"Would you like to RESTART combat or CONTINUE the story?", "purple bold")
         
     def use_mana(self, mana_cost):
         self.mana -= mana_cost
@@ -284,9 +276,7 @@ class Combatant():
     def use_speed(self, speed_cost):
         if self.speed >= speed_cost:
             self.speed -= speed_cost
-            set_char_stats()
 
-    
     def use_endurance(self, endurance_cost):
         if self.endurance >= endurance_cost:
             self.endurance -= endurance_cost
@@ -307,6 +297,9 @@ class Combatant():
     def level_up(self):
         self.level+=1
         self.set_health()
+        self.set_mana()
+        self.set_speed()
+        self.set_endurance()
 
     def __repr__(self):
         print(f"Name {self.name}, max_speed {self.max_speed}, status {self.status}")
@@ -323,44 +316,34 @@ class Combatant():
 #max end/speed/mana = (level+stat)*10  (divide in 2 for NPC's because they will use it right away?)
 
 snakey = Combatant(name="Snakey", level=3, health=30, player_class=None, strength=6, agility=7, acuity=10, 
-primary_stat=10 , avoidance=11, resistance=15, deflection=1, map=None, coordinate=None, max_mana=130, max_endurance=90, 
-max_speed=60, spells=[comet, missile_barrage, spell_reflect], styles=[arcane_pulse, tear_flesh], inventory={}, status={"Ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=3, initiative=None, max_health=18, 
+primary_stat=10 , avoidance=11, resistance=15, deflection=1, max_mana=130, max_endurance=90, 
+max_speed=60, spells=[abilities.comet, abilities.missile_barrage, abilities.spell_reflect], styles=[abilities.arcane_pulse, abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=18, 
 endurance=90, speed=60, mana=130)
 
 lilsnake1 = Combatant(name="snake", level=1, health=6, player_class=None, strength=3, agility=7, acuity=3, 
-primary_stat=7, avoidance=10, resistance=9, deflection=1, map=None, coordinate=None, max_mana=0, max_endurance=30, 
-max_speed=30, spells=[], styles=[tear_flesh], inventory={}, status={"Ranged": [False, "status"]}, 
+primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
+max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=6, 
 endurance=30, speed=30, mana=0)
 
-earth_golem = Combatant("Earth Golem", 1, 20, None, 9, 4, 3, 9,
-                        10, 8, 2, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 6) #CS 35 
-goblin_bonemage = Combatant("Goblin Bone Mage", 1, 15, None, 4, 7, 7, 12,
-                            12, 12, 0, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 4) #CS 27
-mud_golem = Combatant("Mud Golem", 1, 20, None, 7, 3, 3, 7,
-                        8, 6, 1, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 4) #CS 30
-black_bear = Combatant("Black Bear", 1, 20, None, 12, 6, 1, 12,
-                        10, 3, 1, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 6) #CS 29.5
-dire_fox = Combatant("Dire Fox", 1, 25, None, 10, 12, 3, 12,
-                        16, 6, 1, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 8) #CS 39
-fire_sprite = Combatant("Fire Sprite", 1, 10, None, 7, 7, 7, 7,
-                            10, 10, 1, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 3)
-water_sprite = Combatant("Water Sprite", 1, 10, None, 5, 10, 4, 10,
-                            15, 7, 1, None, None, 50, 50, 50, [], [], {}, {}, base_damage = 3)
+lilsnake2 = Combatant(name="snake", level=1, health=6, player_class=None, strength=3, agility=7, acuity=3, 
+primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
+max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=6, 
+endurance=30, speed=30, mana=0)
+
+dire_beetle = Combatant(name="Dire Beetle", level=1, health=12, player_class=None, strength=10, agility=5, acuity=3, 
+primary_stat=10, avoidance=8, resistance=12, deflection=2, max_mana=0, max_endurance=60, 
+max_speed=30, spells=[], styles=[abilities.heavy_strike], inventory={}, status={"Ranged": [False, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=12, 
+endurance=60, speed=30, mana=0)
+
 
 if __name__ == "__main__":
-
-    snakey.__repr__()
-    # def calculate_npc_challenge(*args):
-    #     print(args)
-    #     for combatant in args[0]:
-    #         combatant.assign_styles()
-    #     for combatant in args[0]:
-    #         challenge_score = (combatant.health + (combatant.deflection * 3)
-    #                         + ((combatant.avoidance + combatant.resistance) / 2)
-    #                         + (len(combatant.styles)*4) + (len(combatant.spells)*4))
-    #         print(f"{combatant.name} challenge score is {challenge_score}")
-    
-    # calculate_npc_challenge(Combatant.combatant_list)
-    # print(mud_golem.styles[0].name)
+    def print_slow(text):
+        for char in text:
+            print(char)
+            time.sleep(.5)
+    print_slow(abilities.comet.name)
+    # print([style.name for style in dire_beetle.styles])

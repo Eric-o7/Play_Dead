@@ -65,7 +65,7 @@ class Ability():
         user.status["raise_avoidance"] = [self.duration, self.effect_int, self.name]
         user.set_avoidance()
         main.set_char_stats()
-        game_out(f"{user.name} uses {self.name} to increas avoidance for {self.duration} attacks")
+        game_out(f"{user.name} uses {self.name} to increase avoidance for {self.duration} attacks", "effects")
         if self.damage:
             user.basic_attack(victim, self.damage)
     
@@ -73,7 +73,7 @@ class Ability():
         user.status["raise_deflection"] = [self.duration, self.effect_int, self.name]
         user.set_deflection()
         main.set_char_stats()
-        game_out(f"{user.name} uses {self.name} to increas deflection for {self.duration} attacks")
+        game_out(f"{user.name}'s deflection is increased for {self.duration} attacks", "effects")
         if self.damage:
             user.basic_attack(victim, self.damage)
     
@@ -89,8 +89,8 @@ class Ability():
     
     def stealth(self, user, victim): #ninja stealth, wizard missile barrage
         user.status[self.effect] = True
-        game_out(f"You are stealthed! Enemies cannot see you! Stealth will break if you attack, use a spell, or use a style to harm an enemy", "blue")
-        game_out(f"Your next attack or style is guaranteed to hit", "blue")
+        game_out(f"You are stealthed! Enemies cannot see you! Stealth will break if you attack, use a spell, or use a style to harm an enemy", "effects")
+        game_out(f"Your next attack or style is guaranteed to hit", "effects")
     
     def lifedraw(self, user, victim): #warrior transfusion
         total_life = randint(1, 6) + user.level
@@ -99,7 +99,7 @@ class Ability():
             game_out(f"Your opponent must be wounded before you can draw their life.", "error")
             return main.wait_player_input()
         if user.resistance_check(victim):
-            game_out(f"{user.name} stole {total_life} health from {victim.name}!", "blue")
+            game_out(f"{user.name} stole {total_life} health from {victim.name}!", "damage")
         else:
             total_life //= 2
             game_out(f"{self.name} was partially resisted. {user.name} stole {total_life} health from {victim.name}!", "blue")
@@ -138,6 +138,7 @@ class Ability():
         if not victim.player_class:
             user.status["Ranged"] = [False, "status"]
         game_out(f"{victim.name} is entangled! They are unable to move!")
+        victim.status["Ranged"][0] = False
     
     def augment_attack(self, user, victim):
         user.status["augment_attack"] = [self.duration, self.effect_int, self.name]
@@ -162,6 +163,7 @@ class Style(Ability):
             return
         if self.endurance_cost <= user.endurance:
             user.use_endurance(self.endurance_cost)
+            game_out(f"{user.name} uses {self.name}", "styles")
             self.ability_effect(user, victim)
             main.set_char_stats()
             if user.player_class:
@@ -191,7 +193,7 @@ starting_styles = {"Fire Bolt": firebolt, "Tear Flesh": tear_flesh,
 
 class Spell(Ability):
     def __init__ (self, name, effect: str, effect_int:int, damage: int, duration: int, ranged:bool, mana_cost: int):
-        super().__init__(name, effect, effect_int, damage, ranged, duration)
+        super().__init__(name, effect, effect_int, damage, duration, ranged)
         self.mana_cost = mana_cost 
         
     def use_spell(self, user, victim):
@@ -202,6 +204,7 @@ class Spell(Ability):
             return
         if self.mana_cost <= user.mana:
             user.use_mana(self.mana_cost)
+            game_out(f"{user.name} uses {self.name}", "spells")
             self.ability_effect(user, victim)
             main.set_char_stats()
             if user.player_class:

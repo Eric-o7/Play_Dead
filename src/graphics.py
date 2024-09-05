@@ -79,9 +79,36 @@ game_text.tag_configure("purple", background = "#212121",
 game_text.tag_configure("error", background = "#212121", 
                         font=("Times New Roman", 11), 
                         foreground = "#e02012")
-game_text.tag_configure("dot", background = "#69070b", 
+game_text.tag_configure("dot", background = "#212121", 
                         font=("Times New Roman", 9), 
-                        foreground = "#ebe6e6")
+                        foreground = "#69070b")
+game_text.tag_configure("combat", background = "#661209", 
+                        font=("Times New Roman", 11, "bold"), 
+                        foreground = "#bdaeb2")
+game_text.tag_configure("combat_npc", background = "#661209", 
+                        font=("Times New Roman", 11), 
+                        foreground = "#e86427")
+game_text.tag_configure("combat_pc", background = "#0b4704", 
+                        font=("Times New Roman", 11), 
+                        foreground = "#bdaeb2")
+game_text.tag_configure("combat_pc_question", background = "#0b4704", 
+                        font=("Times New Roman", 11, "bold"), 
+                        foreground = "#bdaeb2")
+game_text.tag_configure("effects", background = "#212121", 
+                        font=("Times New Roman", 11), 
+                        foreground = "#15c2cf")
+game_text.tag_configure("spells", background = "#212121", 
+                        font=("Times New Roman", 11), 
+                        foreground = "#1587cf")
+game_text.tag_configure("styles", background = "#212121", 
+                        font=("Times New Roman", 11), 
+                        foreground = "#20ab81")
+game_text.tag_configure("damage", background = "#212121", 
+                        font=("Times New Roman", 11, "bold"), 
+                        foreground = "#bd1f11")
+
+
+
 
 #output to text box with optional text arguments
 def game_out(text, tags = "user"):
@@ -90,14 +117,17 @@ def game_out(text, tags = "user"):
     game_text.configure(state = "disabled")
     game_text.see(tk.END)
     
-def narrative_out(text, tags = "user"):
-    for char in range(0, len(text)):
+def typing_animation(text, tags = "user", text_index = 0):
+    if text_index < len(text):
+        tag_arg = tags
+        letter = text[text_index]
         game_text.configure(state = "normal")
-        game_text.insert(tk.END, text[char], tags)
+        game_text.insert(tk.END, letter, tags)
         game_text.configure(state = "disabled")
         game_text.see(tk.END)
-        # char += 1
-        # root.after(100, narrative_out, text[char:])
+        text_index += 1
+        game_text.after(30, typing_animation, text, tag_arg, text_index)
+    return
 
 
 #display content and progress game using gamestate()

@@ -101,16 +101,16 @@ class Combatant():
                     max_stat = stat
             stat_check = max_stat
         if self.__getattribute__(stat_check) < Item.min_stat_req:
-            game_out(f"You need {Item.min_stat_req} {stat_check} to equip this item")
+            game_out(f"You need {Item.min_stat_req} {stat_check} to equip this item", "error")
         elif self.equipment[equipment_slot]:
-            game_out(f"You currently have {self.equipment[Item.slot[0]]} equipped!")
+            game_out(f"You currently have {self.equipment[Item.slot[0]]} equipped!", "error")
             self.unequip_item(self.equipment[Item.slot[0]])
         else:
             if isinstance(Item.slot, tuple):
                 self.equipment[Item.slot[0]], self.equipment[Item.slot[1]] = Item, Item
             else:
                 self.equipment[equipment_slot] = Item
-            game_out(f"{Item.name} equipped!", "purple")
+            game_out(f"{Item.name} equipped!\n", "purple")
         if isinstance (Item, Armor):
             self.set_deflection()
             
@@ -131,7 +131,7 @@ class Combatant():
             game_out(f"{Item.name} added to Inventory!")
             game_out(f"Inventory Space Remaining {inventory_size}")
         else:
-            game_out(f"Cannot add {Item.name} to inventory, not enough space")
+            game_out(f"Cannot add {Item.name} to inventory, not enough space", "error")
             
     def inventory_size(self, Item):
         sum = 0
@@ -172,12 +172,12 @@ class Combatant():
         
     def avoidance_check(self, Combatant):
         temp_avoidance = Combatant.avoidance
-        if "Stealth" in self.status and self.player_class:
-            game_out(f"{self.name} automatically hits {Combatant.name} from Stealth!", "purple")
-            del self.status["Stealth"]
+        if "stealth" in self.status and self.player_class:
+            game_out(f"{self.name} automatically hits {Combatant.name} from Stealth!", "effects")
+            del self.status["stealth"]
             return True
         elif "Stealth" in Combatant.status:
-            game_out(f"{self.name} tries to attack but cannot see you!")
+            game_out(f"{self.name} tries to attack but cannot see!", "error")
             return False
         if "raise_avoidance" in Combatant.status:
             Combatant.status["raise_avoidance"][0] -= 1
@@ -187,25 +187,25 @@ class Combatant():
                 Combatant.set_avoidance()
         attack_roll_result = self.attack_roll()    
         if attack_roll_result >= temp_avoidance:
-            game_out(f"{self.name} hit with a roll of {attack_roll_result} beating {Combatant.name}'s avoidance score of {Combatant.avoidance}!", "purple")
+            game_out(f"{self.name} hit with a roll of {attack_roll_result} beating {Combatant.name}'s avoidance score of {Combatant.avoidance}!", "styles")
             return True
-        game_out(f"{self.name} missed with a roll of {attack_roll_result} against {Combatant.name}'s avoidance score of {Combatant.avoidance}.")
+        game_out(f"{self.name} missed with a roll of {attack_roll_result} against {Combatant.name}'s avoidance score of {Combatant.avoidance}.","styles")
         return False        
     
     def resistance_check(self, Combatant):
         attack_roll_result = self.attack_roll()
-        if "Stealth" in self.status and self.player_class:
-            game_out(f"{self.name} has come out of Stealth!", "purple")
-            del self.status["Stealth"]
-        elif "Stealth" in Combatant.status:
+        if "stealth" in self.status and self.player_class:
+            game_out(f"{self.name} has come out of Stealth!", "effects")
+            del self.status["stealth"]
+        elif "stealth" in Combatant.status:
             game_out(f"{self.name} cannot see you!")
             return False
         if "reflect" in Combatant.status:
             pass
         if attack_roll_result >= Combatant.resistance:
-            game_out(f"{self.name} hit with a roll of {attack_roll_result} beating {Combatant.name}'s resistance score of {Combatant.resistance}!", "purple")
+            game_out(f"{self.name} hit with a roll of {attack_roll_result} beating {Combatant.name}'s resistance score of {Combatant.resistance}!", "spells")
             return True
-        game_out(f"{self.name} missed with a roll of {attack_roll_result} against {Combatant.name}'s resistance score of {Combatant.resistance}.")
+        game_out(f"{self.name} missed with a roll of {attack_roll_result} against {Combatant.name}'s resistance score of {Combatant.resistance}.", "spells")
         return False
                         
     def take_damage(self, damage):
@@ -215,7 +215,7 @@ class Combatant():
         if "raise_deflection" in self.status:
             self.status["raise_deflection"][0] -= 1
             if self.status["raise_deflection"][0] == 0:
-                game_out(f"Bonus deflection from {self.status['raise_avoidance'][2]} has ended")
+                game_out(f"Bonus deflection from {self.status['raise_deflection'][2]} has ended", "effects")
                 del self.status["raise_deflection"]
                 self.set_deflection()
         
@@ -223,7 +223,7 @@ class Combatant():
         
         if "augment_attack" in self.status:
             damage += self.status["augment_attack"][1]
-            game_out(f"{self.status['augment_attack'][2]} adds {self.status['augment_attack'][1]} to your damage!")
+            game_out(f"{self.status['augment_attack'][2]} adds {self.status['augment_attack'][1]} to your damage!", "effects")
             self.status["augment_attack"][0] -= 1
             if self.status["augment_attack"][0] == 0:
                 del self.status["augment_attack"]
@@ -235,14 +235,14 @@ class Combatant():
             self.health -= damage + player.level
             print(f"vulnerability counter currently at {self.status['vulnerability'][1]}")
             self.status["vulnerability"][1] -= 1
-            game_out(f"{self.name} takes {damage} plus {player.level} vulnerability damage for a total of {damage + player.level} damage! ({self.deflection} damage was deflected)")
+            game_out(f"{self.name} takes {damage} plus {player.level} vulnerability damage for a total of {damage + player.level} damage! ({self.deflection} damage was deflected)", "damage")
             self.check_death(self.health)
             if self.status["vulnerability"][1] == 0:
                 del self.status["vulnerability"]
                 game_out(f"{self.name}'s vulnerability condition has ended.")
         else:
             self.health -= damage
-            game_out(f"{self.name} takes {damage} damage! ({temp_deflection} damage was deflected)")
+            game_out(f"{self.name} takes {damage} damage! ({temp_deflection} damage was deflected)", "damage")
             self.check_death(self.health)
         
         if self.player_class:
@@ -256,19 +256,19 @@ class Combatant():
         else:
             damage = random.randint(1,self.base_damage) + self.level
         if self.avoidance_check(Combatant):
-            game_out(f"{self.name} rolled {damage} for damage")
+            game_out(f"{self.name} rolled {damage} for damage", "damage")
             Combatant.take_damage(damage)
             
     def check_death(self, damage = None):
         from main import enemies
         if self.health <= 0:
-            game_out(f"{self.name} was defeated!")
+            game_out(f"{self.name} was defeated!", "effects")
             if self in enemies:
                 enemies.remove(self)
             return True
         if self.health <= 0 and self.player_class:
             game_out(f"You play dead until the threat has passed.", "error")
-            game_out(f"Would you like to RESTART combat or CONTINUE the story?", "purple bold")
+            game_out(f"Would you like to RESTART combat or CONTINUE the story?", "purple_bold")
         
     def use_mana(self, mana_cost):
         self.mana -= mana_cost

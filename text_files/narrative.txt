@@ -9,19 +9,15 @@ Project by Eric Brown
 ***TitleEnd***
 
 ***IntroStart***
-The last thing you remember is being pushed inside a faerie ring in a cave near your home. Your father has long advocated for you as a champion among the Opossums. He has told you that this trial is important not only for you but also the society he wishes to build and protect!
-
-You now face a group of flitting faeries who are flying around you and look upon you warmly.
-They have soft features and glittered wings that give way to light coming from seemingly every direction, though not brightly. There are no shadows cast in this realm.
-You're in what seems like a dirt arena.
-
+The last thing you remember is being pushed inside a faerie ring in a cave near your home. Your father, Kesk, has long advocated for you as a champion among the Opossums.
+You now face a group of flitting faeries flying around and looking upon you warmly. They have soft features and glittered wings that give way to dim light coming from seemingly every direction. There are no shadows cast in this realm.
+You're in what seems like a dirt floor arena, surrounded by wild and mystical creatures.
 Welcome, young Opossum!
-We are the faerie council of the Appalachian Mountains. 
-For too long we've seen your kind play dead to survive in this region. Now, we offer a gift that may allow a resorting of your place in the hierarchy. Rise you white dog and tell us your name!
-First, tell us your name.
+We are the faerie council of the Appalachian Mountains. For too long we've seen your kind play dead to survive in this region. Now, we offer a gift that may allow a resorting of your place in the hierarchy. 
 ***IntroEnd***
 
 ***ClassDescStart***
+Now tell us how you would like to express your new gifts: 
 Warrior - Melee fighter that can use two-handed weapons for higher damage or sword and shield for higher avoidance. High strength, capable of wearing the strongest armor.
 Wizard - Spellcaster with access to damage, defensive, and utility spells. High acuity and overall utility.
 Ninja - Melee or ranged combatant that can make multiple low damage attacks. High agility and speed.

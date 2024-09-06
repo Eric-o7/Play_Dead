@@ -3,21 +3,20 @@
 ===========<-Welcome to Play Dead->============
 ----------    Type and Enter "Start" to play           -----------
 --------------    Click Help Button for information    --------------
-
 Project by Eric Brown
 *********************************************************************
 ***TitleEnd***
 
 ***IntroStart***
-The last thing you remember is being pushed inside a faerie ring in a cave near your home. Your father, Kesk, has long advocated for you as a champion among the Opossums.
+The last thing you remember is walking into a faerie ring in a cave near the Oak Grove. Your father, Kesk, has long advocated for you as a champion among the Opossums.
 You now face a group of flitting faeries flying around and looking upon you warmly. They have soft features and glittered wings that give way to dim light coming from seemingly every direction. There are no shadows cast in this realm.
 You're in what seems like a dirt floor arena, surrounded by wild and mystical creatures.
-Welcome, young Opossum!
-We are the faerie council of the Appalachian Mountains. For too long we've seen your kind play dead to survive in this region. Now, we offer a gift that may allow a resorting of your place in the hierarchy. 
+"Welcome, young Opossum!
+"We are the faerie council of the Appalachian Mountains. For too long we've seen your kind play dead to survive in this region. Now, we offer a gift that may allow a resorting of your place in the hierarchy."
 ***IntroEnd***
 
 ***ClassDescStart***
-Now tell us how you would like to express your new gifts: 
+"Now tell us how you would like to express your new gifts:"
 Warrior - Melee fighter that can use two-handed weapons for higher damage or sword and shield for higher avoidance. High strength, capable of wearing the strongest armor.
 Wizard - Spellcaster with access to damage, defensive, and utility spells. High acuity and overall utility.
 Ninja - Melee or ranged combatant that can make multiple low damage attacks. High agility and speed.
@@ -29,7 +28,7 @@ You may choose a bowie KNIFE and shield for higher avoidance, or a HATCHET for m
 Your weapon determines what combat styles are available to you.
 ***WarriorWepsEnd***
 ***WizardWepsStart***
-You may choose briar WAND and shield for higher avoidance, or a gnarled STAFF for more damage and utility.
+You may choose briar WAND and shield for higher avoidance and ranged attacks, or a gnarled STAFF for more damage and utility.
 Your weapon determines what combat styles are available to you.
 ***WizardWepsEnd***
 ***NinjaWepsStart***
@@ -74,12 +73,36 @@ You may choose two spells: ENTANGLE(enemy cannot move for two turns), COMET(mass
 You may choose SHADOW GUISE (raise deflection on next two instances of damage), SECOND WIND (recover some speed resource), INFLAME WEAPON (all attacks this turn do additional damage).
 ***NinjaSpellsEnd***
 
-***Start***
-Well done 'name!' Your courage makes us proud!
-The sun is coming up, we're going to head back to the grove, come with us.
-Let's tell 'Fartlord' how you bested the fairy ring trials today'!
-***End***
-***Start***
-***End***
-***Start***
-***End***
+***Story1Start***
+Your companion opossums see you suddenly appear back in the cave.
+"Your courage makes us proud! The sun is coming up, we're going to head back to the grove."
+***Story1End***
+
+***Story2Start***
+You return to the Oak Grove where a small feast awaits you.
+Your father, Kesk, looks very proud throughout the celebration. 
+
+During the feast, Kesk tells you that their brother Elpos has returned to the valley. Elpos feasts with the passel, telling stories of Kesk as a child and congratulating you on your victory in the fairy trials.
+
+Kesk asks the child to get some rest and then go to the bald to seek out other opossums who can join them. 
+***Story2End***
+
+
+***Story3Start***
+As Elpos finishes his monologue, you see Kesk moving out of his hollow and the other opossums in the passle soon follow. 
+
+Kesk bellows a warcry and jumps into action. The other 'possums growl in defiance and leap to fight with Kesk.
+
+You are immediately surrounded by a slither of small timber rattlesnakes. Your battle begins!
+***Story3End***
+
+Opossum is the only marsupial in North America.
+
+They live 2-4 years in the wild.
+
+They have a prehensile tail that helps them climb.
+
+Most Opossum's are naturally immune to rabies.
+
+Opossum babies are called joeys.
+

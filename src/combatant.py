@@ -1,5 +1,6 @@
 import random
 import abilities
+import main
 from graphics import game_out
 from items import *
 import time
@@ -35,7 +36,7 @@ class Combatant():
         self.spells = spells
         self.styles = styles
         self.inventory = {}
-        self.status = {"Ranged": [False, "status"]}
+        self.status = {"ranged": [False, "status"]}
         self.equipment = {"Mhand": None, "Ohand": None, "Armor": None}
         self.base_damage = base_damage
         self.initiative = initiative
@@ -157,10 +158,11 @@ class Combatant():
     
     def set_deflection(self):
         self.deflection = int((self.equipment["Armor"].deflection_rating) / 2)
-        if self.status["Ranged"][0] == True:
+        if self.status["ranged"][0] == True:
             self.deflection += 1
         if "raise_deflection" in self.status:
             self.deflection += self.status["raise_deflection"][1]
+        main.set_char_stats()
 
 #2d6 plus primary stat -4 plus level
     def attack_roll(self):
@@ -221,19 +223,11 @@ class Combatant():
         
         damage = damage - temp_deflection
         
-        if "augment_attack" in self.status:
-            damage += self.status["augment_attack"][1]
-            game_out(f"{self.status['augment_attack'][2]} adds {self.status['augment_attack'][1]} to your damage!", "effects")
-            self.status["augment_attack"][0] -= 1
-            if self.status["augment_attack"][0] == 0:
-                del self.status["augment_attack"]
-                game_out(f"{self.name}'s weapon returns to its normal state.")
-        
         if damage < 1: damage = 0
         
         if "vulnerability" in self.status:
             self.health -= damage + player.level
-            print(f"vulnerability counter currently at {self.status['vulnerability'][1]}")
+            # print(f"vulnerability counter currently at {self.status['vulnerability'][1]}")
             self.status["vulnerability"][1] -= 1
             game_out(f"{self.name} takes {damage} plus {player.level} vulnerability damage for a total of {damage + player.level} damage! ({self.deflection} damage was deflected)", "damage")
             self.check_death(self.health)
@@ -257,6 +251,15 @@ class Combatant():
             damage = random.randint(1,self.base_damage) + self.level
         if self.avoidance_check(Combatant):
             game_out(f"{self.name} rolled {damage} for damage", "damage")
+            if "augment_attack" in self.status:
+                damage += self.status["augment_attack"][1]
+                game_out(f"{self.status['augment_attack'][2]} adds {self.status['augment_attack'][1]} to your damage!", "effects")
+                Combatant.take_damage(damage + self.status["augment_attack"][1])
+                self.status["augment_attack"][0] -= 1
+                if self.status["augment_attack"][0] == 0:
+                    del self.status["augment_attack"]
+                    game_out(f"{self.name}'s weapon returns to its normal state.")
+                return
             Combatant.take_damage(damage)
             
     def check_death(self, damage = None):
@@ -265,10 +268,11 @@ class Combatant():
             game_out(f"{self.name} was defeated!", "effects")
             if self in enemies:
                 enemies.remove(self)
+                main.target = None
             return True
         if self.health <= 0 and self.player_class:
-            game_out(f"You play dead until the threat has passed.", "error")
-            game_out(f"Would you like to RESTART combat or CONTINUE the story?", "purple_bold")
+            game_out(f"You're critically wounded and play dead until the threat has passed.", "blue")
+            game_out(f"RESTART to try again", "blue_bold")
         
     def use_mana(self, mana_cost):
         self.mana -= mana_cost
@@ -300,6 +304,11 @@ class Combatant():
         self.set_mana()
         self.set_speed()
         self.set_endurance()
+        self.set_avoidance()
+        self.set_resistance()
+        self.primary_stat += 1
+        main.set_char_stats()
+        game_out(f"You level up! Your primary stat and resources have increased.", "effects")
 
     def __repr__(self):
         print(f"Name {self.name}, max_speed {self.max_speed}, status {self.status}")
@@ -323,19 +332,25 @@ endurance=90, speed=60, mana=130)
 
 lilsnake1 = Combatant(name="snake", level=1, health=6, player_class=None, strength=3, agility=7, acuity=3, 
 primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
-max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
+max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=6, 
 endurance=30, speed=30, mana=0)
 
 lilsnake2 = Combatant(name="snake", level=1, health=6, player_class=None, strength=3, agility=7, acuity=3, 
 primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
-max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
+max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"ranged": [False, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=6, 
+endurance=30, speed=30, mana=0)
+
+lilsnake3 = Combatant(name="snake", level=1, health=6, player_class=None, strength=3, agility=7, acuity=3, 
+primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
+max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=6, 
 endurance=30, speed=30, mana=0)
 
 dire_beetle = Combatant(name="Dire Beetle", level=1, health=12, player_class=None, strength=10, agility=5, acuity=3, 
 primary_stat=10, avoidance=8, resistance=12, deflection=2, max_mana=0, max_endurance=60, 
-max_speed=30, spells=[], styles=[abilities.heavy_strike], inventory={}, status={"Ranged": [False, "status"]}, 
+max_speed=30, spells=[], styles=[abilities.heavy_strike], inventory={}, status={"ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=12, 
 endurance=60, speed=30, mana=0)
 

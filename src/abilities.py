@@ -3,13 +3,15 @@ from graphics import game_out
 import main
 
 class Ability():
+    ability_list = []
     def __init__(self, name, effect: str, effect_int:int, damage: range, duration: int, ranged:bool):
         self.name = name
         self.effect = effect #identified using ability_effect() method
         self.effect_int = effect_int
         self.damage = damage #max damage or range
         self.duration = duration
-        self.ranged = ranged    
+        self.ranged = ranged
+        Ability.ability_list.append(self)    
             
     def ability_effect(self, user, victim):
         match self.effect:
@@ -123,22 +125,22 @@ class Ability():
         if user.player_class:
             for e in enemies:
                 e.take_damage(aoe_damage)
-                if "Stealth" in e.status:
+                if "stealth" in e.status:
                     game_out(f"{e.name}'s location has been revealed, they lose the stealth effect!")
-                    del e.status["Stealth"]
+                    del e.status["stealth"]
             return
         else:
             main.player.take_damage(aoe_damage)
             if "Stealth" in main.player.status:
                 game_out(f"Your location has been revealed, you lose the stealth effect!")
-                del main.player.status["Stealth"]
+                del main.player.status["stealth"]
             
     def entangle(self, user, victim):
         victim.status["entangled"] = [self.duration, self.effect_int, self.name]
-        if not victim.player_class:
-            user.status["Ranged"] = [False, "status"]
+        if not victim.player_class and user.status["ranged"][0] != True:
+            user.status["ranged"] = [False, "status"]
         game_out(f"{victim.name} is entangled! They are unable to move!")
-        victim.status["Ranged"][0] = False
+        victim.status["ranged"][0] = False
     
     def augment_attack(self, user, victim):
         user.status["augment_attack"] = [self.duration, self.effect_int, self.name]
@@ -216,7 +218,7 @@ class Spell(Ability):
 #Spells
 transfusion = Spell("Transfusion", "lifedraw", effect_int=0, damage=6, duration=0, ranged=True, mana_cost=50) #use player.level as effect int to modify damage
 spell_reflect = Spell("Spell Reflect", "reflect", effect_int=0, damage=0, duration=0, ranged=True, mana_cost=25)
-inflame_weapon = Spell("Inflame Weapon", "augment_attack", effect_int=0, damage=4, duration=2, ranged=True, mana_cost=50)
+inflame_weapon = Spell("Inflame Weapon", "augment_attack", effect_int=2, damage=4, duration=2, ranged=True, mana_cost=50)
 shadow_guise = Spell("Shadow Guise", "raise_deflection", effect_int=2, damage=0, duration=2, ranged=True, mana_cost=25) #effect int used for status counter
 second_wind = Spell("Second Wind", "recover_resource", effect_int=0, damage=0, duration=0, ranged=True, mana_cost=50) #effect int will indicate which resource to recover
 entangle = Spell("Entangle", "entangle", effect_int=3, damage=0, duration=3, ranged=True, mana_cost=25)
@@ -228,6 +230,10 @@ starting_spells = {"Transfusion": transfusion, "Spell Reflect": spell_reflect,
                    "Inflame Weapon": inflame_weapon, "Shadow Guise": shadow_guise,
                    "Second Wind": second_wind, "Entangle": entangle, "Comet": comet, "Missile Barrage": missile_barrage}
 
+
+new_ability_dict = dict({"Wizard": {"Wizard_Styles": ["Fire Bolt", "Fade"], "Wizard_Spells": ["Comet", "Entangle", "Missile Barrage"]}, 
+                    "Warrior": {"Warrior_Styles": ["Sweeping Strike", "Bloody Strike", "Defensive Strike"], "Warrior_Spells": ["Transfusion", "Inflame Weapon"]},
+                    "Ninja": {"Ninja_Styles": ["Tear Flesh", "Stealth", "Envenom"], "Ninja_Spells": ["Shadow Guise", "Second Wind", "Inflame Weapon"]}})
 
 if __name__ == "__main__":
     Ability.set_damage_over_time()

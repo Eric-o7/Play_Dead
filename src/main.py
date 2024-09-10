@@ -9,6 +9,7 @@ def main():
 gamestate = 1
 combatstate = 1
 combatround = 0
+player = None
 
 def delay(seconds):
     time.sleep(seconds)
@@ -43,7 +44,9 @@ def gamestate_bus(text):
         case 11:
             battle_at_grove(text)
         case 12:
-            pass
+            post_grove_battle(text)
+        case 13:
+            speak_to_passel(text)
         
 def combatstate_bus(text, *args):
     if combatstate == 1:
@@ -293,6 +296,7 @@ def ask_player_target():
 
 def player_target(text): #combatstate 4
     names = [e.name for e in enemies]
+    print(f" List of enemies {names}")
     if text.title() in names:
         for e in enemies:
             if text.title() == e.name:
@@ -387,7 +391,7 @@ def choose_equipment(text):
         game_out(f"That is not a valid option, please try again!", "error")
     item = starting_weapons[item_name]
     player.equip_item(item)
-    if item.name in {"Sword", "Rod"}:
+    if item.name in {"Knife", "Wand"}:
         player.equip_item(shield)
         player.set_avoidance()
     narrative_read(item.name)
@@ -448,13 +452,13 @@ def wizard_spells(text):
         game_out(f"{spell_choice.name} is already in your list of spells!", "error")
 
 def opening_combat():
-    from combatant import dire_beetle
+    from combatant import lilsnake1, lilsnake2, lilsnake3
     game_out(f"\n{char_name}, your {player.player_class} is ready for combat!\n", "combat")
     game_out(f"\nTest your new abilities against a Dire Beetle!\n", "purple_bold")
-    combat_order(player, [dire_beetle])
+    combat_order(player, [lilsnake1, lilsnake2, lilsnake3])
 
 
-def new_ability(text):
+def new_ability(text): #gamestate 8
     global available_abilities, gamestate
     available_abilities = []
     for available_style in abilities.new_ability_dict[player.player_class][f"{player.player_class}_Styles"]:
@@ -464,16 +468,16 @@ def new_ability(text):
         if available_spell not in [spell.name for spell in player.spells]:
             available_abilities.append(available_spell)
     print([new_ability for new_ability in available_abilities])
-    typing_animation(f'''   The faeries surrounding you look impressed at the command of your new abilities.
+    typing_animation(f'''  The faeries surrounding you look impressed at the command of your new abilities.
 "You fought well {player.name}. We are glad to offer you a gift of one additional style or spell of your choosing.
 These styles are available to you: {[new_ability for new_ability in available_abilities if new_ability in abilities.new_ability_dict[player.player_class][f"{player.player_class}_Styles"]]}
 These spells are available to you: {[new_ability for new_ability in available_abilities if new_ability in abilities.new_ability_dict[player.player_class][f"{player.player_class}_Spells"]]}"
 
-Make a selection by typing in the name of the new ability you want to learn''', "blue")
+Make a selection by typing in the name of the new ability you want to learn.''', "blue")
     gamestate = 9
     
     
-def choose_new_ability(text): #gamestate 8
+def choose_new_ability(text): #gamestate 9
     global available_abilities
     print(available_abilities)
     if text.title() not in [new_ability for new_ability in available_abilities]:
@@ -483,23 +487,25 @@ def choose_new_ability(text): #gamestate 8
     for new_ability in abilities.Ability.ability_list:
         if text.title() == new_ability.name and isinstance(new_ability, abilities.Style):
             player.styles.append(new_ability)
+            game_out(f"You have learned a new style: {new_ability.name}", "purple_bold")
         elif text.title() == new_ability.name and isinstance(new_ability, abilities.Spell):
             player.spells.append(new_ability) 
-    game_out(f"You have learned {new_ability.name}", "purple_bold")
+            game_out(f"You have learned a new spell: {new_ability.name}", "purple_bold")
     narrative_read("Story1", "blue")
-    typing_animation(f"""Let's tell Kesk how you bested the fairy ring trials today!
-Enter OK to continue.""", "blue")
+    typing_animation(f"""  Let's tell Kesk how you bested the fairy ring trials today!
+Enter OK to continue.
+___________________\n""", "blue")
     global gamestate
-    gamestate = 9
+    gamestate = 10
 
 def story_continues(text):
     if text:
         narrative_read("Story2", "blue")
-        typing_animation(f''' After the feast, Kesk says to you, "Now go get some rest, {player.name}. Tomorrow we begin planning our ascent in the food chain."
+        typing_animation(f'''  After the feast, Kesk says to you, "Now go get some rest, {player.name}. Tomorrow we begin planning our ascent in the food chain."
 
 Later that day, while the passel slept. You wake up to the hissing of snakes near the oak grove. 
 
-As you poke your head out of the hollow, you see Elpos with a large claw hammer slung over his shoulder talking to a very large timber rattlesnake.
+As you poke your head out of the hollow, you see Elpos with a claw hammer slung over his shoulder talking to a larger than normal timber rattlesnake.
 
 Elpos senses you, looks over and smirks...
 
@@ -507,9 +513,10 @@ Elpos senses you, looks over and smirks...
 
 "Prepare for battle!"
 
-Enter OK to continue.''', "blue" )
+Enter OK to continue.
+___________________\n''', "blue" )
     global gamestate
-    gamestate = 10
+    gamestate = 11
 
 def battle_at_grove(text):
     from combatant import lilsnake1, lilsnake2, lilsnake3
@@ -519,6 +526,38 @@ def battle_at_grove(text):
     global gamestate
     gamestate = 12
 
+def post_grove_battle(text):
+    player.level_up()
+    typing_animation(f''' After the battle, you see that Kesk was injured and some of the passel has been killed.
+Kesk calls you into his hollow where he is tending his wounds.
+"{player.name}, YOU must avenge this disgraceful attack.
+Go back up the winding path towards the mountain bald and see if you can find a vantage point to track Elpos.
+The other 'possums of the passel need to stay behind to defend the grove in case of another attack.
+
+On your journey, be on the lookout for three things:
+1. How can we defend our grove?
+2. Where did Elpos get his powers?
+3. Where can we recruit allies to help our cause?
+
+Get some rest and start your journey at nightfall."
+
+Would you like to speak to other members of the passel before you leave?''', "blue")
+    global gamestate
+    gamestate = 13
+    
+def speak_to_passel(text):
+    if text.lower() == "yes":
+        typing_animation(f'''You talk to the matron of the grove first. 
+She says "My dear {player.name} - you fought to protect this grove and your new gifts.
+You must know that Kesk is hurt very badly.
+He wants you to look for allies. When you find new allies, make sure you tell them that we have food and shelter here at the grove.
+We all have faith in you, {player.name}."
+
+Next you talk to the lorekeeper of the grove, who is hanging upside down from a nearby treebranch waving in the breeze. Her eyes are closed.
+"Pay attention, young 'possum. When you are looking for friends, keep in mind that other creatures in these mountains also "play dead" when threatened.
+They may be sympathetic to our cause.
+''', "blue")
+
 def regenerate_resources(player):
     player.health = player.max_health
     player.endurance = player.max_endurance
@@ -526,11 +565,12 @@ def regenerate_resources(player):
     player.mana = player.max_mana
     player.status["ranged"][1] = "status"
     for condition in status_conditions:
-        if condition in e.status:
-            del e.status[condition]
+        if condition in player.status:
+            del player.status[condition]
 
 def restart_combat(player, enemies):
     enemies.append(player)
+    global status_conditions
     status_conditions = {"damage_over_time", "entangled", "vulnerability", "raise_avoidance", "raise_deflection", "stealth", "reflect"}
     for e in enemies:
         e.health = e.max_health

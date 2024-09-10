@@ -1,0 +1,36 @@
+Thank you for playing :)
+
+Play Dead is a role-playing game with three starting classes: warrior, wizard, and ninja. Warriors are the strongest, ninjas are the fastest and most agile, and wizards offer the highest acuity and utility through spellcasting.
+
+**Capitalization is unimportant in text commands.**
+
+Combat actions: 
+Attack - type 'attack'
+Use style - type and enter the style name
+Use spell - type and enter the spell name
+Use Item - type and enter item name
+
+Click the Spells or Styles buttons to see what abilities you have learned.
+
+In Combat you may be asked some yes/no questions, type and enter Yes or No to continue.
+
+If your max speed is greater than all the enemies max speed, you may outmaneuver the enemies to gain a bonus to deflection.
+
+Health:
+Health =  (6 + (level * 2) + strength)
+If strength score is 10 or above -> add level / 2 to health
+
+Max Resource = (level + corresponding ability score) * 10
+
+Resources:
+Endurance corresponds to strength and is depleted using combat weapon styles.
+Mana corresponds to acuity and is depleted using spells.
+Speed corresponds to agility and is depleted using extra attacks (base only 1 extra per round).
+
+Resource recovery - you regain all resources after combat ends
+
+Avoidance - ability to dodge, parry, or move out of a basic attack or style. (level + agility + 4)
+Resistance - ability to avoid a spell effect. (level + acuity + 4)
+Deflection - ability to mitigate some incoming damage
+
+Basic attack = 2d6 + (main stat - 5) + level

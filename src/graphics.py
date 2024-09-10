@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, Toplevel
 
 
 root = tk.Tk()
@@ -26,16 +26,133 @@ button_frame.rowconfigure(2, weight = 1)
 button_frame.rowconfigure(3, weight = 1)
 button_frame.rowconfigure(4, weight = 1)
 
-help_button = ttk.Button(button_frame, text = "Help")
+def close_window(window):
+    window.destroy()
+
+def help_read():
+    open_help = open("text_files/help.txt")
+    read_help = open_help.read()
+    return read_help
+
+def help_click():
+
+    pophelp = Toplevel(root)
+    pophelp.title("Play Dead Information")
+    pophelp.geometry("650x750")
+    pophelp.config(bg="#212121")
+    
+    my_frame = tk.Frame(pophelp, bg="#212121")
+    my_frame.pack(expand = True, fill = 'both')
+    
+    help_info = tk.StringVar(pophelp)
+    help_info.set(help_read())
+    
+    pophelp_text = tk.Label(my_frame, textvariable= help_info, bg="#212121", fg="#6a8758", justify="left", font=("Times", 10, "bold"), wraplength=650)
+    pophelp_text.pack(expand=True, fill = 'both')
+    
+    ok_but = tk.Button(my_frame, text= "Ok", bg="#9c0514", command= lambda: close_window(pophelp))
+    ok_but.pack(pady=1)
+
+help_button = tk.Button(button_frame, text = "Help", activebackground="#6a8758", bg="#5d9639", bd=0, relief="groove", command=help_click)
 help_button.grid(row = 0, column = 0)
 
-inventory_button = ttk.Button(button_frame, text = "Inventory")
+def inv_read():
+    import main
+    if main.player:
+        if main.player.equipment["Mhand"]:
+            info = (f"""
+    Main Hand: {main.player.equipment["Mhand"].name}\n
+    Off Hand: {main.player.equipment["Ohand"].name}\n
+    Armor: {main.player.equipment["Armor"].name}\n
+    Inventory: {[item.name for item in main.player.inventory]}""")
+            return info
+    else:
+        return "You haven't chosen equipment yet."
+        
+  
+def inv_click():
+    popinv = Toplevel(root)
+    popinv.title("Equipment and Inventory")
+    popinv.geometry("300x200")
+    popinv.config(bg="#212121")
+        
+    my_frame = tk.Frame(popinv, bg="#212121")
+    my_frame.pack(pady=10)
+    
+    inv_info = tk.StringVar(popinv)
+    inv_info.set(inv_read())
+    
+    popinv_label = tk.Label(my_frame, textvariable=inv_info, bg="#212121", fg="#d9d5e3", justify="left", font=("Times", 12))
+    popinv_label.pack(expand=True, fill = 'both')
+
+    ok_but = tk.Button(my_frame, text= "Ok", bg="#9c0514", command= lambda: close_window(popinv))
+    ok_but.pack(pady=1)
+
+inventory_button = tk.Button(button_frame, text = "Inventory", activebackground= "#d9d5e3", bg = "#554c73",command=inv_click)
 inventory_button.grid(row = 1, column = 0)
 
-spells_button = ttk.Button(button_frame, text = "Spells")
+def spells_read():
+    import main
+    if main.player:
+        if len(main.player.spells) > 0:
+            info = (f"""
+Spell List:\n
+{[spell.name for spell in main.player.spells]}""")
+            return info
+    else:
+        return "You haven't chosen any spells yet."
+
+def spells_click():
+    popspells = Toplevel(root)
+    popspells.title("Spells")
+    popspells.geometry("300x200")
+    popspells.config(bg="#212121")
+    
+    my_frame = tk.Frame(popspells, bg="#212121")
+    my_frame.pack(pady=10)
+    
+    spells_info = tk.StringVar(popspells)
+    spells_info.set(spells_read())
+    
+    popspells_label = tk.Label(my_frame, textvariable=spells_info, bg="#212121", fg="#1587cf", justify="left", font=("Times", 12))
+    popspells_label.pack(expand=True, fill = 'both')
+    
+    ok_but = tk.Button(my_frame, text= "Ok", bg="#9c0514", command= lambda: close_window(popspells))
+    ok_but.pack(pady=1)
+
+spells_button = tk.Button(button_frame, text = "Spells",activebackground= "#d9d5e3", bg="#1587cf", command=spells_click)
 spells_button.grid(row = 2, column = 0)
 
-styles_button = ttk.Button(button_frame, text = "Styles")
+def styles_read():
+    import main
+    if main.player:
+        if len(main.player.styles) > 0:
+            info = (f"""
+Styles List:\n
+{[style.name for style in main.player.styles]}""")
+            return info
+    else:
+        return "You haven't chosen any styles yet."
+
+def styles_click():
+    popstyles = Toplevel(root)
+    popstyles.title("Styles")
+    popstyles.geometry("300x200")
+    popstyles.config(bg="#212121")
+    
+    my_frame = tk.Frame(popstyles, bg="#212121")
+    my_frame.pack(pady=10)
+    
+    styles_info = tk.StringVar(popstyles)
+    styles_info.set(styles_read())
+    
+    popstyles_label = tk.Label(my_frame, textvariable=styles_info, bg="#212121", fg="#20ab81", justify="left", font=("Times", 12))
+    popstyles_label.pack(expand=True, fill = 'both')
+    
+    ok_but = tk.Button(my_frame, text= "Ok", bg="#9c0514", command= lambda: close_window(popstyles))
+    ok_but.pack(pady=1)
+
+styles_button = tk.Button(button_frame, text = "Styles",activebackground= "#d9d5e3", bg="#20ab81",command=styles_click)
 styles_button.grid(row = 3, column = 0)
 
 #status frame

@@ -324,7 +324,7 @@ class Combatant():
 
 #max end/speed/mana = (level+stat)*10  (divide in 2 for NPC's because they will use it right away?)
 
-snakey = Combatant(name="Snakey", level=3, health=30, player_class=None, strength=6, agility=7, acuity=10, 
+snakey = Combatant(name="Snakey", level=3, health=18, player_class=None, strength=6, agility=7, acuity=10, 
 primary_stat=10 , avoidance=11, resistance=15, deflection=1, max_mana=130, max_endurance=90, 
 max_speed=60, spells=[abilities.comet, abilities.missile_barrage, abilities.spell_reflect], styles=[abilities.arcane_pulse, abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=18, 
@@ -353,6 +353,12 @@ primary_stat=10, avoidance=8, resistance=12, deflection=2, max_mana=0, max_endur
 max_speed=30, spells=[], styles=[abilities.heavy_strike], inventory={}, status={"ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=12, 
 endurance=60, speed=30, mana=0)
+
+fox = Combatant(name="Fox", level=3, health=30, player_class=None, strength=7, agility=12, acuity=7, 
+primary_stat=12 , avoidance=14, resistance=10, deflection=2, max_mana=0, max_endurance=90, 
+max_speed=120, spells=[], styles=[abilities.bloody_strike, abilities.defensive_strike], inventory={}, status={"Ranged": [False, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=5, initiative=None, max_health=30, 
+endurance=90, speed=120, mana=0)
 
 
 if __name__ == "__main__":

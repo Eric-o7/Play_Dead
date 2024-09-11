@@ -2,7 +2,7 @@ Thank you for playing :)
 
 Play Dead is a role-playing game with three starting classes: warrior, wizard, and ninja. Warriors are the strongest, ninjas are the fastest and most agile, and wizards offer the highest acuity and utility through spellcasting.
 
-**Capitalization is unimportant in text commands.**
+**Words in all capital letters are expected responses to continue the game. Capitalization of your response is unimportant.**
 
 Combat actions: 
 Attack - type 'attack'

@@ -1,6 +1,7 @@
 import time
 import random
 import abilities
+import typing_var
 from graphics import root, game_out, char_stats, typing_animation
 
 def main():
@@ -276,7 +277,7 @@ def wait_player_input():
         combatstate = 2
 
 def ask_player_target():
-    global enemies, target
+    global enemies, target, combatround
     if len(enemies) == 0:
         game_out(f"You've defeated all enemies!", "combat_pc")
         restart_combat(player, enemies)
@@ -285,8 +286,10 @@ def ask_player_target():
     if len(enemies) == 1:
         target = enemies[0]
         game_out(f"{target.name} is your target!", "combat_pc")
-        wait_player_input()
-        return
+        if combatround == 1:
+            wait_player_input()
+        else:
+            npc_action()
     game_out(f"Which enemy would you like to target?","combat_pc_question")
     for e in enemies:
         if e.player_class == None:
@@ -452,10 +455,10 @@ def wizard_spells(text):
         game_out(f"{spell_choice.name} is already in your list of spells!", "error")
 
 def opening_combat():
-    from combatant import lilsnake1, lilsnake2, lilsnake3
+    from combatant import dire_beetle
     game_out(f"\n{char_name}, your {player.player_class} is ready for combat!\n", "combat")
     game_out(f"\nTest your new abilities against a Dire Beetle!\n", "purple_bold")
-    combat_order(player, [lilsnake1, lilsnake2, lilsnake3])
+    combat_order(player, [dire_beetle])
 
 
 def new_ability(text): #gamestate 8
@@ -492,33 +495,20 @@ def choose_new_ability(text): #gamestate 9
             player.spells.append(new_ability) 
             game_out(f"You have learned a new spell: {new_ability.name}", "purple_bold")
     narrative_read("Story1", "blue")
-    typing_animation(f"""  Let's tell Kesk how you bested the fairy ring trials today!
+    typing_animation(f"""   Let's tell Kesk how you bested the fairy ring trials today!
 Enter OK to continue.
 ___________________\n""", "blue")
     global gamestate
     gamestate = 10
 
-def story_continues(text):
+def story_continues(text): #10
     if text:
         narrative_read("Story2", "blue")
-        typing_animation(f'''  After the feast, Kesk says to you, "Now go get some rest, {player.name}. Tomorrow we begin planning our ascent in the food chain."
-
-Later that day, while the passel slept. You wake up to the hissing of snakes near the oak grove. 
-
-As you poke your head out of the hollow, you see Elpos with a claw hammer slung over his shoulder talking to a larger than normal timber rattlesnake.
-
-Elpos senses you, looks over and smirks...
-
-"This unnatural formation and rise of opossums is heresy, {player.name}! Snakey and I have been charged with maintaining order in these mountains. You and Kesk will regret seeking your unnatural gifts." 
-
-"Prepare for battle!"
-
-Enter OK to continue.
-___________________\n''', "blue" )
+        typing_animation(typing_var.feast, "blue" )
     global gamestate
     gamestate = 11
 
-def battle_at_grove(text):
+def battle_at_grove(text): #11
     from combatant import lilsnake1, lilsnake2, lilsnake3
     if text:
         narrative_read("Story3", "blue")
@@ -526,37 +516,102 @@ def battle_at_grove(text):
     global gamestate
     gamestate = 12
 
-def post_grove_battle(text):
-    player.level_up()
-    typing_animation(f''' After the battle, you see that Kesk was injured and some of the passel has been killed.
-Kesk calls you into his hollow where he is tending his wounds.
-"{player.name}, YOU must avenge this disgraceful attack.
-Go back up the winding path towards the mountain bald and see if you can find a vantage point to track Elpos.
-The other 'possums of the passel need to stay behind to defend the grove in case of another attack.
-
-On your journey, be on the lookout for three things:
-1. How can we defend our grove?
-2. Where did Elpos get his powers?
-3. Where can we recruit allies to help our cause?
-
-Get some rest and start your journey at nightfall."
-
-Would you like to speak to other members of the passel before you leave?''', "blue")
-    global gamestate
-    gamestate = 13
+def post_grove_battle(text): #12
+    if text:
+        player.level_up()
+        typing_animation(typing_var.post_grove_battle, "blue")
+        global gamestate
+        gamestate = 13
     
-def speak_to_passel(text):
+def speak_to_passel(text): #13
     if text.lower() == "yes":
-        typing_animation(f'''You talk to the matron of the grove first. 
-She says "My dear {player.name} - you fought to protect this grove and your new gifts.
-You must know that Kesk is hurt very badly.
-He wants you to look for allies. When you find new allies, make sure you tell them that we have food and shelter here at the grove.
-We all have faith in you, {player.name}."
+        typing_animation(typing_var.speak_to_passel, "blue")
+    elif text.lower() == "no":
+        game_out(f"Enter OK to continue.", "blue")
+    global gamestate
+    gamestate = 14
+    
+def path_one(text): #14
+    if text:
+        typing_animation(typing_var.path_1, "blue")
+    global gamestate
+    gamestate = 15
+        
+        
+def path_or_cave(text): #15
+    global gamestate
+    if text.lower() == "cave":
+        typing_animation(typing_var.fern_cave_1, "blue")
+        gamestate = 16
+    elif text.lower() == "up":
+        gamestate = 17
+    else:
+        game_out(f'That is not a valid option, please enter the words "CAVE" to continue the conversation or "UP" to leave the cave', "error")
 
-Next you talk to the lorekeeper of the grove, who is hanging upside down from a nearby treebranch waving in the breeze. Her eyes are closed.
-"Pay attention, young 'possum. When you are looking for friends, keep in mind that other creatures in these mountains also "play dead" when threatened.
-They may be sympathetic to our cause.
-''', "blue")
+def fern_cave(text): #16
+    global gamestate
+    if text.lower() == "hell":
+        typing_animation(typing_var.fern_cave_2, "blue")
+        gamestate = 17
+    elif text.lower() == "ok":
+        game_out(f"You nod to Amanita and leave the cave.", "blue")
+        gamestate = 17
+    else:
+        game_out(f'That is not a valid option, please enter the words "HELL" to continue the conversation or "OK" to leave the cave', "error")
+        
+def path_two(text): #17
+    if text:
+        typing_animation(typing_var.fox_1, "blue")
+    global gamestate
+    gamestate = 18
+
+def fox_response(text): # 18
+    global gamestate
+    from combatant import fox
+    if text.lower() == "come":
+        game_out(f"The fox leaps at you!", "purple_bold")
+        combat_order(player, fox)
+        gamestate = 20
+    elif text.lower() == "help":
+        typing_animation(typing_var.fox_2, "blue")
+        gamestate = 19
+    else:
+        game_out(f'That is not a valid option, please enter the words "come" to beckon the fox or "help" to continue the conversation', "error")
+    
+def fox_food(text): #19
+    global gamestate
+    from combatant import fox
+    if text.lower() == "come":
+        game_out(f"The fox leaps at you!", "purple_bold")
+        combat_order(player, fox)
+        gamestate = 20
+    elif text.lower() == "suit":
+        game_out(f"You walk away as the fox sits in confusion", "purple_bold")
+        gamestate = 21
+    elif text.lower() == "have":
+        typing_animation(typing_var.help_fox)
+
+def post_fox_fight(text): #20
+    global gamestate
+    if text:
+        game_out(f"You completed the fox encounter, well done!", "blue_bold")
+        player.level_up()
+        gamestate = 21
+        game_out(f"Enter OK to continue", "blue")
+        
+def path_three(text): #21
+    global gamestate
+    if text:
+        typing_animation(typing_var.path_3, "blue")
+        gamestate = 22    
+
+def path_or_maple_cave(text): #22
+    global gamestate
+    if text.lower() == "bald":
+        game_out(f"You choose to keep hiking up the path", "purple_bold")
+        gamestate = 25
+    elif text.lower() == "cave":
+        typing_animation(typing_var.maple_cave, "blue")
 
 def regenerate_resources(player):
     player.health = player.max_health

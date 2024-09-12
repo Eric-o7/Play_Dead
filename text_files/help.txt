@@ -4,11 +4,14 @@ Play Dead is a role-playing game with three starting classes: warrior, wizard, a
 
 **Words in all capital letters are expected responses to continue the game. Capitalization of your response is unimportant.**
 
+If you enter "Reset", the entire game will restart.
+
 Combat actions: 
 Attack - type 'attack'
 Use style - type and enter the style name
 Use spell - type and enter the spell name
 Use Item - type and enter item name
+Restart - resets the combat encounter
 
 Click the Spells or Styles buttons to see what abilities you have learned.
 

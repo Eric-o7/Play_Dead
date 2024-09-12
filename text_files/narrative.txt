@@ -62,7 +62,7 @@ You may choose STEALTH (automatic hit on next attack) or TEAR FLESH (bonus damag
 ***ClawsEnd***
 
 ***WarriorSpellsStart***
-You may choose TRANSFUSION (drain a wounded enemy's life to heal yourself), SPELL REFLECT (reflects the effect of one spell back to the caster), or INFLAME WEAPON (all attacks this turn do additional damage).
+You may choose TRANSFUSION (drain a wounded enemy's life to heal yourself) or INFLAME WEAPON (all attacks this turn do additional damage).
 ***WarriorSpellsEnd***
 
 ***WizardSpellsStart***

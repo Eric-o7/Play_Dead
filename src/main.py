@@ -364,12 +364,14 @@ Resistance: {player.resistance}""")
         
 def choose_class(text):
     from combatant import Combatant
+    from typing_var import player_name
     from items import pinecone_mail, leafrobe, snakeweave
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
         game_out(f"That is not a valid option, please try entering the name of your class again!", "error")
     else:
         global player
+        player_name(char_name)
         player = Combatant(char_name, 1, 0, player_class, styles=[], spells=[])
         player.set_playerclass(player_class)
         game_out(f"You are now {player.name} the {player.player_class} 'possum!\n", "purple_bold")
@@ -495,9 +497,7 @@ def choose_new_ability(text): #gamestate 9
             player.spells.append(new_ability) 
             game_out(f"You have learned a new spell: {new_ability.name}", "purple_bold")
     narrative_read("Story1", "blue")
-    typing_animation(f"""   Let's tell Kesk how you bested the fairy ring trials today!
-Enter OK to continue.
-___________________\n""", "blue")
+    typing_animation(typing_var.back_to_grove, "blue")
     global gamestate
     gamestate = 10
 
@@ -517,11 +517,15 @@ def battle_at_grove(text): #11
     gamestate = 12
 
 def post_grove_battle(text): #12
+    from combatant import lilsnake3, lilsnake1, lilsnake2
     if text:
         player.level_up()
         typing_animation(typing_var.post_grove_battle, "blue")
         global gamestate
         gamestate = 13
+    refresh_snakes = [lilsnake2, lilsnake1, lilsnake3]
+    for snake in refresh_snakes:
+        regenerate_resources(snake)
     
 def speak_to_passel(text): #13
     if text.lower() == "yes":
@@ -666,14 +670,48 @@ def past_maple_cave(text): #27
 def mountaintop(text): #28
     global gamestate
     if text.lower() == "investigate":
+        typing_animation(typing_var.investigate_snake, "blue")
         gamestate = 29
     elif text.lower() == "up":
-        gamestate = 33
+        gamestate = 30
+        player.status["snake_ally"] = "no"
     else:
         game_out(f'That is not a valid option, please enter the words "investigate" or "up"', "error")
 
-def investigate_snake(text):
+def investigate_snake(text): #29
+    global gamestate
+    if text.lower() == "yes":
+        typing_animation(typing_var.ally_hognose, "blue")
+        player.status["snake_ally"] = "yes"
+        gamestate = 30
+    elif text.lower() == "no":
+        player.status["snake_ally"] = "no"
+        typing_animation(typing_var.no_ally_hognose, "blue")
+        gamestate = 30
+    else:
+        game_out(f'That is not a valid option, please enter the words "yes" to form an alliance or "no" to deny', "error")
+        
+def briar_thicket(text): #30
+    global gamestate
+    import typing_var
+    if text:
+        typing_animation(typing_var.briar_dialogue, "blue")
+    gamestate = 31  
+
+def briar_fight(text): #31
+    from combatant import snakey, lilsnake1, lilsnake2, lilsnake3
+    global gamestate
+    if text:
+        if player.status["snake_ally"] == "yes":
+            game_out(f"Your new hognose allies are helping you deal with the timber rattlesnakes!")
+            combat_order(player, [snakey])
+        elif player.status["snake_ally"] == "no":
+            combat_order(player, [snakey, lilsnake1, lilsnake2, lilsnake3])
+    gamestate = 32
     
+def close_game_credits(text): #32
+    pass
+#type closing credits
 
 def regenerate_resources(player):
     player.health = player.max_health
@@ -688,7 +726,7 @@ def regenerate_resources(player):
 def restart_combat(player, enemies):
     enemies.append(player)
     global status_conditions
-    status_conditions = {"damage_over_time", "entangled", "vulnerability", "raise_avoidance", "raise_deflection", "stealth", "reflect"}
+    status_conditions = {"damage_over_time", "entangled", "vulnerability", "raise_avoidance", "raise_deflection", "stealth"}
     for e in enemies:
         e.health = e.max_health
         e.endurance = e.max_endurance

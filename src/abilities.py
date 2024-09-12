@@ -29,8 +29,6 @@ class Ability():
                 self.stealth(user, victim)   
             case "lifedraw":
                 self.lifedraw(user, victim)  
-            case "reflect":
-                self.reflect(user, victim)
             case "recover_resource":
                 self.recover_resource(user, victim)
             case "multi_target_damage":
@@ -107,10 +105,6 @@ class Ability():
             game_out(f"{self.name} was partially resisted. {user.name} stole {total_life} health from {victim.name}!", "blue")
         user.health += total_life
         victim.health -= total_life
-
-    def reflect(self, user, victim):
-        user.status["reflect"] = True
-        #when building NPC action logic, find out where to put this
     
     def recover_resource(self, user, victim):
         #effect int key: 0-speed, 1-mana, 2-endurance
@@ -217,7 +211,6 @@ class Spell(Ability):
         
 #Spells
 transfusion = Spell("Transfusion", "lifedraw", effect_int=0, damage=6, duration=0, ranged=True, mana_cost=50) #use player.level as effect int to modify damage
-spell_reflect = Spell("Spell Reflect", "reflect", effect_int=0, damage=0, duration=0, ranged=True, mana_cost=25)
 inflame_weapon = Spell("Inflame Weapon", "augment_attack", effect_int=2, damage=4, duration=2, ranged=True, mana_cost=50)
 shadow_guise = Spell("Shadow Guise", "raise_deflection", effect_int=2, damage=0, duration=2, ranged=True, mana_cost=25) #effect int used for status counter
 second_wind = Spell("Second Wind", "recover_resource", effect_int=0, damage=0, duration=0, ranged=True, mana_cost=50) #effect int will indicate which resource to recover
@@ -226,7 +219,7 @@ comet = Spell("Comet", "direct_damage", effect_int=2, damage=12, duration=0, ran
 missile_barrage = Spell("Missile Barrage", "automatic_hit", effect_int=0, damage=6, duration=0, ranged=True, mana_cost=40)
 
 
-starting_spells = {"Transfusion": transfusion, "Spell Reflect": spell_reflect,
+starting_spells = {"Transfusion": transfusion,
                    "Inflame Weapon": inflame_weapon, "Shadow Guise": shadow_guise,
                    "Second Wind": second_wind, "Entangle": entangle, "Comet": comet, "Missile Barrage": missile_barrage}
 

@@ -202,8 +202,6 @@ class Combatant():
         elif "stealth" in Combatant.status:
             game_out(f"{self.name} cannot see you!")
             return False
-        if "reflect" in Combatant.status:
-            pass
         if attack_roll_result >= Combatant.resistance:
             game_out(f"{self.name} hit with a roll of {attack_roll_result} beating {Combatant.name}'s resistance score of {Combatant.resistance}!", "spells")
             return True
@@ -326,7 +324,7 @@ class Combatant():
 
 snakey = Combatant(name="Snakey", level=3, health=18, player_class=None, strength=6, agility=7, acuity=10, 
 primary_stat=10 , avoidance=11, resistance=15, deflection=1, max_mana=130, max_endurance=90, 
-max_speed=60, spells=[abilities.comet, abilities.missile_barrage, abilities.spell_reflect], styles=[abilities.arcane_pulse, abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
+max_speed=60, spells=[abilities.comet, abilities.missile_barrage], styles=[abilities.arcane_pulse, abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=18, 
 endurance=90, speed=60, mana=130)
 

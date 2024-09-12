@@ -1,7 +1,21 @@
-#This module will be used to store variables for the typing animation function so that the main.py module does not get cluttered.
-import main
+#This module will be used to store multi-line string variables for the typing animation function so that the main.py module does not get cluttered.
 
-feast = f'''    After the feast, Kesk says to you, "Now go get some rest, {main.player.name}. Tomorrow we begin planning our ascent in the food chain."
+global player
+player = None
+
+def player_name(playername):
+    global player
+    player = playername
+
+back_to_grove = f"""Let's tell Kesk how you bested the fairy ring trials today!
+Enter OK to continue.
+___________________\n"""
+
+feast = f'''    You return to the Oak Grove where a small feast awaits you.
+Your father, Kesk, looks very proud throughout the celebration. 
+During the feast, Kesk tells you that their brother Elpos has returned to the valley. Elpos feasts with the passel, telling stories of Kesk as a child and congratulating you on your victory in the fairy trials.
+
+After the feast, Kesk says to you, "Now go get some rest, {player}. Tomorrow we begin planning our ascent in the food chain."
 
 Later that day, while the passel slept. You wake up to the hissing of snakes near the oak grove. 
 
@@ -9,7 +23,7 @@ As you poke your head out of the hollow, you see Elpos with a claw hammer slung 
 
 Elpos senses you, looks over and smirks...
 
-"This unnatural formation and rise of opossums is heresy, {main.player.name}! Snakey and I have been charged with maintaining order in these mountains. You and Kesk will regret seeking your unnatural gifts." 
+"This unnatural formation and rise of opossums is heresy, {player}! Snakey and I have been charged with maintaining order in these mountains. You and Kesk will regret seeking your unnatural gifts." 
 
 "Prepare for battle!"
 
@@ -18,7 +32,7 @@ ___________________\n'''
 
 post_grove_battle = f'''    After the battle, you see that Kesk was injured and some of the passel has been killed.
 Kesk calls you into his hollow where he is tending his wounds.
-"{main.player.name}, YOU must avenge this disgraceful attack.
+"{player}, YOU must avenge this disgraceful attack.
 Go back up the winding path towards the mountain bald and see if you can find a vantage point to track Elpos.
 The other 'possums of the passel need to stay behind to defend the grove in case of another attack.
 
@@ -31,11 +45,11 @@ Get some rest and start your journey at nightfall."
 
 Would you like to speak to other members of the passel before you leave?\n'''
 
-speak_to_passel = f'''  You talk to the matron of the grove first. 
-She says "My dear {main.player.name} - you fought to protect this grove and your new gifts.
+speak_to_passel = f'''\n  You talk to the matron of the grove first. 
+She says "My dear {player} - you fought to protect this grove and your new gifts.
 You must know that Kesk is hurt very badly.
 He wants you to look for allies. When you find new allies, make sure you tell them that we have food and shelter here at the grove.
-We all have faith in you, {main.player.name}."
+We all have faith in you, {player}."
 
 Next you talk to the lorekeeper of the grove, who is hanging upside down from a nearby treebranch waving in the breeze. Her eyes are closed.
 "Pay attention, young 'possum. When you are looking for friends, keep in mind that other creatures in these mountains also "play dead" when threatened.
@@ -85,7 +99,7 @@ Amanita looks directly at you.
 
 "I'll do my best!" you exclaim with hesitation.
 
-"The world is better with you in it, {main.player.name}. Continue to fight for your passel, and for your father. 
+"The world is better with you in it, {player}. Continue to fight for your passel, and for your father. 
 
 By the way, if you see any fairy rings that are comprised of mushrooms that look like me, you can attempt to destroy them. I know that paints me in a suspicious light, but remember... it's all part of the balance."
 
@@ -110,7 +124,7 @@ fox_2 = f'''    "I don't need any help from a 'possum. You ARE food... but then 
 
 Respond with "COME see for yourself then!" to fight, "Ok SUIT yourself" to start walking away, or "We HAVE food" to continue the conversation.'''
 
-help_fox = f''' Look, we have food that we have gathered in the Oak Grove just down the path and across the creek. Tell them {main.player.name} invited you to our grove and they will help."
+help_fox = f''' Look, we have food that we have gathered in the Oak Grove just down the path and across the creek. Tell them {player} invited you to our grove and they will help."
 
 You look down as you feel slightly embarassment at the food stores you know are available. "This food came from preparation and working together, something us 'possums have not done well at until recently."
 
@@ -159,7 +173,7 @@ leave_cave = f'''   You run out of the cave. As the moon illuminates your fur, y
 
 Would you like to RUN or FIGHT?'''
 
-after_venus_combat = f'''   The Venus Flytrap screeches. Bugs and carrion spew from its mouths. You step aside as it withers and dies. Well fought, {main.player.name}!
+after_venus_combat = f'''   The Venus Flytrap screeches. Bugs and carrion spew from its mouths. You step aside as it withers and dies. Well fought, {player}!
 
 Enter OK to continue.
 _____________________'''
@@ -189,5 +203,42 @@ You think to yourself... maybe this is the kind of ally the grove lorekeeper was
 
 The snakes watch as you consider the situation. This whole nature rebalancing thing is complicated!
 
-"We were attacked by a slither led by Snakey yesterday morning. I'm looking for allies.
+"We were attacked by a slither of snakes led by Snakey yesterday morning. Have you heard that name?" you ask emphatically.
+
+"Yesss, Snakey has been to the top of this mountain. Snakey has taken shhhhelter in the briar thicket nearby..."
+
+The hognose snake pauses as it considers the implication of helping one of its predators.
+
+"Perhapss, we can come to an... agreement?"
+
+Respond with YES or NO.'''
+
+ally_hognose = f''' "Yes! We can come to an agreement, please tell me more about Snakey's hideout in the briar thicket."
+
+"Excsselent... we will happily assist you in this confrontation!" says the hognose snake.
+
+Enter OK to continue.
+_____________________'''
+
+no_ally_hognose = f''' "I cannot ally with you. Thank you for telling me about Snakey in the briar thicket, now get out of here before I get hungry."
+
+Enter OK to continue.
+_____________________'''
+
+briar_dialogue = f'''   As you get closer to the center of the mountaintop, you hear hissing, followed by the shaking of rattles coming from inside the briar thicket.
+
+You see a few timber rattlesnakes inside the briars along with a much larger rattlesnake... Snakey.
+
+Snakey looks even bigger than before, he is now almost as long and large as a python!
+
+A patrolling timber rattlesnake sees you approach and alerts the group.
+
+Snakey slithers out from under the briars. "You aren't the only one that has found friends {player}. I've been given a special purpose to put you and the other 'possums back where you belong. You should NEVER have been given the gifts you took. You are a disgrace to natural order and I will clean up this mess. Prepare to play dead for another millenia. Opossums are cowards!"
+
+You stand up straight. "We don't play dead anymore, Snakey. Prepare to pay for your aggression!"
+
+Respond with FIGHT to continue.'''
+
+if __name__ == "__main__":
+    print(player)
 

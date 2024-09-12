@@ -189,5 +189,5 @@ You think to yourself... maybe this is the kind of ally the grove lorekeeper was
 
 The snakes watch as you consider the situation. This whole nature rebalancing thing is complicated!
 
-"We were attacked by a slither led by Snakey yesterday morning. I'm looking for allies
+"We were attacked by a slither led by Snakey yesterday morning. I'm looking for allies.
 

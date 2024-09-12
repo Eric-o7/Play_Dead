@@ -185,7 +185,9 @@ The snake that was playing dead rolls over.
 
 "Weeee are the hognosesss. Our kind playss dead like you." The former thanatosed snake says to you. 
 
-You think to yourself... maybe this is the kind of ally the grove lorekeeper was talking about. You've heard of your kind eating hognose snakes, but you didn't know they played dead like you. Will nature rebalance in a way that makes hognoses our allies?
+You think to yourself... maybe this is the kind of ally the grove lorekeeper was talking about. You've heard of your kind eating hognose snakes, but you didn't know they played dead like you.
 
-The snakes watch as you consider the situation. 
+The snakes watch as you consider the situation. This whole nature rebalancing thing is complicated!
+
+"We were attacked by a slither led by Snakey yesterday morning. I'm looking for allies
 

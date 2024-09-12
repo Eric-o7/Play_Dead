@@ -139,3 +139,53 @@ You feel an emanation of chaos coming from them.
 
 Would you like to ENTER the ring, DESTROY the mushrooms, or LEAVE immediately?'''
 
+enter_maple_ring = f''' You enter a state of trance. Your mind goes blank and you see nothing but darkness. In that darkness, a light appears in the distance. It slowly grows in size as it seems to get closer to you. In that light you start to make out a vision. You see the Oak Grove but it's empty. You see no other Opossums there, not even Kesk. 
+
+The vision pans out and you see a group of opossums in the creek. They're laying belly up. One of them is Kesk. A vulture crashes down into the shallow creek, perching on a stone, it rips at the body of Kesk. The vision ends. The cave shakes from above as you return to your senses.
+
+The rumble quiets, and you see tendrils stretch across the mouth of the cave. From the shadows cast by the moonlight you see a silhouette of a Venus Flytrap. It lunges at you!
+
+Enter OK to continue.
+_____________________'''
+
+stomp_maple = f'''  You stomp on the mushrooms. As you feel the red yellow-spotted fruiting bodies squish below your paws, your bones shake from a rumble in the dirt, and a growl from above...
+
+The rumble quiets, and you see tendrils stretch across the mouth of the cave. From the shadows cast by the moonlight you see a silhouette of a Venus Flytrap. It lunges at you!
+
+Enter OK to continue.
+_____________________''' 
+
+leave_cave = f'''   You run out of the cave. As the moon illuminates your fur, you feel a tingling in the back of your neck. You turn around and look above the cave to see a giant Venus Flytrap that has sprouted tendrils and is reaching for you.
+
+Would you like to RUN or FIGHT?'''
+
+after_venus_combat = f'''   The Venus Flytrap screeches. Bugs and carrion spew from its mouths. You step aside as it withers and dies. Well fought, {main.player.name}!
+
+Enter OK to continue.
+_____________________'''
+
+past_maple_cave = f'''  You resume your journey up the winding path. With a few hours left until dawn, you start to reach the top of the mountain. 
+
+The path fans out in all directions and disappears into the bald top of the mountain. You see a snake skin on the side of one of the paths.
+
+Would you like to INVESTIGATE the snake skin or keep going UP toward the center of the mountain top?'''
+
+investigate_snake = f'''    You get on all fours and sniff at the snakeskin. It smells different than the snakes that attacked the grove. 
+
+Your eyes squint and you see a snake in the brush nearby roll over, it's white belly up to the moon. The snake looks to be playing dead.
+
+As you approach you see a few nearby snakes raise their head out of the brush and tall grass on the perimeter of the mountain top. The snake heads have an upturned snout that looks like a pig's nose.
+
+The snake that was playing dead rolls over.
+
+"You er not like the other 'possummsss around 'ere"
+"We are not enemiesss" says a snake from the tall grass.
+
+"What are you?" you ask.
+
+"Weeee are the hognosesss. Our kind playss dead like you." The former thanatosed snake says to you. 
+
+You think to yourself... maybe this is the kind of ally the grove lorekeeper was talking about. You've heard of your kind eating hognose snakes, but you didn't know they played dead like you. Will nature rebalance in a way that makes hognoses our allies?
+
+The snakes watch as you consider the situation. 
+

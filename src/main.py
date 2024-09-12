@@ -590,6 +590,9 @@ def fox_food(text): #19
         gamestate = 21
     elif text.lower() == "have":
         typing_animation(typing_var.help_fox)
+        gamestate = 21
+    else:
+        game_out(f'That is not a valid option, please enter the words "come" to beckon the fox or "help" to continue the conversation', "error")
 
 def post_fox_fight(text): #20
     global gamestate
@@ -608,10 +611,69 @@ def path_three(text): #21
 def path_or_maple_cave(text): #22
     global gamestate
     if text.lower() == "bald":
-        game_out(f"You choose to keep hiking up the path", "purple_bold")
-        gamestate = 25
+        game_out(f"You choose to keep hiking up the path. Enter OK to continue.", "purple_bold")
+        gamestate = 27
     elif text.lower() == "cave":
         typing_animation(typing_var.maple_cave, "blue")
+        gamestate = 23
+    else:
+        game_out(f'That is not a valid option, please enter the words "bald" to continue up the path or "cave" to go towards the Maple Cave', "error")
+
+def maple_cave(text): #23
+    global gamestate
+    gamestate = 24
+    if text.lower() == "enter":
+        typing_animation(typing_var.enter_maple_ring, "blue")
+    elif text.lower() == "destroy":
+        typing_animation(typing_var.stomp_maple, "blue")
+    elif text.lower() == "leave":
+        typing_animation(typing_var.leave_cave)
+    else:
+        game_out(f'That is not a valid option, try again!', "error")
+    
+
+def venus_combat_choice(text): #24
+    global gamestate
+    if text.lower() == "run":
+        game_out(f"You run away from the monstrosity and back to the winding path. Enter OK to continue.", "purple_bold")
+        gamestate = 27
+    elif text.lower() == "fight":
+        game_out(f"You steel your nerves and lunge at the plant!", "purple_bold")
+        gamestate = 25
+    else:
+        game_out(f'That is not a valid option, please enter the words "run" or "fight"', "error")
+        
+
+def venus_combat(text): #25
+    global gamestate
+    from combatant import venus_flytrap, venus_tendril
+    if text:
+        combat_order(player, [venus_tendril, venus_flytrap])
+    gamestate = 26
+    
+def post_venus_combat(text): #26
+    global gamestate
+    gamestate = 27
+    player.level_up()
+    typing_animation(typing_var.after_venus_combat, "purple")
+    
+def past_maple_cave(text): #27
+    global gamestate
+    gamestate = 28
+    if text:
+        typing_animation(typing_var.past_maple_cave, "blue")
+
+def mountaintop(text): #28
+    global gamestate
+    if text.lower() == "investigate":
+        gamestate = 29
+    elif text.lower() == "up":
+        gamestate = 33
+    else:
+        game_out(f'That is not a valid option, please enter the words "investigate" or "up"', "error")
+
+def investigate_snake(text):
+    
 
 def regenerate_resources(player):
     player.health = player.max_health

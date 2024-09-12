@@ -354,11 +354,23 @@ max_speed=30, spells=[], styles=[abilities.heavy_strike], inventory={}, status={
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=12, 
 endurance=60, speed=30, mana=0)
 
-fox = Combatant(name="Fox", level=3, health=30, player_class=None, strength=7, agility=12, acuity=7, 
-primary_stat=12 , avoidance=14, resistance=10, deflection=2, max_mana=0, max_endurance=90, 
+fox = Combatant(name="Fox", level=2, health=25, player_class=None, strength=7, agility=12, acuity=7, 
+primary_stat=12 , avoidance=14, resistance=10, deflection=1, max_mana=0, max_endurance=90, 
 max_speed=120, spells=[], styles=[abilities.bloody_strike, abilities.defensive_strike], inventory={}, status={"Ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=5, initiative=None, max_health=30, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=6, initiative=None, max_health=30, 
 endurance=90, speed=120, mana=0)
+
+venus_flytrap = Combatant(name="Venus Flytrap", level=3, health=30, player_class=None, strength=8, agility=8, acuity=12, 
+primary_stat=12 , avoidance=10, resistance=14, deflection=2, max_mana=100, max_endurance=60, 
+max_speed=30, spells=[abilities.missile_barrage, abilities.transfusion], styles=[abilities.lotus_bloom], inventory={}, status={"Ranged": [True, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=30, 
+endurance=60, speed=30, mana=100)
+
+venus_tendril = Combatant(name="Venus Tendril", level=1, health=5, player_class=None, strength=7, agility=7, acuity=7, 
+primary_stat=7 , avoidance=7, resistance=7, deflection=1, max_mana=0, max_endurance=25, 
+max_speed=30, spells=[], styles=[abilities.tear_flesh], inventory={}, status={"Ranged": [True, "status"]}, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=5, 
+endurance=25, speed=30, mana=0)
 
 
 if __name__ == "__main__":

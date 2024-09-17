@@ -37,8 +37,8 @@ class Ability():
                 self.entangle(user, victim)   
             case "augment_attack":
                 self.augment_attack(user, victim)
-            case "automatic_hit":
-                self.automatic_hit(user, victim)
+            case "guaranteed_hit":
+                self.guaranteed_hit(user, victim)
     
     #damage_over_time set up is Combatant.status = {"damage_over_time":{dot1:[duration,effect_int]}, {dot2:[duration, effect_int]}}
         
@@ -140,9 +140,9 @@ class Ability():
         user.status["augment_attack"] = [self.duration, self.effect_int, self.name]
         user.basic_attack(victim)
     
-    def automatic_hit(self, user, victim):
+    def guaranteed_hit(self, user, victim):
         victim.health -= self.damage
-        game_out(f"You hit {victim.name} automatically for {self.damage} damage!")
+        game_out(f"{victim.name} is hit for {self.damage} damage!")
         
 
 class Style(Ability):
@@ -216,7 +216,7 @@ shadow_guise = Spell("Shadow Guise", "raise_deflection", effect_int=2, damage=0,
 second_wind = Spell("Second Wind", "recover_resource", effect_int=0, damage=0, duration=0, ranged=True, mana_cost=50) #effect int will indicate which resource to recover
 entangle = Spell("Entangle", "entangle", effect_int=3, damage=0, duration=3, ranged=True, mana_cost=25)
 comet = Spell("Comet", "direct_damage", effect_int=2, damage=12, duration=0, ranged=True, mana_cost=50) #effect int used for area of effect damage
-missile_barrage = Spell("Missile Barrage", "automatic_hit", effect_int=0, damage=6, duration=0, ranged=True, mana_cost=40)
+missile_barrage = Spell("Missile Barrage", "guaranteed_hit", effect_int=0, damage=6, duration=0, ranged=True, mana_cost=40)
 
 
 starting_spells = {"Transfusion": transfusion,

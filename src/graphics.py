@@ -38,7 +38,7 @@ def help_click():
 
     pophelp = Toplevel(root)
     pophelp.title("Play Dead Information")
-    pophelp.geometry("650x750")
+    pophelp.geometry("650x800")
     pophelp.config(bg="#212121")
     
     my_frame = tk.Frame(pophelp, bg="#212121")
@@ -56,40 +56,39 @@ def help_click():
 help_button = tk.Button(button_frame, text = "Help", activebackground="#6a8758", bg="#5d9639", bd=0, relief="groove", command=help_click)
 help_button.grid(row = 0, column = 0)
 
-def inv_read():
+def equip_read():
     import main
     if main.player:
         if main.player.equipment["Mhand"]:
             info = (f"""
     Main Hand: {main.player.equipment["Mhand"].name}\n
     Off Hand: {main.player.equipment["Ohand"].name}\n
-    Armor: {main.player.equipment["Armor"].name}\n
-    Inventory: {[item.name for item in main.player.inventory]}""")
+    Armor: {main.player.equipment["Armor"].name}\n""")
             return info
     else:
         return "You haven't chosen equipment yet."
         
   
-def inv_click():
-    popinv = Toplevel(root)
-    popinv.title("Equipment and Inventory")
-    popinv.geometry("300x200")
-    popinv.config(bg="#212121")
+def equip_click():
+    popequip = Toplevel(root)
+    popequip.title("Equipment")
+    popequip.geometry("300x200")
+    popequip.config(bg="#212121")
         
-    my_frame = tk.Frame(popinv, bg="#212121")
+    my_frame = tk.Frame(popequip, bg="#212121")
     my_frame.pack(pady=10)
     
-    inv_info = tk.StringVar(popinv)
-    inv_info.set(inv_read())
+    equip_info = tk.StringVar(popequip)
+    equip_info.set(equip_read())
     
-    popinv_label = tk.Label(my_frame, textvariable=inv_info, bg="#212121", fg="#d9d5e3", justify="left", font=("Times", 12))
-    popinv_label.pack(expand=True, fill = 'both')
+    popequip_label = tk.Label(my_frame, textvariable=equip_info, bg="#212121", fg="#d9d5e3", justify="left", font=("Times", 12))
+    popequip_label.pack(expand=True, fill = 'both')
 
-    ok_but = tk.Button(my_frame, text= "Ok", bg="#9c0514", command= lambda: close_window(popinv))
+    ok_but = tk.Button(my_frame, text= "Ok", bg="#9c0514", command= lambda: close_window(popequip))
     ok_but.pack(pady=1)
 
-inventory_button = tk.Button(button_frame, text = "Inventory", activebackground= "#d9d5e3", bg = "#554c73",command=inv_click)
-inventory_button.grid(row = 1, column = 0)
+equipment_button = tk.Button(button_frame, text = "Equipment", activebackground= "#d9d5e3", bg = "#554c73",command=equip_click)
+equipment_button.grid(row = 1, column = 0)
 
 def spells_read():
     import main
@@ -196,9 +195,9 @@ game_text.tag_configure("purple", background = "#212121",
 game_text.tag_configure("error", background = "#212121", 
                         font=("Times New Roman", 11), 
                         foreground = "#e02012")
-game_text.tag_configure("dot", background = "#212121", 
-                        font=("Times New Roman", 9), 
-                        foreground = "#69070b")
+game_text.tag_configure("dot", background = "#e6dada", 
+                        font=("Times New Roman", 9, "bold"), 
+                        foreground = "#910606")
 game_text.tag_configure("combat", background = "#661209", 
                         font=("Times New Roman", 11, "bold"), 
                         foreground = "#bdaeb2")

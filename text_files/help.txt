@@ -10,7 +10,6 @@ Combat actions:
 Attack - type 'attack'
 Use style - type and enter the style name
 Use spell - type and enter the spell name
-Use Item - type and enter item name
 Restart - resets the combat encounter
 
 Click the Spells or Styles buttons to see what abilities you have learned.

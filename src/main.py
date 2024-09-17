@@ -48,6 +48,44 @@ def gamestate_bus(text):
             post_grove_battle(text)
         case 13:
             speak_to_passel(text)
+        case 14:
+            path_one(text)
+        case 15:
+            path_or_cave(text)
+        case 16:
+            fern_cave(text)
+        case 17:
+            path_two(text)
+        case 18:
+            fox_response(text)
+        case 19:
+            fox_food(text)
+        case 20:
+            post_fox_fight(text)
+        case 21:
+            path_three(text)
+        case 22:
+            path_or_maple_cave(text)
+        case 23:
+            maple_cave(text)
+        case 24:
+            venus_combat_choice(text)
+        case 25:
+            venus_combat(text)
+        case 26:
+            post_venus_combat(text)
+        case 27:
+            past_maple_cave(text)
+        case 28:
+            mountaintop(text)
+        case 29:
+            investigate_snake(text)
+        case 30:
+            briar_thicket(text)
+        case 31:
+            briar_fight(text)
+        case 32:
+            close_game_credits(text)
         
 def combatstate_bus(text, *args):
     if combatstate == 1:
@@ -56,7 +94,7 @@ def combatstate_bus(text, *args):
         #clear previous ability counter dictionary
     elif combatstate == 2:
         player_action(text)
-        #dot counters are decreased automatically
+        #dot counters are decreased
     elif combatstate == 3:
         npc_action()
     elif combatstate == 4:
@@ -65,16 +103,16 @@ def combatstate_bus(text, *args):
         extra_attack(text)
     elif combatstate == 6:
         check_range(text)
-
-
+        
 enemies = []
 target = None
 
 def combat_order(player, *args): 
+    from graphics import game_text
     global enemies
     enemies = []
     for combatant in args[0]:
-        print(combatant.name)
+        # print(combatant.name)
         combatant.initiative = None
         enemies.append(combatant)
     player.initiative = player.agility + random.randint(2,12)
@@ -93,15 +131,15 @@ def combat_order(player, *args):
         else:
             ask_player_target()    
     else:
-        npc_action()   
+        npc_action()
 
 def player_action(text):
     global player, combatround
     combatround +=1
     if "damage_over_time" in player.status:
         damage_over_time(player)
-    print([style.name for style in player.styles])
-    print([spell.name for spell in player.spells])
+    # print([style.name for style in player.styles])
+    # print([spell.name for spell in player.spells])
     if target == None:
         ask_player_target()
     game_out(f"{text.title()}", "combat_pc")
@@ -169,89 +207,6 @@ def ask_extra_attack():
     else:
         npc_action()
 
-def npc_action():
-    global enemies, player
-    print(f"NPC ACTION")
-    #ALL ENEMIES GO
-    for e in enemies:
-        if "entangled" in e.status:
-            e.status["entangled"][0] -= 1
-            if e.status["entangled"][0] == 0:
-                del e.status["entangled"]
-        if "damage_over_time" in e.status:
-            damage_over_time(e)
-            if e.check_death():
-                if len(enemies) == 0:
-                    gamestate_bus()
-                return
-        npc_decision(e)
-    wait_player_input()
-    
-def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra attack is its own function
-    global player
-    aoe_styles = {"Lotus Bloom", "Arcane Pulse", "Sweeping Strike"}
-    player_health_status = float(player.health  / player.max_health) * 100
-    enemy_health_status = float(enemy.health  / enemy.max_health) * 100
-    print(f"Player health: {player_health_status}%, Enemy health: {enemy_health_status}%")
-    print(f"Enemy resources: Speed - {enemy.speed}, Endurance - {enemy.endurance}, Mana - {enemy.mana}")
-    check_aoe = [style.name for style in enemy.styles if style.name in aoe_styles]
-    range_difference = True if player.status["ranged"][0] == True and enemy.status["ranged"][0] == False else False
-    if "stealth" in player.status:
-        if len(check_aoe) > 0:
-            if enemy.endurance > check_aoe[0].endurance_cost:
-                check_aoe[0].use_style(enemy, player)
-                del player.status["stealth"]
-                game_out(f"{enemy.name} has revealed your location using {check_aoe[0].name}", "combat_npc")
-        else:
-            return game_out(f"{enemy.name} cannot see you while you're stealthed!", "combat_npc")
-    elif player_health_status >= enemy_health_status:
-        if enemy.endurance > enemy.mana:
-            available_styles = [style for style in enemy.styles if enemy.endurance > style.endurance_cost]
-            if range_difference: available_styles = [style for style in available_styles if style.ranged == True]
-            for style in available_styles:
-                print(style.name)
-            if available_styles:
-                random_style = random.choice(available_styles)
-                random_style.use_style(enemy, player)
-            else:
-                npc_basic_attack(range_difference, enemy)
-        else:
-            available_spells = [spell for spell in enemy.spells if enemy.mana > spell.mana_cost]
-            if available_spells:
-                random_spell = random.choice(available_spells)
-                random_spell.use_spell(enemy, player)
-            else:
-                print(range_difference)
-                npc_basic_attack(range_difference, enemy)
-    else:
-        npc_basic_attack(range_difference, enemy)
-    print(enemy.status)
-    set_char_stats()
-    if enemy.speed > 30 and player_health_status > enemy_health_status and enemy.status["Extra Attack"] < combatround:
-        if npc_basic_attack(range_difference, enemy):
-            enemy.use_speed(30)
-            enemy.status["Extra Attack"] += 1
-    return 
-    
-def npc_basic_attack(range_difference, enemy):
-    print(f"Range Difference is {range_difference}")
-    if range_difference and "entangled" in enemy.status:
-        return game_out(f"{enemy.name} cannot attack while entangled.", "combat_npc")
-    enemy.basic_attack(player)
-    return True
-
-def damage_over_time(combatant):
-    for dot in combatant.status["damage_over_time"].copy():
-        if combatant.status["damage_over_time"][dot][0] > 0:
-            combatant.status["damage_over_time"][dot][0] -= 1
-            combatant.health -= combatant.status["damage_over_time"][dot][1]
-            game_out(f"{combatant.name} takes {combatant.status['damage_over_time'][dot][1]} damage from {combatant.status['damage_over_time'][dot][2]}", "dot")
-            if combatant.status["damage_over_time"][dot][0] == 0:
-                del combatant.status["damage_over_time"][dot]
-                
-        else:
-            del combatant.status["damage_over_time"][dot]
-
 def extra_attack(text):
     if text.lower() in {"yes", "attack"}:
         global player
@@ -283,13 +238,16 @@ def ask_player_target():
         restart_combat(player, enemies)
         gamestate_bus("ok")
         return
-    if len(enemies) == 1:
+    elif len(enemies) == 1:
         target = enemies[0]
         game_out(f"{target.name} is your target!", "combat_pc")
-        if combatround == 1:
+        print(f" COMBAT ROUND: {combatround}")
+        if combatround == 0:
             wait_player_input()
+            return
         else:
             npc_action()
+            return
     game_out(f"Which enemy would you like to target?","combat_pc_question")
     for e in enemies:
         if e.player_class == None:
@@ -299,7 +257,7 @@ def ask_player_target():
 
 def player_target(text): #combatstate 4
     names = [e.name for e in enemies]
-    print(f" List of enemies {names}")
+    # print(f" List of enemies {names}")
     if text.title() in names:
         for e in enemies:
             if text.title() == e.name:
@@ -308,8 +266,90 @@ def player_target(text): #combatstate 4
                 target = e
                 wait_player_input()
     else:
-        game_out(f"Cannot find {text}, please try again!", "error")    
-        
+        game_out(f"Cannot find {text}, please try again!", "error")   
+
+def npc_action():
+    from graphics import game_text
+    global enemies, player, combatstate
+    #ALL ENEMIES GO
+    for e in enemies:
+        if "entangled" in e.status:
+            e.status["entangled"][0] -= 1
+            if e.status["entangled"][0] == 0:
+                del e.status["entangled"]
+        if "damage_over_time" in e.status:
+            damage_over_time(e)
+            if e.check_death():
+                if len(enemies) == 0:
+                    gamestate_bus("ok")
+                return
+        game_text.after(2000, npc_decision, e)
+    game_text.after(3000, wait_player_input)
+    
+def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra attack is its own function
+    global player
+    aoe_styles = {"Lotus Bloom", "Arcane Pulse", "Sweeping Strike"}
+    player_health_status = float(player.health  / player.max_health) * 100
+    enemy_health_status = float(enemy.health  / enemy.max_health) * 100
+    # print(f"Player health: {player_health_status}%, Enemy health: {enemy_health_status}%")
+    # print(f"Enemy resources: Speed - {enemy.speed}, Endurance - {enemy.endurance}, Mana - {enemy.mana}")
+    check_aoe = [style.name for style in enemy.styles if style.name in aoe_styles]
+    range_difference = True if player.status["ranged"][0] == True and enemy.status["ranged"][0] == False else False
+    if "stealth" in player.status:
+        if len(check_aoe) > 0:
+            if enemy.endurance > check_aoe[0].endurance_cost:
+                check_aoe[0].use_style(enemy, player)
+                del player.status["stealth"]
+                game_out(f"{enemy.name} has revealed your location using {check_aoe[0].name}", "combat_npc")
+        else:
+            return game_out(f"{enemy.name} cannot see you while you're stealthed!", "combat_npc")
+    elif player_health_status >= enemy_health_status:
+        if enemy.endurance > enemy.mana:
+            available_styles = [style for style in enemy.styles if enemy.endurance > style.endurance_cost]
+            if range_difference: available_styles = [style for style in available_styles if style.ranged == True]
+            # for style in available_styles:
+                # print(style.name)
+            if available_styles:
+                random_style = random.choice(available_styles)
+                random_style.use_style(enemy, player)
+            else:
+                npc_basic_attack(range_difference, enemy)
+        else:
+            available_spells = [spell for spell in enemy.spells if enemy.mana > spell.mana_cost]
+            if available_spells:
+                random_spell = random.choice(available_spells)
+                random_spell.use_spell(enemy, player)
+            else:
+                # print(range_difference)
+                npc_basic_attack(range_difference, enemy)
+    else:
+        npc_basic_attack(range_difference, enemy)
+    # print(enemy.status)
+    set_char_stats()
+    if enemy.speed > 30 and player_health_status > enemy_health_status and enemy.status["Extra Attack"] < combatround:
+        if npc_basic_attack(range_difference, enemy):
+            enemy.use_speed(30)
+            enemy.status["Extra Attack"] += 1
+    return 
+    
+def npc_basic_attack(range_difference, enemy):
+    # print(f"Range Difference is {range_difference}")
+    if range_difference and "entangled" in enemy.status:
+        return game_out(f"{enemy.name} cannot attack while entangled.", "combat_npc")
+    enemy.basic_attack(player)
+    return True
+
+def damage_over_time(combatant):
+    for dot in combatant.status["damage_over_time"].copy():
+        if combatant.status["damage_over_time"][dot][0] > 0:
+            combatant.status["damage_over_time"][dot][0] -= 1
+            combatant.health -= combatant.status["damage_over_time"][dot][1]
+            game_out(f"{combatant.name} takes {combatant.status['damage_over_time'][dot][1]} damage from {combatant.status['damage_over_time'][dot][2]}", "dot")
+            if combatant.status["damage_over_time"][dot][0] == 0:
+                del combatant.status["damage_over_time"][dot]
+                
+        else:
+            del combatant.status["damage_over_time"][dot]
 
 def narrative_read(identifier:str, tag = "blue"):
     with open("text_files/narrative.txt") as narrative:
@@ -336,10 +376,12 @@ def start_game(text):
         gamestate = 2
         
 def enter_name(text):
+    import typing_var
     if 1 < len(text) < 13:
         game_out(f"\nWelcome to our realm, {text.capitalize()}!", "purple_bold")
         global char_name 
         char_name = text.capitalize()
+        typing_var.player["name"] = char_name
         #Choose class prompt
         narrative_read("ClassDesc")
         typing_animation(f"Choose your class - ", "blue_bold")
@@ -364,14 +406,13 @@ Resistance: {player.resistance}""")
         
 def choose_class(text):
     from combatant import Combatant
-    from typing_var import player_name
     from items import pinecone_mail, leafrobe, snakeweave
+    print(f"TYPING VAR NAME: {typing_var.player}")
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
         game_out(f"That is not a valid option, please try entering the name of your class again!", "error")
     else:
         global player
-        player_name(char_name)
         player = Combatant(char_name, 1, 0, player_class, styles=[], spells=[])
         player.set_playerclass(player_class)
         game_out(f"You are now {player.name} the {player.player_class} 'possum!\n", "purple_bold")
@@ -399,6 +440,7 @@ def choose_equipment(text):
     if item.name in {"Knife", "Wand"}:
         player.equip_item(shield)
         player.set_avoidance()
+        set_char_stats()
     narrative_read(item.name)
     typing_animation(f"Choose a style to start with - ", "blue_bold")
     #Choose styles prompt
@@ -472,7 +514,7 @@ def new_ability(text): #gamestate 8
     for available_spell in abilities.new_ability_dict[player.player_class][f"{player.player_class}_Spells"]:
         if available_spell not in [spell.name for spell in player.spells]:
             available_abilities.append(available_spell)
-    print([new_ability for new_ability in available_abilities])
+    # print([new_ability for new_ability in available_abilities])
     typing_animation(f'''  The faeries surrounding you look impressed at the command of your new abilities.
 "You fought well {player.name}. We are glad to offer you a gift of one additional style or spell of your choosing.
 These styles are available to you: {[new_ability for new_ability in available_abilities if new_ability in abilities.new_ability_dict[player.player_class][f"{player.player_class}_Styles"]]}
@@ -484,9 +526,10 @@ Make a selection by typing in the name of the new ability you want to learn.''',
     
 def choose_new_ability(text): #gamestate 9
     global available_abilities
-    print(available_abilities)
+    # print(available_abilities)
     if text.title() not in [new_ability for new_ability in available_abilities]:
         game_out(f"Choice not valid, please try again.", "error")
+        return
     # if text.title() in [abilities.Ability.name for abilities.Ability in abilities.Ability.ability_list]:
     player.level_up()
     for new_ability in abilities.Ability.ability_list:
@@ -503,8 +546,7 @@ def choose_new_ability(text): #gamestate 9
 
 def story_continues(text): #10
     if text:
-        narrative_read("Story2", "blue")
-        typing_animation(typing_var.feast, "blue" )
+        typing_animation(typing_var.feast.format(player.name, player.name), "blue" )
     global gamestate
     gamestate = 11
 
@@ -520,7 +562,7 @@ def post_grove_battle(text): #12
     from combatant import lilsnake3, lilsnake1, lilsnake2
     if text:
         player.level_up()
-        typing_animation(typing_var.post_grove_battle, "blue")
+        typing_animation(typing_var.post_grove_battle.format(player.name), "blue")
         global gamestate
         gamestate = 13
     refresh_snakes = [lilsnake2, lilsnake1, lilsnake3]
@@ -529,7 +571,7 @@ def post_grove_battle(text): #12
     
 def speak_to_passel(text): #13
     if text.lower() == "yes":
-        typing_animation(typing_var.speak_to_passel, "blue")
+        typing_animation(typing_var.speak_to_passel.format(player.name, player.name), "blue")
     elif text.lower() == "no":
         game_out(f"Enter OK to continue.", "blue")
     global gamestate
@@ -539,8 +581,7 @@ def path_one(text): #14
     if text:
         typing_animation(typing_var.path_1, "blue")
     global gamestate
-    gamestate = 15
-        
+    gamestate = 15  
         
 def path_or_cave(text): #15
     global gamestate
@@ -555,7 +596,7 @@ def path_or_cave(text): #15
 def fern_cave(text): #16
     global gamestate
     if text.lower() == "hell":
-        typing_animation(typing_var.fern_cave_2, "blue")
+        typing_animation(typing_var.fern_cave_2.format(player.name), "blue")
         gamestate = 17
     elif text.lower() == "ok":
         game_out(f"You nod to Amanita and leave the cave.", "blue")
@@ -593,10 +634,10 @@ def fox_food(text): #19
         game_out(f"You walk away as the fox sits in confusion", "purple_bold")
         gamestate = 21
     elif text.lower() == "have":
-        typing_animation(typing_var.help_fox)
-        gamestate = 21
+        typing_animation(typing_var.help_fox.format(player.name), "blue")
+        gamestate = 20
     else:
-        game_out(f'That is not a valid option, please enter the words "come" to beckon the fox or "help" to continue the conversation', "error")
+        game_out(f'That is not a valid option, please enter the words "come" to beckon the fox, "suit" to end the conversation, or "have" to continue the conversation', "error")
 
 def post_fox_fight(text): #20
     global gamestate
@@ -628,8 +669,10 @@ def maple_cave(text): #23
     gamestate = 24
     if text.lower() == "enter":
         typing_animation(typing_var.enter_maple_ring, "blue")
+        gamestate = 25
     elif text.lower() == "destroy":
         typing_animation(typing_var.stomp_maple, "blue")
+        gamestate = 25
     elif text.lower() == "leave":
         typing_animation(typing_var.leave_cave)
     else:
@@ -642,7 +685,7 @@ def venus_combat_choice(text): #24
         game_out(f"You run away from the monstrosity and back to the winding path. Enter OK to continue.", "purple_bold")
         gamestate = 27
     elif text.lower() == "fight":
-        game_out(f"You steel your nerves and lunge at the plant!", "purple_bold")
+        game_out(f"You steel your nerves and lunge at the plant! Enter OK to continue.", "purple_bold")
         gamestate = 25
     else:
         game_out(f'That is not a valid option, please enter the words "run" or "fight"', "error")
@@ -659,7 +702,7 @@ def post_venus_combat(text): #26
     global gamestate
     gamestate = 27
     player.level_up()
-    typing_animation(typing_var.after_venus_combat, "purple")
+    typing_animation(typing_var.after_venus_combat.format(player.name), "purple")
     
 def past_maple_cave(text): #27
     global gamestate
@@ -695,7 +738,7 @@ def briar_thicket(text): #30
     global gamestate
     import typing_var
     if text:
-        typing_animation(typing_var.briar_dialogue, "blue")
+        typing_animation(typing_var.briar_dialogue.format(player.name), "blue")
     gamestate = 31  
 
 def briar_fight(text): #31
@@ -703,15 +746,14 @@ def briar_fight(text): #31
     global gamestate
     if text:
         if player.status["snake_ally"] == "yes":
-            game_out(f"Your new hognose allies are helping you deal with the timber rattlesnakes!")
+            game_out(f"Your new hognose allies are helping you deal with the timber rattlesnakes!", "purple_bold")
             combat_order(player, [snakey])
         elif player.status["snake_ally"] == "no":
             combat_order(player, [snakey, lilsnake1, lilsnake2, lilsnake3])
     gamestate = 32
     
 def close_game_credits(text): #32
-    pass
-#type closing credits
+    typing_animation(typing_var.beat_snakey, "purple_bold")
 
 def regenerate_resources(player):
     player.health = player.max_health

@@ -175,7 +175,7 @@ class Combatant():
     def avoidance_check(self, Combatant):
         temp_avoidance = Combatant.avoidance
         if "stealth" in self.status and self.player_class:
-            game_out(f"{self.name} automatically hits {Combatant.name} from Stealth!", "effects")
+            game_out(f"{self.name} successfully hits {Combatant.name} from Stealth!", "effects")
             del self.status["stealth"]
             return True
         elif "Stealth" in Combatant.status:
@@ -261,16 +261,16 @@ class Combatant():
             Combatant.take_damage(damage)
             
     def check_death(self, damage = None):
-        from main import enemies
+        from main import enemies, combatround
         if self.health <= 0:
             game_out(f"{self.name} was defeated!", "effects")
             if self in enemies:
                 enemies.remove(self)
+                combatround += 1
                 main.target = None
             return True
         if self.health <= 0 and self.player_class:
-            game_out(f"You're critically wounded and play dead until the threat has passed.", "blue")
-            game_out(f"RESTART to try again", "blue_bold")
+            game_out(f"You're critically wounded, enter RESTART to try again.", "blue")
         
     def use_mana(self, mana_cost):
         self.mana -= mana_cost
@@ -372,9 +372,5 @@ endurance=25, speed=30, mana=0)
 
 
 if __name__ == "__main__":
-    def print_slow(text):
-        for char in text:
-            print(char)
-            time.sleep(.5)
-    print_slow(abilities.comet.name)
+    pass
     # print([style.name for style in dire_beetle.styles])

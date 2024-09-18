@@ -306,7 +306,7 @@ class Combatant():
         self.set_resistance()
         self.primary_stat += 1
         main.set_char_stats()
-        game_out(f"\nYou level up! Your primary stat and resources have increased.", "effects")
+        game_out(f"\nYou level up! Your primary stat and resources have increased.\n", "effects")
 
     # def __repr__(self):
     #     print(f"Name {self.name}, max_speed {self.max_speed}, status {self.status}")
@@ -322,40 +322,40 @@ class Combatant():
 
 #max end/speed/mana = (level+stat)*10  (divide in 2 for NPC's because they will use it right away?)
 
-snakey = Combatant(name="Snakey", level=3, health=24, player_class=None, strength=6, agility=7, acuity=10, 
+snakey = Combatant(name="Snakey", level=3, health=29, player_class=None, strength=6, agility=7, acuity=10, 
 primary_stat=10 , avoidance=11, resistance=15, deflection=1, max_mana=130, max_endurance=90, 
 max_speed=60, spells=[abilities.comet, abilities.missile_barrage], styles=[abilities.arcane_pulse, abilities.tear_flesh, abilities.envenom], inventory={}, status={"Ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=24, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=3, initiative=None, max_health=29, 
 endurance=90, speed=60, mana=130)
 
-lilsnake1 = Combatant(name="Red Snake", level=1, health=8, player_class=None, strength=3, agility=7, acuity=3, 
+lilsnake1 = Combatant(name="Red Snake", level=1, health=10, player_class=None, strength=3, agility=7, acuity=3, 
 primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
 max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=8, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=10, 
 endurance=30, speed=30, mana=0)
 
-lilsnake2 = Combatant(name="Brown Snake", level=1, health=8, player_class=None, strength=3, agility=7, acuity=3, 
+lilsnake2 = Combatant(name="Brown Snake", level=1, health=10, player_class=None, strength=3, agility=7, acuity=3, 
 primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
 max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=8, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=10, 
 endurance=30, speed=30, mana=0)
 
-lilsnake3 = Combatant(name="Orange Snake", level=1, health=8, player_class=None, strength=3, agility=7, acuity=3, 
+lilsnake3 = Combatant(name="Orange Snake", level=1, health=10, player_class=None, strength=3, agility=7, acuity=3, 
 primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
 max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=8, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=10, 
 endurance=30, speed=30, mana=0)
 
-dire_beetle = Combatant(name="Dire Beetle", level=1, health=12, player_class=None, strength=10, agility=5, acuity=3, 
+dire_beetle = Combatant(name="Dire Beetle", level=1, health=16, player_class=None, strength=10, agility=5, acuity=3, 
 primary_stat=10, avoidance=8, resistance=12, deflection=2, max_mana=0, max_endurance=60, 
 max_speed=30, spells=[], styles=[abilities.heavy_strike], inventory={}, status={"ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=12, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiative=None, max_health=16, 
 endurance=60, speed=30, mana=0)
 
-fox = Combatant(name="Fox", level=2, health=25, player_class=None, strength=7, agility=12, acuity=7, 
+fox = Combatant(name="Fox", level=2, health=30, player_class=None, strength=7, agility=12, acuity=7, 
 primary_stat=12 , avoidance=14, resistance=10, deflection=1, max_mana=0, max_endurance=90, 
 max_speed=120, spells=[], styles=[abilities.bloody_strike, abilities.defensive_strike], inventory={}, status={"Ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=6, initiative=None, max_health=30, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=5, initiative=None, max_health=30, 
 endurance=90, speed=120, mana=0)
 
 venus_flytrap = Combatant(name="Venus Flytrap", level=3, health=30, player_class=None, strength=8, agility=8, acuity=12, 

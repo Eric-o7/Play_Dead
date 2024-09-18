@@ -109,7 +109,7 @@ class Ability():
     def recover_resource(self, user, victim):
         #effect int key: 0-speed, 1-mana, 2-endurance
         if self.effect_int == 0:
-            user.speed += 60
+            user.speed += 30 * user.level
     
     def multi_target_damage(self, user, victim):
         from main import enemies
@@ -118,7 +118,7 @@ class Ability():
             aoe_damage = 3
         if user.player_class:
             for e in enemies:
-                e.take_damage(aoe_damage)
+                e.take_damage(aoe_damage + user.level)
                 if "stealth" in e.status:
                     game_out(f"{e.name}'s location has been revealed, they lose the stealth effect!")
                     del e.status["stealth"]
@@ -137,7 +137,7 @@ class Ability():
         victim.status["ranged"][0] = False
     
     def augment_attack(self, user, victim):
-        user.status["augment_attack"] = [self.duration, self.effect_int, self.name]
+        user.status["augment_attack"] = [user.level, self.effect_int, self.name]
         user.basic_attack(victim)
     
     def guaranteed_hit(self, user, victim):

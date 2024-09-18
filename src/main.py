@@ -1,4 +1,3 @@
-import time
 import random
 import abilities
 import typing_var
@@ -11,9 +10,6 @@ gamestate = 1
 combatstate = 1
 combatround = 0
 player = None
-
-def delay(seconds):
-    time.sleep(seconds)
 
 def reset_game():
     import os, sys
@@ -87,22 +83,24 @@ def gamestate_bus(text):
         case 32:
             close_game_credits(text)
         
-def combatstate_bus(text, *args):
-    if combatstate == 1:
-        combat_order()
+def combatstate_bus(text):
+    global combatstate
+    match combatstate:
+        case 1:
+            combat_order()
         #set combat order by rolling agi + 2d6
         #clear previous ability counter dictionary
-    elif combatstate == 2:
-        player_action(text)
+        case 2:
+            player_action(text)
         #dot counters are decreased
-    elif combatstate == 3:
-        npc_action()
-    elif combatstate == 4:
-        player_target(text)
-    elif combatstate == 5:
-        extra_attack(text)
-    elif combatstate == 6:
-        check_range(text)
+        case 3:
+            npc_action()
+        case 4:
+            player_target(text)
+        case 5:
+            extra_attack(text)
+        case 6:
+            check_range(text)
         
 enemies = []
 target = None
@@ -125,7 +123,6 @@ def combat_order(player, *args):
     if player.initiative > enemies[0].initiative:
         game_out(f"You go first!", "blue_bold")
         if len(enemies) <= 1:
-            combatstate = 2
             wait_player_input()
         else:
             ask_player_target()    
@@ -192,7 +189,6 @@ def check_range(text): #combatstate 6
     player.set_deflection()
     wait_player_input()
         
-
 def ask_extra_attack():
     if not target:
         ask_player_target()
@@ -346,8 +342,7 @@ def damage_over_time(combatant):
             combatant.health -= combatant.status["damage_over_time"][dot][1]
             game_out(f"{combatant.name} takes {combatant.status['damage_over_time'][dot][1]} damage from {combatant.status['damage_over_time'][dot][2]}", "dot")
             if combatant.status["damage_over_time"][dot][0] == 0:
-                del combatant.status["damage_over_time"][dot]
-                
+                del combatant.status["damage_over_time"][dot]  
         else:
             del combatant.status["damage_over_time"][dot]
 
@@ -367,7 +362,6 @@ def narrative_read(identifier:str, tag = "blue"):
     for line in narrative[section[0]+1:section[1]]:
         game_out(line, tag)
 
-        
 def start_game(text):
     if text.lower() == "start":
         typing_animation(typing_var.intro, "blue")
@@ -443,7 +437,6 @@ def choose_equipment(text):
     global gamestate
     gamestate = 5
     
-
 def choose_styles(text):
     from abilities import starting_styles
     style_name = text.title()
@@ -462,7 +455,6 @@ def choose_styles(text):
         typing_animation(f"You're almost ready for your first trial. Choose two spells to start with.", "blue_bold")
     global gamestate
     gamestate = 6
-    
 
 def choose_spells(text):
     from abilities import starting_spells
@@ -500,7 +492,6 @@ def opening_combat():
     game_out(f"\nTest your new abilities against a Dire Beetle!\n", "purple_bold")
     combat_order(player, [dire_beetle])
 
-
 def new_ability(text): #gamestate 8
     global available_abilities, gamestate
     available_abilities = []
@@ -518,8 +509,7 @@ These spells are available to you: {[new_ability for new_ability in available_ab
 
 Make a selection by typing in the name of the new ability you want to learn.''', "blue")
     gamestate = 9
-    
-    
+      
 def choose_new_ability(text): #gamestate 9
     global available_abilities
     # print(available_abilities)
@@ -535,7 +525,6 @@ def choose_new_ability(text): #gamestate 9
         elif text.title() == new_ability.name and isinstance(new_ability, abilities.Spell):
             player.spells.append(new_ability) 
             game_out(f"You have learned a new spell: {new_ability.name}", "purple_bold")
-    narrative_read("Story1", "blue")
     typing_animation(typing_var.back_to_grove, "blue")
     global gamestate
     gamestate = 10
@@ -549,8 +538,7 @@ def story_continues(text): #10
 def battle_at_grove(text): #11
     from combatant import lilsnake1, lilsnake2, lilsnake3
     if text:
-        narrative_read("Story3", "blue")
-    combat_order(player, [lilsnake1, lilsnake2, lilsnake3])
+        combat_order(player, [lilsnake1, lilsnake2, lilsnake3])
     global gamestate
     gamestate = 12
 

@@ -78,19 +78,7 @@ Your companion opossums see you suddenly appear back in the cave.
 "Your courage makes us proud! The sun is coming up, we're going to head back to the grove."
 ***Story1End***
 
-***Story2Start***
-You return to the Oak Grove where a small feast awaits you.
-Your father, Kesk, looks very proud throughout the celebration. 
-During the feast, Kesk tells you that their brother Elpos has returned to the valley. Elpos feasts with the passel, telling stories of Kesk as a child and congratulating you on your victory in the fairy trials.
-***Story2End***
-
-
-***Story3Start***
-As Elpos finishes his monologue, you see Kesk moving out of his hollow and the other opossums in the passle soon follow. 
-Kesk bellows a warcry and jumps into action. The other 'possums growl in defiance and leap to fight with Kesk.
-You are immediately surrounded by a slither of small timber rattlesnakes. Your battle begins!
-***Story3End***
-
+Opossum facts
 Opossum is the only marsupial in North America.
 
 They live 2-4 years in the wild.

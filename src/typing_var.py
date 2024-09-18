@@ -11,7 +11,9 @@ We are the faerie council of the Appalachian Mountains. For too long we've seen 
 
 Now rise, you white dog, and tell us your name!"'''
 
-back_to_grove = """ Let's tell Kesk how you bested the fairy ring trials today!
+back_to_grove = """ Your companion opossums see you suddenly appear back in the cave.
+"Your courage makes us proud! The sun is coming up, we're going to head back to the grove.
+Let's tell Kesk how you bested the fairy ring trials tonight!"
 Enter OK to continue.
 ___________________\n"""
 
@@ -30,6 +32,12 @@ Elpos senses you, looks over and smirks...
 "This unnatural formation and rise of opossums is heresy, {}! Snakey and I have been charged with maintaining order in these mountains. You and Kesk will regret seeking your unnatural gifts." 
 
 "Prepare for battle!"
+
+As Elpos finishes his monologue, you see Kesk moving out of his hollow and the other opossums in the passle soon follow. 
+
+Kesk bellows a warcry and jumps into action. The other 'possums growl in defiance and leap to fight with Kesk.
+
+You are immediately surrounded by a slither of small timber rattlesnakes. Your battle begins!
 
 Enter OK to continue.
 ___________________\n'''

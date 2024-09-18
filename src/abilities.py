@@ -151,8 +151,8 @@ class Style(Ability):
         self.endurance_cost = endurance_cost
     
     def use_style(self, user, victim):
-        print(user.name, self.name, victim.name)
-        print(self.endurance_cost, user.endurance)
+        # print(user.name, self.name, victim.name)
+        # print(self.endurance_cost, user.endurance)
         if self.effect in user.status and user.player_class:
             game_out(f"You already benefit from {self.name}! Choose a different action.", "error")
             main.wait_player_input()
@@ -193,7 +193,7 @@ class Spell(Ability):
         self.mana_cost = mana_cost 
         
     def use_spell(self, user, victim):
-        print(user.name, self.name, victim.name)
+        # print(user.name, self.name, victim.name)
         if self.effect in user.status and user.player_class:
             game_out(f"You already benefit from {self.name}! Choose a different action.", "error")
             main.wait_player_input()

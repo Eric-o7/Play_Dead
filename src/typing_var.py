@@ -1,11 +1,21 @@
 #This module will be used to store multi-line string variables for the typing animation function so that the main.py module does not get cluttered.
 
 
-back_to_grove = """Let's tell Kesk how you bested the fairy ring trials today!
+intro = '''The last thing you remember is walking into a faerie ring in a cave near the Oak Grove. Your father, Kesk, has long advocated for you as a champion among the Opossums.
+You now face a group of flitting faeries flying around and looking upon you warmly. They have soft features and glittered wings that give way to dim light coming from seemingly every direction. There are no shadows cast in this realm.
+You're in what seems like a dirt floor arena, surrounded by wild and mystical creatures.
+
+"Welcome, young Opossum!
+
+We are the faerie council of the Appalachian Mountains. For too long we've seen your kind play dead to survive in this region. Now, we offer a gift that may allow a resorting of your place in the hierarchy.
+
+Now rise, you white dog, and tell us your name!"'''
+
+back_to_grove = """ Let's tell Kesk how you bested the fairy ring trials today!
 Enter OK to continue.
 ___________________\n"""
 
-feast = '''    You return to the Oak Grove where a small feast awaits you.
+feast = ''' You return to the Oak Grove where a small feast awaits you.
 Your father, Kesk, looks very proud throughout the celebration. 
 During the feast, Kesk tells you that their brother Elpos has returned to the valley. Elpos feasts with the passel, telling stories of Kesk as a child and congratulating you on your victory in the fairy trials.
 
@@ -24,7 +34,7 @@ Elpos senses you, looks over and smirks...
 Enter OK to continue.
 ___________________\n'''
 
-post_grove_battle = '''    After the battle, you see that Kesk was injured and some of the passel has been killed.
+post_grove_battle = ''' After the battle, you see that Kesk was injured and some of the passel has been killed.
 Kesk calls you into his hollow where he is tending his wounds.
 "{}, YOU must avenge this disgraceful attack.
 Go back up the winding path towards the mountain bald and see if you can find a vantage point to track Elpos.
@@ -83,7 +93,7 @@ Amanita looks to the side, continuing their work to reclaim the energy.
 
 Respond with 'OK' to nod and walk away or 'what the HELL are you talking about?' to learn more.\n'''
  
-fern_cave_2 = '''" I am speaking to the nature of our existence in such a world. By existing, you push and pull the chains of balance against other such actors. Take your appetite for ticks for example. They are a great source of protein for you and other animals. Though you engorge on the little bugs at will, if too many are removed, the ripples of change would affect nearly every living creature. 
+fern_cave_2 = '''   "I am speaking to the nature of our existence in such a world. By existing, you push and pull the chains of balance against other such actors. Take your appetite for ticks for example. They are a great source of protein for you and other animals. Though you engorge on the little bugs at will, if too many are removed, the ripples of change would affect nearly every living creature. 
 
 Some factions, like the one I associate with, champion change sufficient for one species but not in a way that outdoes or pushes away the dependencies of that species and the others that rely on it. We have reviewed some potential outcomes of our interjection here. The consequences are mostly benign, yet they do exist. 
 
@@ -211,7 +221,9 @@ Respond with YES or NO.\n'''
 
 ally_hognose = ''' "Yes! We can come to an agreement, please tell me more about Snakey's hideout in the briar thicket."
 
-"Excsselent... we will happily assist you in this confrontation!" says the hognose snake.
+"Excsselent... we will happily assist." says the hognose snake.
+
+"The briar thicket is dense and full of timber rattlesnakessss... weee will take care of those. You musst face Snakey alone."
 
 Enter OK to continue.
 _____________________\n'''
@@ -237,7 +249,7 @@ Respond with FIGHT to continue.\n'''
 
 beat_snakey = '''  Snakey's body shrinks, retracts, and coils into a ball as the slithering monster slips into unconsciousness.
 
-Relief washes over you. Your eyes close. You see the future of opossum's in this world and a smile cracks through. You still have to find Elpos, and now you feel more confident in yourself.
+Relief washes over you. Your eyes close. You see the future of opossum's in this world and a smile cracks through. You still have to find Elpos, but you now feel a surge of confidence in doing so.
 
 Thank you for playing this project game. Please star this repo on GitHub if you enjoyed it. If you want to play again, enter "reset". '''
 

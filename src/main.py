@@ -108,7 +108,6 @@ enemies = []
 target = None
 
 def combat_order(player, *args): 
-    from graphics import game_text
     global enemies
     enemies = []
     for combatant in args[0]:
@@ -133,8 +132,8 @@ def combat_order(player, *args):
     else:
         npc_action()
 
-def player_action(text):
-    global player, combatround
+def player_action(text): #combatstate 2
+    global combatround
     combatround +=1
     if "damage_over_time" in player.status:
         damage_over_time(player)
@@ -174,7 +173,6 @@ def ask_attack_range():
     combatstate = 6
     
 def check_range(text): #combatstate 6
-    global player
     if text.lower() not in {'yes', 'no'}:
         game_out(f"{text} is not a valid response, please enter Yes or No.", "error")
         ask_attack_range()
@@ -209,7 +207,6 @@ def ask_extra_attack():
 
 def extra_attack(text):
     if text.lower() in {"yes", "attack"}:
-        global player
         player.use_speed(30)
         player.basic_attack(target)
         set_char_stats()
@@ -241,7 +238,7 @@ def ask_player_target():
     elif len(enemies) == 1:
         target = enemies[0]
         game_out(f"{target.name} is your target!", "combat_pc")
-        print(f" COMBAT ROUND: {combatround}")
+        # print(f" COMBAT ROUND: {combatround}")
         if combatround == 0:
             wait_player_input()
             return
@@ -264,13 +261,17 @@ def player_target(text): #combatstate 4
                 game_out(f"{text.title()} is targeted!", "combat_pc")
                 global target
                 target = e
-                wait_player_input()
+                print(combatround)
+                if combatround == 0:
+                    wait_player_input()
+                else:
+                    npc_action()
     else:
         game_out(f"Cannot find {text}, please try again!", "error")   
 
 def npc_action():
     from graphics import game_text
-    global enemies, player, combatstate
+    global enemies, combatstate
     #ALL ENEMIES GO
     for e in enemies:
         if "entangled" in e.status:
@@ -287,7 +288,6 @@ def npc_action():
     game_text.after(3000, wait_player_input)
     
 def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra attack is its own function
-    global player
     aoe_styles = {"Lotus Bloom", "Arcane Pulse", "Sweeping Strike"}
     player_health_status = float(player.health  / player.max_health) * 100
     enemy_health_status = float(enemy.health  / enemy.max_health) * 100
@@ -370,18 +370,15 @@ def narrative_read(identifier:str, tag = "blue"):
         
 def start_game(text):
     if text.lower() == "start":
-        narrative_read("Intro")
-        typing_animation("Now rise, you white dog, and tell us your name!", "blue_bold")
+        typing_animation(typing_var.intro, "blue")
         global gamestate
         gamestate = 2
         
 def enter_name(text):
-    import typing_var
     if 1 < len(text) < 13:
         game_out(f"\nWelcome to our realm, {text.capitalize()}!", "purple_bold")
         global char_name 
         char_name = text.capitalize()
-        typing_var.player["name"] = char_name
         #Choose class prompt
         narrative_read("ClassDesc")
         typing_animation(f"Choose your class - ", "blue_bold")
@@ -407,7 +404,6 @@ Resistance: {player.resistance}""")
 def choose_class(text):
     from combatant import Combatant
     from items import pinecone_mail, leafrobe, snakeweave
-    print(f"TYPING VAR NAME: {typing_var.player}")
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
         game_out(f"That is not a valid option, please try entering the name of your class again!", "error")
@@ -573,7 +569,7 @@ def speak_to_passel(text): #13
     if text.lower() == "yes":
         typing_animation(typing_var.speak_to_passel.format(player.name, player.name), "blue")
     elif text.lower() == "no":
-        game_out(f"Enter OK to continue.", "blue")
+        game_out(f"You choose not to speak with the passel. Enter OK to continue.", "purple")
     global gamestate
     gamestate = 14
     
@@ -589,6 +585,7 @@ def path_or_cave(text): #15
         typing_animation(typing_var.fern_cave_1, "blue")
         gamestate = 16
     elif text.lower() == "up":
+        game_out("You choose to keep hiking up the path. Enter OK to continue.", "purple")
         gamestate = 17
     else:
         game_out(f'That is not a valid option, please enter the words "CAVE" to continue the conversation or "UP" to leave the cave', "error")
@@ -599,7 +596,7 @@ def fern_cave(text): #16
         typing_animation(typing_var.fern_cave_2.format(player.name), "blue")
         gamestate = 17
     elif text.lower() == "ok":
-        game_out(f"You nod to Amanita and leave the cave.", "blue")
+        game_out(f"You nod to Amanita and leave the cave.", "purple")
         gamestate = 17
     else:
         game_out(f'That is not a valid option, please enter the words "HELL" to continue the conversation or "OK" to leave the cave', "error")
@@ -615,7 +612,7 @@ def fox_response(text): # 18
     from combatant import fox
     if text.lower() == "come":
         game_out(f"The fox leaps at you!", "purple_bold")
-        combat_order(player, fox)
+        combat_order(player, [fox])
         gamestate = 20
     elif text.lower() == "help":
         typing_animation(typing_var.fox_2, "blue")
@@ -628,10 +625,10 @@ def fox_food(text): #19
     from combatant import fox
     if text.lower() == "come":
         game_out(f"The fox leaps at you!", "purple_bold")
-        combat_order(player, fox)
+        combat_order(player, [fox])
         gamestate = 20
     elif text.lower() == "suit":
-        game_out(f"You walk away as the fox sits in confusion", "purple_bold")
+        game_out(f"You walk away as the fox sits in confusion. Enter OK to continue.", "purple")
         gamestate = 21
     elif text.lower() == "have":
         typing_animation(typing_var.help_fox.format(player.name), "blue")
@@ -642,7 +639,7 @@ def fox_food(text): #19
 def post_fox_fight(text): #20
     global gamestate
     if text:
-        game_out(f"You completed the fox encounter, well done!", "blue_bold")
+        game_out(f"You completed the fox encounter, well done!", "purple_bold")
         player.level_up()
         gamestate = 21
         game_out(f"Enter OK to continue", "blue")
@@ -656,7 +653,7 @@ def path_three(text): #21
 def path_or_maple_cave(text): #22
     global gamestate
     if text.lower() == "bald":
-        game_out(f"You choose to keep hiking up the path. Enter OK to continue.", "purple_bold")
+        game_out(f"You choose to keep hiking up the path. Enter OK to continue.", "purple")
         gamestate = 27
     elif text.lower() == "cave":
         typing_animation(typing_var.maple_cave, "blue")
@@ -674,7 +671,7 @@ def maple_cave(text): #23
         typing_animation(typing_var.stomp_maple, "blue")
         gamestate = 25
     elif text.lower() == "leave":
-        typing_animation(typing_var.leave_cave)
+        typing_animation(typing_var.leave_cave, "blue")
     else:
         game_out(f'That is not a valid option, try again!', "error")
     
@@ -682,10 +679,10 @@ def maple_cave(text): #23
 def venus_combat_choice(text): #24
     global gamestate
     if text.lower() == "run":
-        game_out(f"You run away from the monstrosity and back to the winding path. Enter OK to continue.", "purple_bold")
+        game_out(f"You run away from the monstrosity and back to the winding path. Enter OK to continue.", "purple")
         gamestate = 27
     elif text.lower() == "fight":
-        game_out(f"You steel your nerves and lunge at the plant! Enter OK to continue.", "purple_bold")
+        game_out(f"You steel your nerves and lunge at the plant! Enter OK to continue.", "purple")
         gamestate = 25
     else:
         game_out(f'That is not a valid option, please enter the words "run" or "fight"', "error")
@@ -716,6 +713,7 @@ def mountaintop(text): #28
         typing_animation(typing_var.investigate_snake, "blue")
         gamestate = 29
     elif text.lower() == "up":
+        game_out("You choose not to investigate the snake. Enter OK to continue.", "purple")
         gamestate = 30
         player.status["snake_ally"] = "no"
     else:

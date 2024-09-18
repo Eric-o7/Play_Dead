@@ -296,6 +296,6 @@ text_entry.focus()
 
 text_entry.bind("<Return>", add_to_game_out)
 
-enter_button = ttk.Button(entry_frame, text = "Enter", command = add_to_game_out)
+enter_button = tk.Button(entry_frame, bg="#241773", fg="white", text = "Enter", command = add_to_game_out)
 enter_button.grid(row = 0, column = 1, sticky = "nsew", padx = 10)
 

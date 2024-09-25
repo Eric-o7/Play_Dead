@@ -269,8 +269,7 @@ class Combatant():
                 combatround += 1
                 main.target = None
             return True
-        if self.health <= 0 and self.player_class:
-            game_out(f"You're critically wounded, enter RESTART to try again.", "blue")
+        
         
     def use_mana(self, mana_cost):
         self.mana -= mana_cost
@@ -328,14 +327,14 @@ max_speed=60, spells=[abilities.comet, abilities.missile_barrage], styles=[abili
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=3, initiative=None, max_health=29, 
 endurance=90, speed=60, mana=130)
 
-lilsnake1 = Combatant(name="Red Snake", level=1, health=10, player_class=None, strength=3, agility=7, acuity=3, 
+lilsnake1 = Combatant(name="Red Snake", level=1, health=14, player_class=None, strength=3, agility=7, acuity=3, 
 primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
 max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"ranged": [False, "status"]}, 
-equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=10, 
+equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=14, 
 endurance=30, speed=30, mana=0)
 
-lilsnake2 = Combatant(name="Brown Snake", level=1, health=10, player_class=None, strength=3, agility=7, acuity=3, 
-primary_stat=7, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
+lilsnake2 = Combatant(name="Brown Snake", level=1, health=10, player_class=None, strength=3, agility=10, acuity=3, 
+primary_stat=10, avoidance=10, resistance=9, deflection=1, max_mana=0, max_endurance=30, 
 max_speed=30, spells=[], styles=[abilities.tear_flesh, abilities.envenom], inventory={}, status={"ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=2, initiative=None, max_health=10, 
 endurance=30, speed=30, mana=0)
@@ -353,7 +352,7 @@ equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=4, initiati
 endurance=60, speed=30, mana=0)
 
 fox = Combatant(name="Fox", level=2, health=30, player_class=None, strength=7, agility=12, acuity=7, 
-primary_stat=12 , avoidance=14, resistance=10, deflection=1, max_mana=0, max_endurance=90, 
+primary_stat=12 , avoidance=13, resistance=10, deflection=1, max_mana=0, max_endurance=90, 
 max_speed=120, spells=[], styles=[abilities.bloody_strike, abilities.defensive_strike], inventory={}, status={"Ranged": [False, "status"]}, 
 equipment={"Mhand": None, "Ohand": None, "Armor": None}, base_damage=5, initiative=None, max_health=30, 
 endurance=90, speed=120, mana=0)

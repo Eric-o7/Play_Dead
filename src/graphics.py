@@ -245,13 +245,13 @@ def typing_animation(text, tags = "user", text_index = 0):
         game_text.configure(state = "disabled")
         game_text.see(tk.END)
         text_index += 1
-        game_text.after(30, typing_animation, text, tag_arg, text_index)
+        game_text.after(22, typing_animation, text, tag_arg, text_index)
     return
 
 
 #display content and progress game using gamestate()
 def add_to_game_out(event=None):
-    from main import gamestate_bus, combatstate, combatstate_bus,  restart_combat, combat_order, reset_game
+    from main import gamestate_bus, combatstate, combatstate_bus,  restart_combat, combat_order, reset_game, player, enemies
     if text_entry.get():
         text = text_entry.get()
         if text.lower() in {"reset", "restart"}:
@@ -259,7 +259,7 @@ def add_to_game_out(event=None):
                 reset_game()
             else:
                 if combatstate > 1:
-                    restart_combat()
+                    restart_combat(player, enemies)
                 else:
                     game_out(f"You're currently not in combat", "error")
             text_entry.delete(0, tk.END)

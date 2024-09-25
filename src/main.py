@@ -130,8 +130,10 @@ def combat_order(player, *args):
         npc_action()
 
 def player_action(text): #combatstate 2
-    global combatround
+    global combatround, enemies
     combatround +=1
+    if text.lower() == "restart":
+        restart_combat(player, enemies)
     if "damage_over_time" in player.status:
         damage_over_time(player)
     # print([style.name for style in player.styles])
@@ -139,7 +141,7 @@ def player_action(text): #combatstate 2
     if target == None:
         ask_player_target()
     game_out(f"{text.title()}", "combat_pc")
-    if text.lower() == "attack" and (player.equipment["Mhand"].ranged == False):
+    if text.lower() in {"attack", "att"} and (player.equipment["Mhand"].ranged == False):
         if player.status["ranged"][0] == True:
             player.status["ranged"][0] = False
             player.set_deflection()
@@ -213,6 +215,9 @@ def extra_attack(text):
         game_out(f"{text} is not a valid response, please enter Yes or No", "error")
 
 def wait_player_input():
+    if player.health <= 0:
+        game_out(f"You're critically wounded, enter RESTART to try again.", "blue")
+        return
     if ((player.player_class == "Wizard" or player.equipment["Mhand"].ranged == True)
         and player.status["ranged"] == [False, "status"]):
         ask_attack_range()
@@ -347,7 +352,7 @@ def damage_over_time(combatant):
             del combatant.status["damage_over_time"][dot]
 
 def narrative_read(identifier:str, tag = "blue"):
-    with open("text_files/narrative.txt") as narrative:
+    with open("narrative.txt") as narrative:
         narrative = narrative.readlines()
     count = 0
     beginning = f"***{identifier}Start***"
@@ -364,7 +369,7 @@ def narrative_read(identifier:str, tag = "blue"):
 
 def start_game(text):
     if text.lower() == "start":
-        typing_animation(typing_var.intro, "blue")
+        # typing_animation(typing_var.intro, "blue")
         global gamestate
         gamestate = 2
         

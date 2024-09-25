@@ -9,11 +9,11 @@ The player can choose between three different classes to get started: Warrior, W
 Starting weapons and abilities are also up to the player to choose each time they play.
 
 ---
-#How to Play
+# How to Play
 1. On Windows: Download and launch the application. Download [here]([url](https://eric-o7.itch.io/play-dead)).
 2. Other OS: You can clone this repo and run main.py in your command line `git clone https://github.com/Eric-o7/Play_Dead`
 
 ---
-#Screenshots
+# Screenshots
 ![Combat](https://github.com/user-attachments/assets/1a55e816-16b8-497d-97d6-78813b9d3e5d)
 ![Char selection](https://github.com/user-attachments/assets/fa0a755e-2682-4bf7-9e54-4f558d9f9689)

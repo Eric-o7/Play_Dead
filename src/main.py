@@ -369,6 +369,7 @@ def start_game(text):
         gamestate = 2
         
 def enter_name(text):
+    global gamestate
     if 1 < len(text) < 13:
         game_out(f"\nWelcome to our realm, {text.capitalize()}!", "purple_bold")
         global char_name 
@@ -376,11 +377,12 @@ def enter_name(text):
         #Choose class prompt
         narrative_read("ClassDesc")
         typing_animation(f"Choose your class - ", "blue_bold")
-        global gamestate
         gamestate = 3
     else:
         game_out(f"{text} is an invalid name. Please enter a name between 2 and 12 characters in length", "error")
-
+        gamestate = 2
+        return
+    
 def set_char_stats():
     if player:
         char_stats.set(f"""
@@ -398,9 +400,12 @@ Resistance: {player.resistance}""")
 def choose_class(text):
     from combatant import Combatant
     from items import pinecone_mail, leafrobe, snakeweave
+    global gamestate
     player_class = text.capitalize()
     if player_class not in {"Warrior", "Ninja", "Wizard"}:
         game_out(f"That is not a valid option, please try entering the name of your class again!", "error")
+        gamestate = 3
+        return
     else:
         global player
         player = Combatant(char_name, 1, 0, player_class, styles=[], spells=[])
@@ -417,14 +422,16 @@ def choose_class(text):
         #Choose equipment prompt
         narrative_read(f"{player_class}Weps")
         typing_animation(f"Choose your starting weapon - ", "blue_bold")
-        global gamestate
         gamestate = 4
         
 def choose_equipment(text):
     from items import starting_weapons, shield
+    global gamestate
     item_name = text.capitalize()
     if item_name not in starting_weapons:
         game_out(f"That is not a valid option, please try again!", "error")
+        gamestate = 4
+        return
     item = starting_weapons[item_name]
     player.equip_item(item)
     if item.name in {"Knife", "Wand"}:
@@ -434,14 +441,16 @@ def choose_equipment(text):
     narrative_read(item.name)
     typing_animation(f"Choose a style to start with - ", "blue_bold")
     #Choose styles prompt
-    global gamestate
     gamestate = 5
     
 def choose_styles(text):
     from abilities import starting_styles
+    global gamestate
     style_name = text.title()
     if style_name not in starting_styles:
         game_out(f"That is not a valid option, please try again!", "error")
+        gamestate = 5
+        return
     style_choice = starting_styles[style_name]
     if len(player.styles) < 1:
         player.styles.append(style_choice)
@@ -453,18 +462,19 @@ def choose_styles(text):
         typing_animation(f"You're almost ready for your first trial. Choose a spell to start with.", "blue_bold")
     if player.player_class == "Wizard":
         typing_animation(f"You're almost ready for your first trial. Choose two spells to start with.", "blue_bold")
-    global gamestate
     gamestate = 6
 
 def choose_spells(text):
     from abilities import starting_spells
+    global gamestate
     spell_name = text.title()
     if spell_name not in starting_spells:
-        game_out(f"That is not a valid option, please try again!", "error")
+        game_out(f"\nThat is not a valid option, please try again!", "error")
+        gamestate = 6
+        return
     spell_choice = starting_spells[spell_name]
     player.spells.append(spell_choice)
     game_out(f"\n{spell_choice.name} has been added to your list of spells.", "purple")
-    global gamestate
     if player.player_class == "Wizard":
         gamestate = 7
     else:
@@ -473,14 +483,16 @@ def choose_spells(text):
     
 def wizard_spells(text):
     from abilities import starting_spells
+    global gamestate
     spell_name = text.title()
     if spell_name not in starting_spells:
-        game_out(f"That is not a valid option, please try again!", "error")
+        game_out(f"\nThat is not a valid option, please try again!", "error")
+        gamestate = 7
+        return
     spell_choice = starting_spells[spell_name]
     if spell_choice not in player.spells:
         player.spells.append(spell_choice)
         game_out(f"{spell_choice.name} has been added to your list of spells.", "purple")
-        global gamestate
         gamestate = 8
         opening_combat()
     else:

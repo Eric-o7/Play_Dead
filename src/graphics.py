@@ -4,7 +4,10 @@ from tkinter import ttk, Toplevel
 
 root = tk.Tk()
 root.geometry("800x600")
-root.title("Start Game")
+root.title("Play Dead")
+icon = tk.PhotoImage(file="exe/Opossum_Icon.png")
+root.iconphoto(True, icon)
+
 
 root.configure(background = "#212121")
 

@@ -257,7 +257,7 @@ def player_target(text): #combatstate 4
                 game_out(f"{text.title()} is targeted!", "combat_pc")
                 global target
                 target = e
-                print(combatround)
+                # print(combatround)
                 if combatround == 0:
                     wait_player_input()
                 else:

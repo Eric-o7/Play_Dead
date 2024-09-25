@@ -8,6 +8,10 @@ The player can choose between three different classes to get started: Warrior, W
 
 Starting weapons and abilities are also up to the player to choose each time they play.
 
+## But why?
+
+This project was created to gain technical experience building a program from conception to conclusion. It has allowed me to put my Python knowledge into practice in a fun and challenging way.
+
 ---
 # How to Play
 1. On Windows: Download and launch the application. Download([here](https://eric-o7.itch.io/play-dead)).

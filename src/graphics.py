@@ -1,11 +1,11 @@
 import tkinter as tk
-from tkinter import ttk, Toplevel
+from tkinter import Toplevel
 
 
 root = tk.Tk()
 root.geometry("800x600")
 root.title("Play Dead")
-icon = tk.PhotoImage(file="exe/Opossum_Icon.png")
+icon = tk.PhotoImage(file="Opossum.png")
 root.iconphoto(True, icon)
 
 
@@ -33,7 +33,7 @@ def close_window(window):
     window.destroy()
 
 def help_read():
-    open_help = open("text_files/help.txt")
+    open_help = open("help.txt")
     read_help = open_help.read()
     return read_help
 
@@ -271,7 +271,7 @@ def add_to_game_out(event=None):
         return gamestate_bus(text)
     
 #title/credits printed upon execution
-with open("text_files/narrative.txt") as start:
+with open("narrative.txt") as start:
     start = start.readlines()
     count = 0
     beginning = "***TitleStart***"
@@ -293,7 +293,7 @@ entry_frame.grid(row = 2, column = 1, sticky = "ew", padx = (15,5))
 entry_frame.columnconfigure(0, weight = 25)
 entry_frame.columnconfigure(1, weight = 2)
 
-text_entry = ttk.Entry(entry_frame)
+text_entry = tk.Entry(entry_frame)
 text_entry.grid(row = 0, column = 0, sticky = "nsew")
 text_entry.focus()
 

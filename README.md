@@ -16,6 +16,7 @@ This project was created to gain technical experience building a program from co
 # How to Play
 1. On Windows: Download and launch the application. Download([here](https://eric-o7.itch.io/play-dead)).
 2. Other OS: You can clone this repo and run main.py in your command line `git clone https://github.com/Eric-o7/Play_Dead`
+    *You must have Python downloaded to run the program from your command line or IDE. https://www.python.org/downloads/
 
 ---
 # Screenshots

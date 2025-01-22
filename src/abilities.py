@@ -1,6 +1,7 @@
 from random import randint
 from graphics import game_out
-import main
+import gamestate
+import combat
 
 class Ability():
     ability_list = []
@@ -64,7 +65,7 @@ class Ability():
     def raise_avoidance(self, user, victim): #warrior defensive strike
         user.status["raise_avoidance"] = [self.duration, self.effect_int, self.name]
         user.set_avoidance()
-        main.set_char_stats()
+        gamestate.set_char_stats()
         game_out(f"{user.name} uses {self.name} to increase avoidance for {self.duration} attacks", "effects")
         if self.damage:
             user.basic_attack(victim, self.damage)
@@ -72,7 +73,7 @@ class Ability():
     def raise_deflection(self, user, victim): #ninja shadow guise
         user.status["raise_deflection"] = [self.duration, self.effect_int, self.name]
         user.set_deflection()
-        main.set_char_stats()
+        gamestate.set_char_stats()
         game_out(f"{user.name}'s deflection is increased for {self.duration} attacks", "effects")
         if self.damage:
             user.basic_attack(victim, self.damage)
@@ -97,7 +98,7 @@ class Ability():
         if victim.health == victim.max_health and user.player_class:
             user.use_mana(-50)
             game_out(f"Your opponent must be wounded before you can draw their life.", "error")
-            return main.wait_player_input()
+            return combat.wait_player_input()
         if user.resistance_check(victim):
             game_out(f"{user.name} stole {total_life} health from {victim.name}!", "damage")
         else:
@@ -112,7 +113,7 @@ class Ability():
             user.speed += 30 * user.level
     
     def multi_target_damage(self, user, victim):
-        from main import enemies
+        from combat import enemies
         aoe_damage = self.damage
         if self.name == "Comet":
             aoe_damage = 3
@@ -124,10 +125,10 @@ class Ability():
                     del e.status["stealth"]
             return
         else:
-            main.player.take_damage(aoe_damage)
-            if "Stealth" in main.player.status:
+            gamestate.player.take_damage(aoe_damage)
+            if "Stealth" in gamestate.player.status:
                 game_out(f"Your location has been revealed, you lose the stealth effect!")
-                del main.player.status["stealth"]
+                del gamestate.player.status["stealth"]
             
     def entangle(self, user, victim):
         victim.status["entangled"] = [self.duration, self.effect_int, self.name]
@@ -137,7 +138,7 @@ class Ability():
         victim.status["ranged"][0] = False
     
     def augment_attack(self, user, victim):
-        user.status["augment_attack"] = [user.level, self.effect_int, self.name]
+        user.status["augment_attack"] = [(user.level + 2), self.effect_int, self.name]
         user.basic_attack(victim)
     
     def guaranteed_hit(self, user, victim):
@@ -155,18 +156,18 @@ class Style(Ability):
         # print(self.endurance_cost, user.endurance)
         if self.effect in user.status and user.player_class:
             game_out(f"You already benefit from {self.name}! Choose a different action.", "error")
-            main.wait_player_input()
+            combat.wait_player_input()
             return
         if self.endurance_cost <= user.endurance:
             user.use_endurance(self.endurance_cost)
             game_out(f"{user.name} uses {self.name}", "styles")
             self.ability_effect(user, victim)
-            main.set_char_stats()
+            gamestate.set_char_stats()
             if user.player_class:
-                main.ask_extra_attack()
+                combat.ask_extra_attack()
         else:
             game_out(f"Not enough endurance to use this style", "error")
-            main.wait_player_input()
+            combat.wait_player_input()
     
 #Styles
 firebolt = Style("Fire Bolt", "direct_damage", effect_int=2, damage=8, duration=1, ranged=True, endurance_cost=25)
@@ -196,18 +197,18 @@ class Spell(Ability):
         # print(user.name, self.name, victim.name)
         if self.effect in user.status and user.player_class:
             game_out(f"You already benefit from {self.name}! Choose a different action.", "error")
-            main.wait_player_input()
+            combat.wait_player_input()
             return
         if self.mana_cost <= user.mana:
             user.use_mana(self.mana_cost)
             game_out(f"{user.name} uses {self.name}", "spells")
             self.ability_effect(user, victim)
-            main.set_char_stats()
+            gamestate.set_char_stats()
             if user.player_class:
-                main.ask_extra_attack()
+                combat.npc_action()
         else:
             game_out(f"Not enough mana to use this spell", "error")
-            main.wait_player_input()
+            combat.wait_player_input()
         
 #Spells
 transfusion = Spell("Transfusion", "lifedraw", effect_int=0, damage=6, duration=0, ranged=True, mana_cost=50) #use player.level as effect int to modify damage

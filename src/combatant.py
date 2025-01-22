@@ -1,9 +1,8 @@
 import random
 import abilities
-import main
+import gamestate
 from graphics import game_out
 from items import *
-import time
 
 class Combatant():
     combatant_list = []
@@ -162,7 +161,7 @@ class Combatant():
             self.deflection += 1
         if "raise_deflection" in self.status:
             self.deflection += self.status["raise_deflection"][1]
-        main.set_char_stats()
+        gamestate.set_char_stats()
 
 #2d6 plus primary stat -4 plus level
     def attack_roll(self):
@@ -209,7 +208,7 @@ class Combatant():
         return False
                         
     def take_damage(self, damage):
-        from main import player, set_char_stats
+        from gamestate import player
         temp_deflection = self.deflection
         
         if "raise_deflection" in self.status:
@@ -238,7 +237,7 @@ class Combatant():
             self.check_death(self.health)
         
         if self.player_class:
-            set_char_stats()
+            gamestate.set_char_stats()
         
     def basic_attack(self, Combatant, style_damage = None):
         if style_damage:
@@ -261,13 +260,13 @@ class Combatant():
             Combatant.take_damage(damage)
             
     def check_death(self, damage = None):
-        from main import enemies, combatround
+        from combat import enemies, combatround, ask_player_target
         if self.health <= 0:
             game_out(f"{self.name} was defeated!", "effects")
             if self in enemies:
                 enemies.remove(self)
                 combatround += 1
-                main.target = None
+                ask_player_target()
             return True
         
         
@@ -296,6 +295,7 @@ class Combatant():
         return self.styles
     
     def level_up(self):
+        import gamestate
         self.level+=1
         self.set_health()
         self.set_mana()
@@ -304,7 +304,7 @@ class Combatant():
         self.set_avoidance()
         self.set_resistance()
         self.primary_stat += 1
-        main.set_char_stats()
+        gamestate.set_char_stats()
         game_out(f"\nYou level up! Your primary stat and resources have increased.\n", "effects")
 
     # def __repr__(self):

@@ -24,7 +24,7 @@ Ninja - Melee or ranged combatant that can make multiple low damage attacks. Hig
 
 
 ***WarriorWepsStart***
-You may choose a bowie KNIFE and shield for higher avoidance, or a HATCHET for more damage.
+You may choose a bowie KNIFE and shield for higher avoidance, or a two handed HATCHET for more damage.
 Your weapon determines what combat styles are available to you.
 ***WarriorWepsEnd***
 ***WizardWepsStart***

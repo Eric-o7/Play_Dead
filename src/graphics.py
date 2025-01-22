@@ -5,8 +5,8 @@ from tkinter import Toplevel
 root = tk.Tk()
 root.geometry("800x600")
 root.title("Play Dead")
-icon = tk.PhotoImage(file="Opossum.png")
-root.iconphoto(True, icon)
+#icon = tk.PhotoImage(file="Opossum.png")
+#root.iconphoto(True, icon)
 
 
 root.configure(background = "#212121")
@@ -33,7 +33,7 @@ def close_window(window):
     window.destroy()
 
 def help_read():
-    open_help = open("help.txt")
+    open_help = open("src/help.txt")
     read_help = open_help.read()
     return read_help
 
@@ -60,13 +60,13 @@ help_button = tk.Button(button_frame, text = "Help", activebackground="#6a8758",
 help_button.grid(row = 0, column = 0)
 
 def equip_read():
-    import main
-    if main.player:
-        if main.player.equipment["Mhand"]:
+    import gamestate
+    if gamestate.player:
+        if gamestate.player.equipment["Mhand"]:
             info = (f"""
-    Main Hand: {main.player.equipment["Mhand"].name}\n
-    Off Hand: {main.player.equipment["Ohand"].name}\n
-    Armor: {main.player.equipment["Armor"].name}\n""")
+    Main Hand: {gamestate.player.equipment["Mhand"].name}\n
+    Off Hand: {gamestate.player.equipment["Ohand"].name}\n
+    Armor: {gamestate.player.equipment["Armor"].name}\n""")
             return info
     else:
         return "You haven't chosen equipment yet."
@@ -94,12 +94,12 @@ equipment_button = tk.Button(button_frame, text = "Equipment", activebackground=
 equipment_button.grid(row = 1, column = 0)
 
 def spells_read():
-    import main
-    if main.player:
-        if len(main.player.spells) > 0:
+    import gamestate
+    if gamestate.player:
+        if len(gamestate.player.spells) > 0:
             info = (f"""
 Spell List:\n
-{[spell.name for spell in main.player.spells]}""")
+{[spell.name for spell in gamestate.player.spells]}""")
             return info
     else:
         return "You haven't chosen any spells yet."
@@ -126,12 +126,12 @@ spells_button = tk.Button(button_frame, text = "Spells",activebackground= "#d9d5
 spells_button.grid(row = 2, column = 0)
 
 def styles_read():
-    import main
-    if main.player:
-        if len(main.player.styles) > 0:
+    import gamestate
+    if gamestate.player:
+        if len(gamestate.player.styles) > 0:
             info = (f"""
 Styles List:\n
-{[style.name for style in main.player.styles]}""")
+{[style.name for style in gamestate.player.styles]}""")
             return info
     else:
         return "You haven't chosen any styles yet."
@@ -251,27 +251,27 @@ def typing_animation(text, tags = "user", text_index = 0):
 
 #display content and progress game using gamestate()
 def add_to_game_out(event=None):
-    from main import gamestate_bus, combatstate, combatstate_bus,  restart_combat, combat_order, reset_game, player, enemies
+    import gamestate, combat, main
     if text_entry.get():
         text = text_entry.get()
         if text.lower() in {"reset", "restart"}:
             if text.lower() == "reset":
-                reset_game()
+                main.reset_game()
             else:
-                if combatstate > 1:
-                    restart_combat(player, enemies)
+                if combat.combatstate > 1:
+                    combat.restart_combat(gamestate.player, combat.enemies)
                 else:
                     game_out(f"You're currently not in combat", "error")
             text_entry.delete(0, tk.END)
             return
         text_entry.delete(0, tk.END)
         # print(f"State: {gamestate}")
-        if combatstate > 1:
-            return combatstate_bus(text)
-        return gamestate_bus(text)
+        if combat.combatstate > 1:
+            return combat.combatstate_bus(text)
+        return gamestate.gamestate_bus(text)
     
 #title/credits printed upon execution
-with open("narrative.txt") as start:
+with open("src/narrative.txt") as start:
     start = start.readlines()
     count = 0
     beginning = "***TitleStart***"

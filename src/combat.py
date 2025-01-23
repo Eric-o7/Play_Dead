@@ -191,7 +191,6 @@ def ask_player_target():
             game_out(f"{e.name}")
             global combatstate
             combatstate = 4
-            return
 
 def player_target(text): #combatstate 4
     names = [e.name for e in enemies]

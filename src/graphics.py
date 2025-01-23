@@ -245,7 +245,7 @@ def typing_animation(text, tags = "user", text_index = 0):
         game_text.configure(state = "disabled")
         game_text.see(tk.END)
         text_index += 1
-        game_text.after(22, typing_animation, text, tag_arg, text_index)
+        game_text.after(18, typing_animation, text, tag_arg, text_index)
     return
 
 

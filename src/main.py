@@ -10,7 +10,3 @@ def reset_game():
 if __name__ == "__main__":        
     main()
     
-    
-#todo
-# make sure the prompt "Which enemy would you like to target accurately displays all enemies"
-# fix bug where the last enemy available attacks twice and prompts player twice

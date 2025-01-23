@@ -51,6 +51,51 @@ def combat_order(player, *args):
             gamestate_bus("ok")
     else:
         npc_action()
+    return
+
+def wait_player_input():
+    from gamestate import player
+    if player.health <= 0:
+        game_out(f"You're critically wounded, enter RESTART to try again.", "blue")
+        return
+    if target == None:
+        ask_player_target()
+        return
+    if ((player.player_class == "Wizard" or player.equipment["Mhand"].ranged == True)
+        and player.status["ranged"] == [False, "status"]):
+        ask_attack_range()
+        return
+    if len(enemies) >= 1:
+        game_out(f"What would you like to do?", "combat_pc_question")
+        game_out(f"You can ATTACK, use a style(STYLE NAME), cast a spell(SPELL NAME), or change TARGET.", "combat_pc")
+        global combatstate
+        combatstate = 2
+    return
+
+def ask_player_target():
+    from gamestate import player
+    global enemies, target, combatround
+    if len(enemies) == 0:
+        game_out(f"You've defeated all enemies!", "combat_pc")
+        restart_combat(player, enemies)
+        gamestate_bus("ok")
+        return
+    elif len(enemies) == 1:
+        target = enemies[0]
+        game_out(f"{target.name} is your target!", "combat_pc")
+        # print(f" COMBAT ROUND: {combatround}")
+        if combatround == 0:
+            wait_player_input()
+        else:
+            npc_action()
+        return
+    game_out(f"Which enemy would you like to target?","combat_pc_question")
+    for e in enemies:
+        if e.player_class == None:
+            game_out(f"{e.name}")
+            global combatstate
+            combatstate = 4
+    return
 
 def player_action(text): #combatstate 2
     from gamestate import player
@@ -62,8 +107,8 @@ def player_action(text): #combatstate 2
         damage_over_time(player)
     # print([style.name for style in player.styles])
     # print([spell.name for spell in player.spells])
-    if target == None:
-        ask_player_target()
+    # if target == None:
+    #     ask_player_target()
     game_out(f"{text.title()}", "combat_pc")
     if text.lower() in {"attack", "att"} and (player.equipment["Mhand"].ranged == False):
         if player.status["ranged"][0] == True:
@@ -122,9 +167,6 @@ def check_range(text): #combatstate 6
         
 def ask_extra_attack():
     from gamestate import player
-    if not target:
-        ask_player_target()
-        return
     if player.speed >= 30 and len(enemies) >= 1:
         game_out(f"Would you like to use your speed to attack again this round?", "combat_pc_question")
         global combatstate
@@ -146,51 +188,6 @@ def extra_attack(text):
     else:
         game_out(f"{text} is not a valid response, please enter Yes or No", "error")
     return
-
-def wait_player_input():
-    from gamestate import player
-    if player.health <= 0:
-        game_out(f"You're critically wounded, enter RESTART to try again.", "blue")
-        return
-    if ((player.player_class == "Wizard" or player.equipment["Mhand"].ranged == True)
-        and player.status["ranged"] == [False, "status"]):
-        ask_attack_range()
-    elif target == None:
-        ask_player_target()
-    elif len(enemies) >= 1:
-        game_out(f"What would you like to do?", "combat_pc_question")
-        game_out(f"You can ATTACK, use a style(STYLE NAME), cast a spell(SPELL NAME), or change TARGET.", "combat_pc")
-        global combatstate
-        combatstate = 2
-        return
-
-#target with 0 health needs to be removed from enemy list of enemies. Prompted player twice? Enemies attacking twice and player is being prompted twice.
-        
-
-def ask_player_target():
-    from gamestate import player
-    global enemies, target, combatround
-    if len(enemies) == 0:
-        game_out(f"You've defeated all enemies!", "combat_pc")
-        restart_combat(player, enemies)
-        gamestate_bus("ok")
-        return
-    elif len(enemies) == 1:
-        target = enemies[0]
-        game_out(f"{target.name} is your target!", "combat_pc")
-        # print(f" COMBAT ROUND: {combatround}")
-        if combatround == 0:
-            wait_player_input()
-            return
-        else:
-            npc_action()
-            return
-    game_out(f"Which enemy would you like to target?","combat_pc_question")
-    for e in enemies:
-        if e.player_class == None:
-            game_out(f"{e.name}")
-            global combatstate
-            combatstate = 4
 
 def player_target(text): #combatstate 4
     names = [e.name for e in enemies]
@@ -216,6 +213,7 @@ def npc_action():
     from graphics import game_text
     global enemies, combatstate
     #ALL ENEMIES GO
+    game_out(f"Your enemies are taking a turn.", "combat_npc")
     for e in enemies:
         if "entangled" in e.status:
             e.status["entangled"][0] -= 1
@@ -229,6 +227,9 @@ def npc_action():
                     return
                 return
         game_text.after(2000, npc_decision, e)
+    if not target:
+        game_text.after(3000, ask_player_target)
+        return
     game_text.after(3000, wait_player_input)
     
 def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra attack is its own function
@@ -249,6 +250,7 @@ def npc_decision(enemy): #logic affecting conditions - entangled, stealth, extra
                 
         else:
             return game_out(f"{enemy.name} cannot see you while you're stealthed!", "combat_npc")
+        return
     elif player_health_status >= enemy_health_status:
         if enemy.endurance > enemy.mana:
             available_styles = [style for style in enemy.styles if enemy.endurance > style.endurance_cost]
@@ -300,7 +302,8 @@ def damage_over_time(combatant):
 def restart_combat(player, enemies):
     from gamestate import player
     enemies.append(player)
-    global status_conditions
+    global status_conditions, target
+    target = None
     status_conditions = {"damage_over_time", "entangled", "vulnerability", "raise_avoidance", "raise_deflection", "stealth"}
     for e in enemies:
         e.health = e.max_health
